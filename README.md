@@ -1,61 +1,117 @@
-<!-- Typing SVG Banner -->
+<!-- BIG Typing SVG Banner -->
 <p align="center">
   <a href="https://github.com/kawincodes">
-    <img src="https://readme-typing-svg.herokuapp.com?size=28&color=00F700&center=true&vCenter=true&width=800&lines=Hi%2C+I'm+Kawin+Raju;Full-Stack+Developer;AI+%26+Bot+Enthusiast;Cloud+%7C+SaaS+%7C+Serverless;Building+Cool+APIs+%26+Automation+Tools;Always+Learning+New+Tech+%F0%9F%9A%80">
+    <img src="https://readme-typing-svg.herokuapp.com?size=40&color=00F700&center=true&vCenter=true&width=900&height=70&lines=Hi%2C+I'm+Kawin+Raju;Full-Stack+Developer;AI+%26+Bot+Enthusiast;Cloud+%7C+SaaS+%7C+Serverless;Building+APIs+%26+Automation+Tools">
   </a>
 </p>
 
----
+<h1 align="center">Hi there 👋, I'm Kawin Raju</h1>
 
-# 👋 Hey, I'm Kawin Raju  
-
-🌟 **Full-Stack Developer | AI Enthusiast | SaaS Builder**  
-⚡ Creating **bots, APIs, SaaS platforms & serverless tools**.  
-🚀 Passionate about **automation, cloud, and AI-driven apps**.  
-
-<p align="center">
-  <img src="https://media.giphy.com/media/L1R1tvI9svkIWwpVYr/giphy.gif" width="500" alt="Coding" />
-</p>
+👨‍💻 **Full-Stack Developer | AI Enthusiast | SaaS Builder**  
+⚡ Focused on **bots, APIs, dashboards, SaaS platforms, and serverless tools**.  
+🚀 Skilled in **automation, cloud-native apps, and AI-driven development**.  
 
 ---
 
-## 🛠️ Tech Stack  
+## 🛠️ Tech Stack (Categorized)
 
+### 🎨 Frontend  
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
   <img src="https://img.shields.io/badge/JavaScript-F7E017?style=for-the-badge&logo=javascript&logoColor=black" />
   <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" />
   <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+</p>
+
+### ⚙️ Backend  
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
   <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white" />
   <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
   <img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" />
+</p>
+
+### 🗄️ Databases  
+<p align="center">
   <img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" />
   <img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" />
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white" />
+</p>
+
+### ☁️ Cloud & DevOps  
+<p align="center">
   <img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white" />
+  <img src="https://img.shields.io/badge/Azure-0089D6?style=for-the-badge&logo=microsoftazure&logoColor=white" />
+  <img src="https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" />
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white" />
+</p>
+
+### 🧰 Tools  
+<p align="center">
+  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white" />
+  <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" />
+  <img src="https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white" />
+  <img src="https://img.shields.io/badge/Insomnia-4000BF?style=for-the-badge&logo=insomnia&logoColor=white" />
+  <img src="https://img.shields.io/badge/VS%20Code-0078D4?style=for-the-badge&logo=visualstudiocode&logoColor=white" />
+  <img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" />
+  <img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" />
 </p>
 
 ---
 
-## 📌 Featured Projects  
+## 📊 Skills Progress (Animated Bars)
 
 <p align="center">
-  <a href="https://github.com/kawincodes/jwt-gen">
-    <img src="https://github-readme-stats.vercel.app/api/pin/?username=kawincodes&repo=jwt-gen&theme=tokyonight" />
-  </a>
-  <a href="https://github.com/kawincodes/listaria-ecommerce">
-    <img src="https://github-readme-stats.vercel.app/api/pin/?username=kawincodes&repo=listaria-ecommerce&theme=tokyonight" />
-  </a>
+  <img src="https://progress-bar.dev/90/?title=Python&width=400&color=3776AB" />
 </p>
 
 <p align="center">
-  <a href="https://github.com/kawincodes/key-gen">
-    <img src="https://github-readme-stats.vercel.app/api/pin/?username=kawincodes&repo=key-gen&theme=tokyonight" />
-  </a>
-  <a href="https://github.com/kawincodes/olx-clone-react">
-    <img src="https://github-readme-stats.vercel.app/api/pin/?username=kawincodes&repo=olx-clone-react&theme=tokyonight" />
-  </a>
+  <img src="https://progress-bar.dev/85/?title=Flask%20%2F%20FastAPI&width=400&color=009688" />
 </p>
+
+<p align="center">
+  <img src="https://progress-bar.dev/75/?title=React%20%2F%20JS&width=400&color=61DAFB" />
+</p>
+
+<p align="center">
+  <img src="https://progress-bar.dev/70/?title=Node.js&width=400&color=43853D" />
+</p>
+
+<p align="center">
+  <img src="https://progress-bar.dev/80/?title=Databases&width=400&color=4EA94B" />
+</p>
+
+<p align="center">
+  <img src="https://progress-bar.dev/78/?title=Cloud%20%2F%20DevOps&width=400&color=FF9900" />
+</p>
+
+---
+
+## 🕸️ Skill Radar Chart  
+
+<p align="center">
+  <img src="https://quickchart.io/chart?c={type:'radar',data:{labels:['Python','Flask/FastAPI','React/JS','Node.js','Databases','Cloud/DevOps'],datasets:[{label:'Skill Level',data:[90,85,75,70,80,78],backgroundColor:'rgba(0,247,0,0.3)',borderColor:'rgba(0,247,0,1)',pointBackgroundColor:'rgba(0,247,0,1)'}]},options:{scale:{ticks:{beginAtZero:true,max:100}}}}" width="500"/>
+</p>
+
+---
+
+## 📖 Currently Learning  
+<p align="center">
+  <img src="https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white" />
+  <img src="https://img.shields.io/badge/GraphQL-E10098?style=for-the-badge&logo=graphql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" />
+  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white" />
+</p>
+
+---
+
+## 🎯 Future Goals  
+- 🚀 Build a **SaaS platform** with subscription + AI integration  
+- 🧠 Explore **LLMs & AI-powered developer tools**  
+- ☁️ Scale apps with **Kubernetes & cloud-native microservices**  
+- 🔒 Improve expertise in **DevSecOps & API security**  
+- 🌍 Contribute more to **open-source projects**  
 
 ---
 
@@ -83,30 +139,6 @@
 ## 🔥 GitHub Activity Graph  
 <p align="center">
   <img src="https://github-readme-activity-graph.vercel.app/graph?username=kawincodes&theme=tokyo-night" />
-</p>
-
----
-
-## 🎶 Now Playing on Spotify  
-
-<p align="center">
-  <img src="https://spotify-github-profile.vercel.app/api/view?uid=your_spotify_id&cover_image=true&theme=novatorem&bar_color=53b14f&bar_color_cover=true" alt="Spotify Now Playing" />
-</p>
-
----
-
-## 💡 Random Dev Quote  
-
-<p align="center">
-  <img src="https://quotes-github-readme.vercel.app/api?type=horizontal&theme=tokyonight" />
-</p>
-
----
-
-## 🐍 Contribution Snake  
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/kawincodes/kawincodes/output/github-contribution-grid-snake.svg" />
 </p>
 
 ---
