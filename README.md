@@ -1,115 +1,131 @@
 <!-- Typing SVG Banner -->
 <p align="center">
   <a href="https://github.com/kawincodes">
-    <img src="https://readme-typing-svg.herokuapp.com?size=24&color=00C6FF&center=true&vCenter=true&width=650&lines=Hi%2C+I'm+Kawin+Raju;Full-Stack+Developer;AI+%26+Bot+Enthusiast;Cloud+%7C+SaaS+%7C+Serverless;Building+APIs+%26+Automation+Tools;Always+Learning+%26+Exploring+New+Tech">
+    <img src="https://readme-typing-svg.herokuapp.com?size=28&color=00F700&center=true&vCenter=true&width=800&lines=Hi%2C+I'm+Kawin+Raju;Full-Stack+Developer;AI+%26+Bot+Enthusiast;Cloud+%7C+SaaS+%7C+Serverless;Building+Cool+APIs+%26+Automation+Tools;Always+Learning+New+Tech+%F0%9F%9A%80">
   </a>
 </p>
 
-# 👋 Hi, I'm Kawin Raju  
+---
 
-👨‍💻 **Full-Stack Developer | AI Enthusiast | SaaS Builder**  
-⚡ I create **bots, APIs, dashboards, and cloud-based platforms**.  
-🚀 Passionate about **automation, serverless tech, and AI-driven apps**.  
+# 👋 Hey, I'm Kawin Raju  
+
+🌟 **Full-Stack Developer | AI Enthusiast | SaaS Builder**  
+⚡ Creating **bots, APIs, SaaS platforms & serverless tools**.  
+🚀 Passionate about **automation, cloud, and AI-driven apps**.  
+
+<p align="center">
+  <img src="https://media.giphy.com/media/L1R1tvI9svkIWwpVYr/giphy.gif" width="500" alt="Coding" />
+</p>
 
 ---
 
 ## 🛠️ Tech Stack  
 
-### 🚀 Languages  
-![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)  
-![JavaScript](https://img.shields.io/badge/JavaScript-F7E017?style=flat-square&logo=javascript&logoColor=black)  
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)  
-![PHP](https://img.shields.io/badge/PHP-777BB4?style=flat-square&logo=php&logoColor=white)  
-![SQL](https://img.shields.io/badge/SQL-336791?style=flat-square&logo=postgresql&logoColor=white)  
-
-### 📦 Frameworks & Libraries  
-![Flask](https://img.shields.io/badge/Flask-000000?style=flat-square&logo=flask&logoColor=white)  
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)  
-![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB)  
-![Node.js](https://img.shields.io/badge/Node.js-43853D?style=flat-square&logo=node.js&logoColor=white)  
-![Express](https://img.shields.io/badge/Express.js-404D59?style=flat-square)  
-
-### 🗄️ Databases  
-![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=flat-square&logo=mongodb&logoColor=white)  
-![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=black)  
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white)  
-![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white)  
-
-### ☁️ Cloud & DevOps  
-![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=flat-square&logo=cloudflare&logoColor=white)  
-![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazonaws&logoColor=white)  
-![Azure](https://img.shields.io/badge/Azure-0089D6?style=flat-square&logo=microsoftazure&logoColor=white)  
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)  
-![Nginx](https://img.shields.io/badge/Nginx-009639?style=flat-square&logo=nginx&logoColor=white)  
-![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white)  
-
-### 🔧 Tools & Utilities  
-![VS Code](https://img.shields.io/badge/VS_Code-0078D4?style=flat-square&logo=visualstudiocode&logoColor=white)  
-![Postman](https://img.shields.io/badge/Postman-FF6C37?style=flat-square&logo=postman&logoColor=white)  
-![Insomnia](https://img.shields.io/badge/Insomnia-4000BF?style=flat-square&logo=insomnia&logoColor=white)  
-![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)  
-![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=flat-square&logo=ubuntu&logoColor=white)  
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/JavaScript-F7E017?style=for-the-badge&logo=javascript&logoColor=black" />
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+  <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white" />
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
+  <img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" />
+  <img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" />
+  <img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" />
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white" />
+</p>
 
 ---
 
-## 📌 Highlighted Projects  
+## 📌 Featured Projects  
 
-### 🔹 Bots & Automation  
-- 🤖 **Telegram Bots** – Auto-reactions, group management, Free Fire integration  
-- 💬 **WhatsApp Bot** – Automation, APIs & media handling  
-- ⚡ **Instagram Tools** – Auto-likes, profile scraper, stats dashboards  
+<p align="center">
+  <a href="https://github.com/kawincodes/jwt-gen">
+    <img src="https://github-readme-stats.vercel.app/api/pin/?username=kawincodes&repo=jwt-gen&theme=tokyonight" />
+  </a>
+  <a href="https://github.com/kawincodes/listaria-ecommerce">
+    <img src="https://github-readme-stats.vercel.app/api/pin/?username=kawincodes&repo=listaria-ecommerce&theme=tokyonight" />
+  </a>
+</p>
 
-### 🔹 APIs & Cloud Services  
-- 🔑 **JWT-Gen API** – Secure token generator  
-- 🌍 **Account Register API** – Region-free guest account creation  
-- 🛒 **Listaria E-Commerce** – Marketplace backend (Flask + Firebase)  
-- 📡 **FF-Outfit API** – Free Fire outfit & skins data  
-
-### 🔹 Web & Dashboards  
-- 🎨 **OLX Clone (React)** – Ads, search, pagination, Firebase auth  
-- 📊 **Finance Tracker** – Daily expenses app (React Native + Firebase)  
-- 🔧 **Admin Panel** – Multi-role dashboard with API integration  
-
-### 🔹 Upcoming Projects 🚀  
-- 🤯 **AI-Chat-SaaS** – Subscription-based chatbot SaaS  
-- 🧠 **AI-Coder** – AI-powered code generation assistant  
-- 📦 **CloudDeploy** – SaaS deployment platform (Heroku-style)  
-- 🔎 **InstaScraper Pro** – Instagram data analytics platform  
-- 🎮 **GameStats API** – Leaderboards, stats & profiles API  
-- 🔐 **SecurePass** – Cloud-based password manager  
-- 📱 **SocialHub** – Unified social media automation dashboard  
+<p align="center">
+  <a href="https://github.com/kawincodes/key-gen">
+    <img src="https://github-readme-stats.vercel.app/api/pin/?username=kawincodes&repo=key-gen&theme=tokyonight" />
+  </a>
+  <a href="https://github.com/kawincodes/olx-clone-react">
+    <img src="https://github-readme-stats.vercel.app/api/pin/?username=kawincodes&repo=olx-clone-react&theme=tokyonight" />
+  </a>
+</p>
 
 ---
 
 ## 📊 GitHub Stats  
 
-![Kawin's GitHub Stats](https://github-readme-stats.vercel.app/api?username=kawincodes&show_icons=true&theme=tokyonight)  
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=kawincodes&layout=compact&theme=tokyonight)  
-![Streak](https://github-readme-streak-stats.herokuapp.com/?user=kawincodes&theme=tokyonight)  
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api?username=kawincodes&show_icons=true&theme=tokyonight" height="150"/>
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=kawincodes&layout=compact&theme=tokyonight" height="150"/>
+</p>
+
+<p align="center">
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=kawincodes&theme=tokyonight" height="150"/>
+</p>
+
+---
+
+## 🏆 GitHub Trophies  
+
+<p align="center">
+  <img src="https://github-profile-trophy.vercel.app/?username=kawincodes&theme=tokyonight&row=1&column=6" />
+</p>
 
 ---
 
 ## 🔥 GitHub Activity Graph  
-[![Kawin's GitHub Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=kawincodes&theme=tokyo-night)](https://github.com/ashutosh00710/github-readme-activity-graph)  
+<p align="center">
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=kawincodes&theme=tokyo-night" />
+</p>
 
 ---
 
-## 🏆 Achievements & Badges  
+## 🎶 Now Playing on Spotify  
 
-- 🏅 **Built 50+ bots & APIs** across Telegram, WhatsApp, and Instagram  
-- ☁️ **Deployed 20+ serverless apps** on Cloudflare, AWS, Azure  
-- 📦 **Created SaaS prototypes** in automation & AI  
-- 🌍 **Open Source Contributions** in Flask, Telegram bot APIs, and JS tools  
+<p align="center">
+  <img src="https://spotify-github-profile.vercel.app/api/view?uid=your_spotify_id&cover_image=true&theme=novatorem&bar_color=53b14f&bar_color_cover=true" alt="Spotify Now Playing" />
+</p>
+
+---
+
+## 💡 Random Dev Quote  
+
+<p align="center">
+  <img src="https://quotes-github-readme.vercel.app/api?type=horizontal&theme=tokyonight" />
+</p>
+
+---
+
+## 🐍 Contribution Snake  
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/kawincodes/kawincodes/output/github-contribution-grid-snake.svg" />
+</p>
 
 ---
 
 ## 📫 Connect with Me  
 
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/kawincodes)  
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](#)  
-[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](#)  
-[![Dev.to](https://img.shields.io/badge/Dev.to-0A0A0A?style=for-the-badge&logo=dev.to&logoColor=white)](#)  
-[![Portfolio](https://img.shields.io/badge/Portfolio-24292F?style=for-the-badge&logo=vercel&logoColor=white)](#)  
+<p align="center">
+  <a href="https://github.com/kawincodes"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" /></a>
+  <a href="https://linkedin.com/in/your-profile"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" /></a>
+  <a href="https://twitter.com/your-profile"><img src="https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" /></a>
+  <a href="https://dev.to/your-profile"><img src="https://img.shields.io/badge/Dev.to-0A0A0A?style=for-the-badge&logo=dev.to&logoColor=white" /></a>
+  <a href="https://your-portfolio-link"><img src="https://img.shields.io/badge/Portfolio-24292F?style=for-the-badge&logo=vercel&logoColor=white" /></a>
+</p>
+
+---
+
+<p align="center">
+  <img src="https://komarev.com/ghpvc/?username=kawincodes&label=Profile+Views&color=blueviolet&style=flat-square" />
+</p>
 
 ---
 
