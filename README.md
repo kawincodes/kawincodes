@@ -15,32 +15,88 @@
 [![Developer GitHub](https://img.shields.io/badge/Developer-kawinthedev-7C3AED?style=for-the-badge&logo=github&logoColor=white)](https://github.com/kawinthedev)
 [![Profile views](https://komarev.com/ghpvc/?username=kawincodes&label=Profile+views&color=00C9A7&style=for-the-badge)](https://github.com/kawincodes)
 
-**[About](#about) · [Expertise](#expertise) · [Technology](#technology) · [Workflow](#workflow) · [Analytics](#analytics) · [Contact](#contact)**
+**[About JSON](#about-json) · [Expertise](#expertise) · [Technology](#technology) · [Workflow](#workflow) · [Analytics](#analytics) · [Options](#collaboration-options) · [Contact](#contact)**
 
 </div>
 
 ---
 
-## About
+## About JSON
 
-<table>
-<tr>
-<td width="64%" valign="top">
+```json
+{
+  "profile": {
+    "name": "P Kawin Raju",
+    "location": "India",
+    "headline": "Full-Stack Developer, AI Builder, and Cloud Enthusiast",
+    "bio": "I turn practical ideas into dependable software products.",
+    "motto": "Ship thoughtfully. Learn continuously. Improve relentlessly."
+  },
+  "github": {
+    "primary": "https://github.com/kawincodes",
+    "developer": "https://github.com/kawinthedev"
+  },
+  "contact": {
+    "business": "kawin@krstechsolutions.in",
+    "personal": "kawinraju@gmail.com",
+    "preferred_for_projects": "business"
+  },
+  "roles": [
+    "Full-Stack Developer",
+    "Backend and API Engineer",
+    "AI Solutions Builder",
+    "Cloud and Automation Enthusiast",
+    "SaaS Product Builder"
+  ],
+  "focus": [
+    "Full-stack web products",
+    "Scalable REST APIs",
+    "AI and LLM integrations",
+    "Developer tools and workflow automation",
+    "Cloud-native and serverless applications",
+    "Secure multi-tenant SaaS platforms"
+  ],
+  "technology": {
+    "languages": ["Python", "TypeScript", "JavaScript", "Rust"],
+    "frontend": ["React", "Next.js", "Tailwind CSS"],
+    "backend": ["FastAPI", "Flask", "Node.js", "Express"],
+    "data": ["PostgreSQL", "MongoDB", "Redis"],
+    "cloud": ["AWS", "Azure", "Cloudflare", "Docker", "Kubernetes"],
+    "ai_and_tools": ["OpenAI", "Git", "GitHub Actions", "Postman"]
+  },
+  "currently_learning": [
+    "Production AI agents and retrieval systems",
+    "Rust backend development",
+    "Kubernetes operations and observability",
+    "Event-driven architecture",
+    "Secure SaaS architecture"
+  ],
+  "engineering_principles": [
+    "Clarity over cleverness",
+    "Security by design",
+    "Automate repeatable work",
+    "Build observable systems",
+    "Document decisions",
+    "Measure outcomes and iterate"
+  ],
+  "availability": {
+    "status": "Open to thoughtful collaborations",
+    "options": [
+      "Product and MVP development",
+      "Backend and API engineering",
+      "AI feature integration",
+      "Automation and developer tooling",
+      "Cloud and deployment improvements",
+      "Architecture and code reviews",
+      "Open-source collaboration"
+    ]
+  }
+}
+```
 
-I’m **P Kawin Raju**, a full-stack developer from India focused on turning practical ideas into dependable software. I enjoy working across product interfaces, APIs, databases, cloud infrastructure, automation, and AI-assisted experiences.
-
-- 🔭 Building scalable SaaS, API, automation, and AI solutions
-- 🌱 Exploring Rust, Kubernetes, GraphQL, and production AI systems
-- 🤝 Open to thoughtful collaborations and product opportunities
-- 🧭 Guided by simple architecture, fast feedback, and measurable value
-- ⚡ Motto: **Ship thoughtfully. Learn continuously. Improve relentlessly.**
-
-</td>
-<td width="36%" align="center" valign="middle">
-<img src="https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" width="260" alt="Developer coding animation" />
-</td>
-</tr>
-</table>
+<div align="center">
+<img src="https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" width="300" alt="Developer coding animation" />
+</div>
 
 ---
 
@@ -183,22 +239,41 @@ A clear problem, honest communication, small milestones, documented decisions, a
 
 ---
 
-## Work With Me
+## Collaboration Options
 
 <div align="center">
 
-| Need | Good starting point |
-|:--|:--|
-| A complete web product or MVP | Product scope, target users, and desired launch window |
-| An API, integration, or automation | Current workflow, inputs, outputs, and constraints |
-| An AI-powered feature | User journey, source data, quality expectations, and risk boundaries |
-| Cloud or deployment improvements | Architecture, current bottlenecks, and reliability goals |
-| An open-source collaborator | Repository, issue, contribution guide, and expected outcome |
+| Option | What We Can Build or Improve | Ideal Starting Information |
+|:--|:--|:--|
+| 🚀 **Product / MVP** | A complete product from interface to deployment | Users, core problem, must-have features, timeline |
+| 🌐 **Frontend Experience** | Responsive websites, dashboards, and product interfaces | Designs, brand direction, pages, integrations |
+| ⚙️ **Backend / API** | REST APIs, authentication, databases, jobs, and caching | Endpoints, consumers, data model, performance needs |
+| 🤖 **AI Integration** | Assistants, RAG, generation, classification, and AI workflows | Use case, source data, quality and safety expectations |
+| 🔁 **Automation** | Bots, scripts, CLIs, scheduled jobs, and workflow integrations | Manual process, inputs, outputs, frequency |
+| ☁️ **Cloud / DevOps** | Containers, CI/CD, serverless delivery, and observability | Current stack, environment, reliability goals |
+| 🔐 **Security Hardening** | API validation, access control, secrets, and safer defaults | Architecture, threat concerns, existing controls |
+| 📈 **Performance Review** | Faster APIs, pages, database access, and resource usage | Metrics, bottlenecks, traces, reproduction steps |
+| 🧭 **Architecture Review** | System boundaries, technology choices, and growth planning | Diagram, requirements, constraints, expected scale |
+| 🧪 **API Testing** | Test strategy, Postman collections, and integration checks | API definition, environments, expected behavior |
+| 🛠️ **Developer Tooling** | Internal platforms, reusable tooling, and better developer UX | Team workflow, recurring friction, target outcome |
+| 🧩 **Open Source** | Features, issue fixes, documentation, and maintenance | Repository, issue, contribution guide, priorities |
+| 💬 **Technical Consultation** | Focused brainstorming and implementation planning | Context, decisions to make, and desired next steps |
 
-<br/>
+### Quick action menu
 
-[![Discuss a project](https://img.shields.io/badge/Discuss_a_Project-kawin%40krstechsolutions.in-00C9A7?style=for-the-badge&logo=minutemailer&logoColor=white)](mailto:kawin@krstechsolutions.in?subject=Project%20Discussion%20with%20P%20Kawin%20Raju)
-[![Send an email](https://img.shields.io/badge/Personal_Email-kawinraju%40gmail.com-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:kawinraju@gmail.com)
+[![Build an MVP](https://img.shields.io/badge/Build-An_MVP-00C9A7?style=for-the-badge&logo=rocket&logoColor=white)](mailto:kawin@krstechsolutions.in?subject=MVP%20Development%20Inquiry)
+[![Create an API](https://img.shields.io/badge/Create-An_API-7C3AED?style=for-the-badge&logo=fastapi&logoColor=white)](mailto:kawin@krstechsolutions.in?subject=Backend%20API%20Project)
+[![Add AI](https://img.shields.io/badge/Integrate-AI-412991?style=for-the-badge&logo=openai&logoColor=white)](mailto:kawin@krstechsolutions.in?subject=AI%20Integration%20Project)
+[![Automate](https://img.shields.io/badge/Automate-A_Workflow-F59E0B?style=for-the-badge&logo=githubactions&logoColor=white)](mailto:kawin@krstechsolutions.in?subject=Workflow%20Automation%20Project)
+
+[![Cloud and DevOps](https://img.shields.io/badge/Improve-Cloud_&_DevOps-2496ED?style=for-the-badge&logo=docker&logoColor=white)](mailto:kawin@krstechsolutions.in?subject=Cloud%20and%20DevOps%20Project)
+[![Review architecture](https://img.shields.io/badge/Review-Architecture-DC382D?style=for-the-badge&logo=diagramsdotnet&logoColor=white)](mailto:kawin@krstechsolutions.in?subject=Architecture%20Review)
+[![Open source](https://img.shields.io/badge/Collaborate-Open_Source-181717?style=for-the-badge&logo=github&logoColor=white)](mailto:kawin@krstechsolutions.in?subject=Open%20Source%20Collaboration)
+[![Discuss an idea](https://img.shields.io/badge/Discuss-An_Idea-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:kawinraju@gmail.com?subject=Idea%20Discussion)
+
+<br/><br/>
+
+> Choose an option above or send a short description of the problem, desired outcome, relevant links, and preferred timeline.
 
 </div>
 
