@@ -12,7 +12,7 @@ An Android app, built with **[Radix UI Themes](https://www.radix-ui.com/themes)*
 
 ## Download
 
-**[Download hermes-deck.apk](https://github.com/kawincodes/kawincodes/releases/latest/download/hermes-deck.apk)** (Android 7.0+). Open it on your phone and allow installing apps from your browser when Android asks. It is a debug-signed build, so Play Protect may show a warning.
+**[Download hermes-deck.apk](release/hermes-deck.apk?raw=true)** (Android 7.0+, 7.5 MB). Open it on your phone and allow installing apps from your browser when Android asks. It is a debug-signed build, so Play Protect may show a warning.
 
 ## What it does
 
