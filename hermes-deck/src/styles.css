@@ -1,0 +1,214 @@
+/* Layout and app-specific styling on top of Radix Themes tokens. */
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--color-background);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+.radix-themes {
+  min-height: 100%;
+  --default-font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, system-ui, sans-serif;
+  --code-font-family: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
+
+.shell {
+  min-height: 100dvh;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.shell-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  min-height: 60px;
+  padding-top: env(safe-area-inset-top);
+  background: color-mix(in oklab, var(--color-background) 88%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--gray-a4);
+}
+
+.shell-main {
+  padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
+}
+
+.shell-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--color-background);
+  border-top: 1px solid var(--gray-a4);
+}
+
+.hero {
+  background:
+    radial-gradient(120% 90% at 100% 0%, var(--teal-a4), transparent 60%),
+    radial-gradient(90% 80% at 0% 100%, var(--violet-a3), transparent 60%),
+    var(--color-panel-solid);
+}
+
+.card-button {
+  all: unset;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  cursor: pointer;
+}
+
+.icon-tile {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-3);
+  background: var(--accent-a3);
+  color: var(--accent-11);
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.dot-green { background: var(--green-9); box-shadow: 0 0 0 3px var(--green-a4); }
+.dot-red { background: var(--red-9); }
+.dot-gray { background: var(--gray-7); }
+
+.step-line {
+  height: 2px;
+  min-width: 12px;
+  border-radius: 1px;
+  background: var(--gray-a5);
+}
+.step-line-done { background: var(--accent-9); }
+
+.wrap {
+  word-break: break-all;
+  white-space: normal;
+}
+
+.mono,
+.mono textarea,
+.mono input {
+  font-family: var(--code-font-family);
+  font-size: var(--font-size-1);
+}
+
+.log {
+  border: 1px solid var(--gray-a5);
+  border-radius: var(--radius-3);
+  background: var(--gray-2);
+  overflow: hidden;
+}
+
+.log-text {
+  margin: 0;
+  padding: var(--space-3);
+  font-family: var(--code-font-family);
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--gray-12);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.log-placeholder { color: var(--gray-10); }
+
+.danger { box-shadow: inset 0 0 0 1px var(--red-a5); }
+
+/* Chat */
+.messages { padding-bottom: var(--space-2); }
+
+.bubble { max-width: 88%; }
+
+.bubble-user {
+  align-self: flex-end;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-4) var(--radius-4) var(--radius-1) var(--radius-4);
+  background: var(--accent-9);
+  color: var(--accent-contrast);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.bubble-agent { align-self: flex-start; }
+
+.prose {
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.6;
+}
+
+.prose code {
+  font-family: var(--code-font-family);
+  font-size: 0.9em;
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-1);
+  background: var(--gray-a3);
+}
+
+.code-block {
+  margin: var(--space-2) 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-2);
+  background: var(--gray-3);
+  font-family: var(--code-font-family);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: var(--accent-9);
+  animation: blink 1s steps(2) infinite;
+}
+
+@keyframes blink {
+  to { opacity: 0; }
+}
+
+.tool-chip { max-width: 100%; }
+.tool-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--code-font-family);
+}
+
+.suggestion {
+  height: auto;
+  padding-block: var(--space-3);
+  white-space: normal;
+  text-align: left;
+  justify-content: flex-start;
+}
+
+.composer-input {
+  min-height: 48px;
+}
+
+.composer-input textarea {
+  min-height: 46px;
+  max-height: 160px;
+  field-sizing: content;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor { animation: none; }
+}
