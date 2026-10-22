@@ -60,7 +60,7 @@ npm run android:apk          # build web, sync Capacitor, ./gradlew assembleDebu
 adb install android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-The **Hermes Deck Android** GitHub Actions workflow builds the same debug APK on every push that touches `hermes-deck/` and uploads it as an artifact. Pushing a `hermes-deck-v*` tag, or running the workflow manually with **release** set to such a tag, also publishes it as a GitHub release. That release is what the download link above points to.
+The **Hermes Deck Android** GitHub Actions workflow builds the same debug APK on every push that touches `hermes-deck/` and uploads it as an artifact. Publishing a GitHub release tagged `hermes-deck-v*`, or running the workflow manually with **release** set to such a tag, attaches the APK to that release as `hermes-deck.apk`. That release is what the download link above points to.
 
 For a release build, create a signing key and run `./gradlew assembleRelease` with your signing config. Signing keys are not checked in.
 
