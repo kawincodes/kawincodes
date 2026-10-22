@@ -3,7 +3,7 @@ name: Hermes Deck Android
 on:
   push:
     branches: ['**']
-    # Pushing a hermes-deck-v* tag also publishes the APK as a GitHub release.
+    # Pushing a hermes-deck-v* tag (or a manual run with `release` set) publishes the APK as a GitHub release.
     tags: ['hermes-deck-v*']
     paths:
       - 'hermes-deck/**'
@@ -13,6 +13,11 @@ on:
       - 'hermes-deck/**'
       - '.github/workflows/hermes-deck.yml'
   workflow_dispatch:
+    inputs:
+      release:
+        description: Publish the APK as a GitHub release with this tag (e.g. hermes-deck-v1.0.0). Leave empty to only build.
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -58,7 +63,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    if: startsWith(github.ref, 'refs/tags/hermes-deck-v')
+    if: startsWith(github.ref, 'refs/tags/hermes-deck-v') || startsWith(inputs.release, 'hermes-deck-v')
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -71,11 +76,13 @@ jobs:
       - name: Publish release with a stable download name
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ inputs.release || github.ref_name }}
         run: |
           mv app-debug.apk hermes-deck.apk
+          # --target only applies when the tag does not exist yet (manual runs).
           gh release create "$TAG" hermes-deck.apk \
             --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
             --title "Hermes Deck ${TAG#hermes-deck-v}" \
             --latest \
             --notes "Android app that deploys and chats with Nous Research's Hermes Agent. Debug-signed build: allow installing unknown apps on your phone. See hermes-deck/README.md."
