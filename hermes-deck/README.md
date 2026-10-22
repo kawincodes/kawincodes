@@ -10,6 +10,10 @@ An Android app, built with **[Radix UI Themes](https://www.radix-ui.com/themes)*
   <img src="docs/screenshots/manage.png" width="180" alt="Manage agent" />
 </p>
 
+## Download
+
+**[Download hermes-deck.apk](https://github.com/kawincodes/kawincodes/releases/latest/download/hermes-deck.apk)** (Android 7.0+). Open it on your phone and allow installing apps from your browser when Android asks. It is a debug-signed build, so Play Protect may show a warning.
+
 ## What it does
 
 | Target | How Hermes gets deployed |
@@ -56,7 +60,7 @@ npm run android:apk          # build web, sync Capacitor, ./gradlew assembleDebu
 adb install android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-The **Hermes Deck Android** GitHub Actions workflow builds the same debug APK on every push that touches `hermes-deck/` and uploads it as an artifact.
+The **Hermes Deck Android** GitHub Actions workflow builds the same debug APK on every push that touches `hermes-deck/` and uploads it as an artifact. Pushing a `hermes-deck-v*` tag also publishes it as a GitHub release, which is what the download link above points to.
 
 For a release build, create a signing key and run `./gradlew assembleRelease` with your signing config. Signing keys are not checked in.
 

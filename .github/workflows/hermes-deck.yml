@@ -2,6 +2,9 @@ name: Hermes Deck Android
 
 on:
   push:
+    branches: ['**']
+    # Pushing a hermes-deck-v* tag also publishes the APK as a GitHub release.
+    tags: ['hermes-deck-v*']
     paths:
       - 'hermes-deck/**'
       - '.github/workflows/hermes-deck.yml'
@@ -53,3 +56,26 @@ jobs:
           name: hermes-deck-debug-apk
           path: hermes-deck/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/hermes-deck-v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: hermes-deck-debug-apk
+
+      - name: Publish release with a stable download name
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          mv app-debug.apk hermes-deck.apk
+          gh release create "$TAG" hermes-deck.apk \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Hermes Deck ${TAG#hermes-deck-v}" \
+            --latest \
+            --notes "Android app that deploys and chats with Nous Research's Hermes Agent. Debug-signed build: allow installing unknown apps on your phone. See hermes-deck/README.md."
