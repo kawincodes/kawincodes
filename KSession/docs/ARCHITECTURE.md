@@ -136,3 +136,10 @@ colour tokens `ks_teal*` currently hold the accent), violet `#7C3AED` (light `#A
 Monospace for URLs, IDs, logs. Status colors come from `ui/common/StatusStyle`. Motion: radar sweep ~4 s per
 turn, blips fade like phosphor after the sweep passes, pulses on new connections. Bottom navigation:
 Chat · Radar · Tunnels · Cloud. Product name **KRS Tunnels**, application id `com.krstech.tunnels`.
+
+### 4.1 Screen designs (visual targets)
+Match these previews (same palette, Lucide icons and logo drawables; open the PNGs):
+`docs/design/screen-chat.png`, `docs/design/screen-radar.png`, `docs/design/screen-tunnels.png`,
+`docs/design/screen-cloud.png` (all four: `docs/design/krs-tunnels-screens.png`; source: `tools/design/screens.py`).
+User-facing text says **KRS Tunnels** (never "KSession"); the assistant is **Kay** and its avatar is
+`@drawable/logo_mark`. Logo drawables: `logo_mark` (square mark) and `logo_lockup` (mark + wordmark).
