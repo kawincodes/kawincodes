@@ -1,4 +1,6 @@
-# KSession
+<p align="center"><img src="docs/brand/krs-tunnels-lockup.png" alt="KRS Tunnels — Cloudflare Tunnels, radar and chat for Android" width="720"></p>
+
+# KRS Tunnels (KSession)
 
 **Cloudflare Tunnels in your pocket.** KSession is a native Android app (Java) that installs and runs the
 official Cloudflare Tunnel engine (`cloudflared`) on your phone, signs in to your Cloudflare account, and
