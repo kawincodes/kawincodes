@@ -9,3 +9,6 @@ build/
 .cxx/
 # cloudflared binaries downloaded by the fetchCloudflared task
 /.engine-cache/
+
+# Python caches from tools/
+__pycache__/
