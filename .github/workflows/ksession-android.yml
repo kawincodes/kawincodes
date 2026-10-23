@@ -1,0 +1,66 @@
+name: KSession Android
+
+on:
+  push:
+    paths:
+      - 'KSession/**'
+      - '.github/workflows/ksession-android.yml'
+  pull_request:
+    paths:
+      - 'KSession/**'
+      - '.github/workflows/ksession-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ksession-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: KSession
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Cache cloudflared engine downloads
+        uses: actions/cache@v4
+        with:
+          path: KSession/.engine-cache
+          key: cloudflared-${{ hashFiles('KSession/gradle.properties', 'KSession/app/build.gradle') }}
+
+      - name: Unit tests
+        run: ./gradlew --console=plain testStoreDebugUnitTest testSideloadDebugUnitTest
+
+      - name: Lint
+        run: ./gradlew --console=plain lintStoreDebug lintSideloadDebug
+
+      - name: Build debug APKs (engine bundled)
+        run: ./gradlew --console=plain assembleStoreDebug assembleSideloadDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ksession-debug-apks
+          path: KSession/app/build/outputs/apk/**/*.apk
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ksession-reports
+          path: |
+            KSession/app/build/reports/
+            KSession/app/build/test-results/
+          if-no-files-found: ignore
