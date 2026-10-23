@@ -2,7 +2,7 @@
 """Export KRS Tunnels brand assets to docs/brand/ with a headless Chromium.
 
     python3 tools/brand/export_brand.py <chromium binary> <scratch dir>
-Writes: krs-tunnels-lockup.svg, krs-tunnels-lockup.png (1280x400), krs-tunnels-icon-512.png,
+Writes: krs-tunnels-lockup.svg, krs-tunnels-lockup.png (1120x320), krs-tunnels-icon-512.png,
 krs-tunnels-feature-graphic.png (1024x500, Play Store), logo-sheet.png.
 """
 import os
@@ -103,28 +103,19 @@ def main(chrome, scratch):
     with open(os.path.join(OUT, "krs-tunnels-lockup.svg"), "w") as f:
         f.write(lockup_svg)
     dark = "background:linear-gradient(135deg,#121A26,#05070D);"
-    shoot(chrome, f"<style>{BASE_CSS}</style><div style='width:1280px;height:400px;{dark}'>{lockup_svg}</div>",
-          os.path.join(OUT, "krs-tunnels-lockup.png"), 1280, 400, scratch)
+    shoot(chrome, f"<style>{BASE_CSS}</style><div style='width:1120px;height:320px;{dark}'>{lockup_svg}</div>",
+          os.path.join(OUT, "krs-tunnels-lockup.png"), 1120, 320, scratch)
     shoot(chrome, f"<style>{BASE_CSS}</style>{icon_layers(512)}",
           os.path.join(OUT, "krs-tunnels-icon-512.png"), 512, 512, scratch)
-    feats = [("zap", "Quick tunnels in one tap"), ("radar", "Live edge radar"),
-             ("message-circle", "Chat to control"), ("shield-check", "Keystore-encrypted secrets")]
-    chips = "".join(
-        f'<div class="f"><span>{lucide(n, "#FFAD5C", 22)}</span>{t}</div>' for n, t in feats)
     feature = f"""<style>{BASE_CSS}
-.g{{width:1024px;height:500px;position:relative;font-family:Roboto,'Segoe UI',sans-serif;color:#E6EDF3;
-background:radial-gradient(520px 380px at 86% 50%,rgba(246,130,31,.30),transparent),linear-gradient(135deg,#121A26,#05070D)}}
-.rings{{position:absolute;right:-120px;top:-70px;width:640px;height:640px;border-radius:50%;
-background:repeating-radial-gradient(circle,rgba(255,173,92,.16) 0 1.5px,transparent 1.5px 64px)}}
-.lock{{position:absolute;left:28px;top:40px;width:780px;height:244px}}
-.fs{{position:absolute;left:64px;top:330px;display:grid;grid-template-columns:repeat(2,330px);gap:14px 22px}}
-.f{{display:flex;align-items:center;gap:12px;background:rgba(13,17,23,.85);border:1px solid #2B3B52;border-radius:16px;padding:13px 16px;font-size:18px}}
-.f span{{display:flex}} .f svg{{width:22px;height:22px}}
-</style><div class="g"><div class="rings"></div><div class="lock">{lockup_svg}</div><div class="fs">{chips}</div></div>"""
+.g{{width:1024px;height:500px;position:relative;
+background:radial-gradient(560px 420px at 50% 120%,rgba(246,130,31,.38),transparent),linear-gradient(135deg,#121A26,#05070D)}}
+.lock{{position:absolute;left:92px;top:126px;width:840px;height:240px}}
+</style><div class="g"><div class="lock">{lockup_svg}</div></div>"""
     shoot(chrome, feature, os.path.join(OUT, "krs-tunnels-feature-graphic.png"), 1024, 500, scratch)
     sheet = os.path.join(scratch, "brand.html")
     brand_sheet.main(sheet)
-    shoot(chrome, open(sheet).read(), os.path.join(OUT, "logo-sheet.png"), 1100, 1000, scratch)
+    shoot(chrome, open(sheet).read(), os.path.join(OUT, "logo-sheet.png"), 1100, 1210, scratch)
     for n in sorted(os.listdir(OUT)):
         print(n, os.path.getsize(os.path.join(OUT, n)))
 

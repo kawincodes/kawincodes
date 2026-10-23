@@ -27,8 +27,30 @@ def adaptive(size, radius):
             f'<div class="layer">{bg}</div><div class="layer">{fg}</div></div>')
 
 
+def text_icon_section():
+    """Optional text-only app icon ("KRS" over "TUNNELS"), previewed for comparison."""
+    f700, f500 = os.environ.get("KRS_FONT_700"), os.environ.get("KRS_FONT_500")
+    if not f700:
+        return ""
+    sys.path.insert(0, HERE)
+    from textpath import TextPath
+    bold, medium = TextPath(f700), TextPath(f500 or f700)
+    krs = bold.path("KRS", 54, 58, 19, tracking=1.2, anchor="middle")
+    tun = medium.path("TUNNELS", 54, 70.5, 6.4, tracking=1.5, anchor="middle")
+    bg = crop(svg("ic_launcher_background.xml"))
+    fg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="18 18 72 72"><path d="{krs}" fill="#fff"/>'
+          f'<path d="{tun}" fill="#fff" fill-opacity=".9"/></svg>')
+    icon = lambda size, rad: (f'<div class="icon" style="width:{size}px;height:{size}px;border-radius:{rad}">'
+                              f'<div class="layer">{bg}</div><div class="layer">{fg}</div></div>')
+    return (f'<div class="over">Alternative · text-only app icon</div><div class="row">'
+            f'<div class="cell">{icon(130, "50%")}circle</div><div class="cell">{icon(130, "30%")}squircle</div>'
+            f'<div class="home"><div class="app">{icon(56, "50%")}KRS Tunnels</div>'
+            f'<div class="app">{icon(44, "50%")}44 dp</div></div></div>')
+
+
 def main(out):
     mono = crop(svg("ic_launcher_monochrome.xml", tint="#FFD9B8"))
+    alt = text_icon_section()
     page = f"""<!doctype html><html><head><meta charset="utf-8"><style>
 body{{margin:0;background:#05070D;color:#E6EDF3;font-family:Roboto,'Segoe UI',sans-serif}}
 .wrap{{padding:40px 48px 48px;background:radial-gradient(900px 420px at 30% -60px,rgba(246,130,31,.20),transparent)}}
@@ -40,7 +62,7 @@ body{{margin:0;background:#05070D;color:#E6EDF3;font-family:Roboto,'Segoe UI',sa
 .mono{{width:132px;height:132px;border-radius:50%;background:#3A2410;overflow:hidden}}
 .home{{display:flex;gap:26px;padding:22px 26px;border-radius:28px;background:linear-gradient(135deg,#1b2433,#0D1117);border:1px solid #1F2A3A}}
 .app{{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px}}
-.lockup{{width:960px;height:300px;border-radius:28px;background:linear-gradient(135deg,#121A26,#05070D);border:1px solid #1F2A3A;padding:6px}}
+.lockup{{width:840px;height:240px;border-radius:28px;background:linear-gradient(135deg,#121A26,#05070D);border:1px solid #1F2A3A;padding:6px}}
 .anat{{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}}
 .anat div{{background:#0D1117;border:1px solid #1F2A3A;border-radius:16px;padding:14px 16px;font-size:13px;color:#8B98A9}}
 .anat b{{display:block;color:#FFAD5C;font-size:14px;margin-bottom:4px}}
@@ -48,11 +70,12 @@ body{{margin:0;background:#05070D;color:#E6EDF3;font-family:Roboto,'Segoe UI',sa
 <div class="over">Logo lockup</div>
 <div class="lockup box">{svg("logo_lockup.xml")}</div>
 <div class="anat">
-<div><b>Tunnel arch</b>Your service travels through a secure Cloudflare Tunnel.</div>
-<div><b>Radar</b>The live radar UI: tunnels and edge data centres as blips.</div>
-<div><b>Cloud keystone</b>Cloudflare's edge network at the top of the tunnel.</div>
-<div><b>KRS monogram</b>KRS Tech Solutions, under the tunnel.</div>
+<div><b>Cloud</b>Cloudflare's global network.</div>
+<div><b>Doorway</b>The tunnel entrance: your service, published through Cloudflare Tunnel.</div>
+<div><b>Light</b>A live connection inside the tunnel.</div>
+<div><b>Wordmark</b>KRS TUNNELS · Cloudflare Tunnels.</div>
 </div>
+{alt}
 <div class="over">Launcher icon · device masks</div>
 <div class="row">
 <div class="cell">{adaptive(170, '50%')}circle</div>
