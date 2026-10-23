@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">KSession</string>
+    <string name="app_name">KRS Tunnels</string>
     <string name="app_tagline">Cloudflare Tunnels in your pocket</string>
 
     <string name="nav_chat">Chat</string>
@@ -38,6 +38,6 @@
     <string name="type_managed">Managed</string>
 
     <string name="qr_title">Scan to open</string>
-    <string name="tile_label">KSession</string>
+    <string name="tile_label">KRS Tunnels</string>
     <string name="fgs_subtype">Keeps user-started Cloudflare Tunnel connections open so local services stay reachable.</string>
 </resources>

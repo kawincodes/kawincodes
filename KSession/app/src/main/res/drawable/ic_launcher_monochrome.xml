@@ -9,7 +9,7 @@
         android:scaleY="2.1"
         android:translateX="28.8"
         android:translateY="28.8">
-        <path android:fillColor="#00000000" android:pathData="M 19.07 4.93 A 10 10 0 0 0 6.99 3.34 M 2.29 9.62 A 10 10 0 1 0 21.31 8.35 M 16.24 7.76 A 6 6 0 1 0 8.23 16.67 M 17.99 11.66 A 6 6 0 0 1 15.77 16.67 m -2.36 -6.07 l 5.66 -5.66 M 4 6 h .01 M 12 18 h .01" android:strokeColor="#FFFFFFFF" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeWidth="2" />
+        <path android:fillColor="#00000000" android:pathData="M 19.07 4.93 A 10 10 0 0 0 6.99 3.34 M 2.29 9.62 A 10 10 0 1 0 21.31 8.35 M 16.24 7.76 A 6 6 0 1 0 8.23 16.67 M 17.99 11.66 A 6 6 0 0 1 15.77 16.67 M 13.41 10.59 l 5.66 -5.66 M 4 6 h .01 M 12 18 h .01" android:strokeColor="#FFFFFFFF" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeWidth="2" />
         <path android:fillColor="#FFFFFFFF" android:pathData="M 10 12 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0" />
     </group>
 </vector>
