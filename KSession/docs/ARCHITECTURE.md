@@ -129,8 +129,10 @@ except `service/*` may start `ui/MainActivity` via a `PendingIntent`.
   regenerate if a new one is needed). Tint them with theme colors.
 
 ## 4. Design language ("radical radar")
-Dark, neon, instrument-panel. Background `#05070D` with a subtle radial glow, surfaces `#0D1117`/`#121A26`,
-1 dp outlines `#1F2A3A`, radius 20 dp cards and 28 dp sheets. Accent teal `#00C9A7` (glow `#2CF5D0`), violet
-`#7C3AED` (light `#A78BFA`), amber `#FFB020`, red `#FF4D6D`. Monospace for URLs, IDs, logs. Status colors come
-from `ui/common/StatusStyle`. Motion: radar sweep ~4 s per turn, blips fade like phosphor after the sweep
-passes, pulses on new connections. Bottom navigation: Chat · Radar · Tunnels · Cloud.
+Dark, neon, instrument-panel. Background `#05070D` with a subtle warm radial glow, surfaces `#0D1117`/`#121A26`,
+1 dp outlines `#1F2A3A`, radius 20 dp cards and 28 dp sheets. Brand accent **orange** `#F6821F` (glow `#FFAD5C`;
+colour tokens `ks_teal*` currently hold the accent), violet `#7C3AED` (light `#A78BFA`) as secondary, red
+`#FF4D6D` for errors. Status: online teal `#2CF5D0`, connecting blue `#38BDF8`, degraded yellow `#FACC15`.
+Monospace for URLs, IDs, logs. Status colors come from `ui/common/StatusStyle`. Motion: radar sweep ~4 s per
+turn, blips fade like phosphor after the sweep passes, pulses on new connections. Bottom navigation:
+Chat · Radar · Tunnels · Cloud. Product name **KRS Tunnels**, application id `com.krstech.tunnels`.

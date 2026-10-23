@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- KRS Tunnels launcher background: red neon gradient with a faint radar ring. -->
+<!-- KRS Tunnels launcher background: orange neon gradient with a faint radar ring. -->
 <vector xmlns:aapt="http://schemas.android.com/aapt"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
@@ -14,9 +14,9 @@
                 android:startX="0"
                 android:startY="0"
                 android:type="linear">
-                <item android:color="#FFFF4D6D" android:offset="0" />
-                <item android:color="#FFE11D48" android:offset="0.5" />
-                <item android:color="#FF9F1239" android:offset="1" />
+                <item android:color="#FFFFB054" android:offset="0" />
+                <item android:color="#FFF6821F" android:offset="0.5" />
+                <item android:color="#FFC2410C" android:offset="1" />
             </gradient>
         </aapt:attr>
     </path>
