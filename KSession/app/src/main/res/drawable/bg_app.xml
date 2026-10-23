@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- App background: deep space with a faint teal glow at the top. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <color android:color="@color/ks_bg" />
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:centerX="0.5"
+                android:centerY="0.0"
+                android:endColor="#0005070D"
+                android:gradientRadius="520dp"
+                android:startColor="#1A00C9A7"
+                android:type="radial" />
+        </shape>
+    </item>
+</layer-list>

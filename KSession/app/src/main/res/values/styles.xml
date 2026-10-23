@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ShapeAppearance.KSession.Small" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">12dp</item>
+    </style>
+    <style name="ShapeAppearance.KSession.Medium" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerSize">@dimen/ks_radius_card</item>
+    </style>
+    <style name="ShapeAppearance.KSession.Large" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerSize">@dimen/ks_radius_sheet</item>
+    </style>
+
+    <!-- Dark glass card with a hairline outline. -->
+    <style name="Widget.KSession.Card" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardBackgroundColor">@color/ks_surface</item>
+        <item name="strokeColor">@color/ks_outline</item>
+        <item name="strokeWidth">@dimen/ks_outline</item>
+        <item name="cardCornerRadius">@dimen/ks_radius_card</item>
+        <item name="cardElevation">0dp</item>
+    </style>
+
+    <!-- Card variant with a teal neon outline, for highlighted content. -->
+    <style name="Widget.KSession.Card.Glow">
+        <item name="strokeColor">@color/ks_teal</item>
+        <item name="cardBackgroundColor">@color/ks_surface_2</item>
+    </style>
+
+    <style name="Widget.KSession.BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="backgroundTint">@color/ks_surface</item>
+        <item name="itemIconTint">@color/nav_item_tint</item>
+        <item name="itemTextColor">@color/nav_item_tint</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.KSession.BottomNav.Indicator</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="elevation">0dp</item>
+    </style>
+    <style name="Widget.KSession.BottomNav.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/ks_teal_dim</item>
+    </style>
+
+    <style name="Widget.KSession.BottomSheet" parent="Widget.Material3.BottomSheet">
+        <item name="backgroundTint">@color/ks_surface</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.KSession.Large</item>
+    </style>
+
+    <style name="Widget.KSession.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/ks_teal</item>
+        <item name="boxCornerRadiusTopStart">14dp</item>
+        <item name="boxCornerRadiusTopEnd">14dp</item>
+        <item name="boxCornerRadiusBottomStart">14dp</item>
+        <item name="boxCornerRadiusBottomEnd">14dp</item>
+    </style>
+
+    <style name="Widget.KSession.Chip" parent="Widget.Material3.Chip.Assist">
+        <item name="chipBackgroundColor">@color/ks_surface_2</item>
+        <item name="chipStrokeColor">@color/ks_outline_bright</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipIconTint">@color/ks_teal_glow</item>
+        <item name="chipCornerRadius">@dimen/ks_radius_chip</item>
+        <item name="android:textColor">@color/ks_text</item>
+    </style>
+
+    <!-- Filled neon button. -->
+    <style name="Widget.KSession.Button" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/ks_teal</item>
+        <item name="android:textColor">@color/ks_on_accent</item>
+        <item name="iconTint">@color/ks_on_accent</item>
+        <item name="cornerRadius">14dp</item>
+    </style>
+    <style name="Widget.KSession.Button.Violet">
+        <item name="backgroundTint">@color/ks_violet</item>
+        <item name="android:textColor">@color/ks_text</item>
+        <item name="iconTint">@color/ks_text</item>
+    </style>
+    <style name="Widget.KSession.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/ks_outline_bright</item>
+        <item name="android:textColor">@color/ks_text</item>
+        <item name="iconTint">@color/ks_teal_glow</item>
+        <item name="cornerRadius">14dp</item>
+    </style>
+    <style name="Widget.KSession.Button.Danger" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/ks_red</item>
+        <item name="android:textColor">@color/ks_red</item>
+        <item name="iconTint">@color/ks_red</item>
+        <item name="cornerRadius">14dp</item>
+    </style>
+    <style name="Widget.KSession.IconButton" parent="Widget.Material3.Button.IconButton">
+        <item name="iconTint">@color/ks_text_muted</item>
+    </style>
+
+    <!-- Typography -->
+    <style name="TextAppearance.KSession.Display" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textColor">@color/ks_text</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+    <style name="TextAppearance.KSession.Title" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/ks_text</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.KSession.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/ks_text</item>
+    </style>
+    <style name="TextAppearance.KSession.Caption" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">@color/ks_text_muted</item>
+    </style>
+    <!-- Small all-caps instrument label, e.g. "EDGE CONNECTIONS". -->
+    <style name="TextAppearance.KSession.Overline" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textColor">@color/ks_text_faint</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.14</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.KSession.Mono" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">@color/ks_teal_glow</item>
+        <item name="android:fontFamily">monospace</item>
+    </style>
+    <style name="TextAppearance.KSession.Metric" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textColor">@color/ks_text</item>
+        <item name="android:fontFamily">monospace</item>
+    </style>
+</resources>

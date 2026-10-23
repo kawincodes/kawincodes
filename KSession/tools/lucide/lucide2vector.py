@@ -1,0 +1,184 @@
+#!/usr/bin/env python3
+"""Convert Lucide SVG icons into Android VectorDrawable XML files.
+
+Lucide (https://lucide.dev, ISC license) icons are 24x24 stroke icons. Android vector drawables
+support the same stroke model, so every SVG shape is translated to an equivalent <path>.
+
+Usage:
+    python3 tools/lucide/lucide2vector.py <lucide-static/icons dir> <res/drawable dir> icons.txt
+"""
+import re
+import sys
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+SVG_NS = "{http://www.w3.org/2000/svg}"
+
+
+ARG_COUNTS = {"m": 2, "l": 2, "h": 1, "v": 1, "c": 6, "s": 4, "q": 4, "t": 2, "a": 7, "z": 0}
+NUM_RE = re.compile(r"[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?")
+
+
+def normalize_path(d):
+    """Re-serialize path data with explicit separators.
+
+    SVG allows compact arc flags ("a1 1 0 011 1"); some Android path parsers mis-read them, so
+    every number and flag is written out separated by spaces.
+    """
+    out, i, n, cmd = [], 0, len(d), None
+    while i < n:
+        c = d[i]
+        if c.isspace() or c == ",":
+            i += 1
+            continue
+        if c.isalpha():
+            cmd = c
+            out.append(c)
+            i += 1
+            if c.lower() == "z":
+                continue
+        if cmd is None:
+            raise ValueError("path data must start with a command: " + d)
+        count = ARG_COUNTS[cmd.lower()]
+        args = []
+        while len(args) < count:
+            while i < n and (d[i].isspace() or d[i] == ","):
+                i += 1
+            if cmd.lower() == "a" and len(args) in (3, 4):
+                args.append(d[i])
+                i += 1
+                continue
+            m = NUM_RE.match(d, i)
+            if not m:
+                raise ValueError(f"bad number at {i} in {d!r}")
+            args.append(m.group(0))
+            i = m.end()
+        out.append(" ".join(args))
+        # Implicit repeats of the same command are handled by looping without a new letter.
+        while i < n and (d[i].isspace() or d[i] == ","):
+            i += 1
+        if i < n and not d[i].isalpha():
+            out.append(" ")
+            if cmd == "m":
+                cmd = "l"
+            elif cmd == "M":
+                cmd = "L"
+            out.append(cmd)
+    return " ".join(x for x in "".join(o if o == " " else " " + o for o in out).split())
+
+
+def fmt(v):
+    s = ("%.4f" % float(v)).rstrip("0").rstrip(".")
+    return "0" if s in ("-0", "") else s
+
+
+def f(el, name, default=0.0):
+    v = el.get(name)
+    return float(v) if v is not None else default
+
+
+def circle_path(cx, cy, rx, ry):
+    return (f"M{fmt(cx - rx)},{fmt(cy)} a{fmt(rx)},{fmt(ry)} 0 1,0 {fmt(2 * rx)},0 "
+            f"a{fmt(rx)},{fmt(ry)} 0 1,0 {fmt(-2 * rx)},0")
+
+
+def rect_path(el):
+    x, y = f(el, "x"), f(el, "y")
+    w, h = f(el, "width"), f(el, "height")
+    rx = el.get("rx")
+    ry = el.get("ry")
+    rx = float(rx) if rx is not None else (float(ry) if ry is not None else 0.0)
+    ry = float(ry) if ry is not None else rx
+    rx, ry = min(rx, w / 2), min(ry, h / 2)
+    if rx == 0 and ry == 0:
+        return f"M{fmt(x)},{fmt(y)} H{fmt(x + w)} V{fmt(y + h)} H{fmt(x)} Z"
+    a = f"A{fmt(rx)},{fmt(ry)} 0 0 1 "
+    return (f"M{fmt(x + rx)},{fmt(y)} H{fmt(x + w - rx)} {a}{fmt(x + w)},{fmt(y + ry)} "
+            f"V{fmt(y + h - ry)} {a}{fmt(x + w - rx)},{fmt(y + h)} H{fmt(x + rx)} "
+            f"{a}{fmt(x)},{fmt(y + h - ry)} V{fmt(y + ry)} {a}{fmt(x + rx)},{fmt(y)} Z")
+
+
+def points_path(el, close):
+    nums = [float(n) for n in re.split(r"[\s,]+", el.get("points", "").strip()) if n]
+    pts = list(zip(nums[0::2], nums[1::2]))
+    if not pts:
+        return None
+    d = f"M{fmt(pts[0][0])},{fmt(pts[0][1])}" + "".join(
+        f" L{fmt(px)},{fmt(py)}" for px, py in pts[1:])
+    return d + (" Z" if close else "")
+
+
+def element_path(el):
+    tag = el.tag.replace(SVG_NS, "")
+    if tag == "path":
+        return el.get("d")
+    if tag == "circle":
+        r = f(el, "r")
+        return circle_path(f(el, "cx"), f(el, "cy"), r, r)
+    if tag == "ellipse":
+        return circle_path(f(el, "cx"), f(el, "cy"), f(el, "rx"), f(el, "ry"))
+    if tag == "rect":
+        return rect_path(el)
+    if tag == "line":
+        return f"M{fmt(f(el, 'x1'))},{fmt(f(el, 'y1'))} L{fmt(f(el, 'x2'))},{fmt(f(el, 'y2'))}"
+    if tag == "polyline":
+        return points_path(el, False)
+    if tag == "polygon":
+        return points_path(el, True)
+    raise ValueError(f"unsupported SVG element <{tag}>")
+
+
+def convert(svg_file: Path, name: str) -> str:
+    root = ET.parse(svg_file).getroot()
+    paths = []
+    for el in root.iter():
+        if el is root or el.tag.replace(SVG_NS, "") in ("title", "desc", "g", "defs"):
+            continue
+        d = element_path(el)
+        if not d:
+            continue
+        filled = el.get("fill") not in (None, "none")
+        paths.append((normalize_path(d), filled))
+    out = [
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>",
+        f"<!-- Lucide icon \"{name}\" (https://lucide.dev, ISC license). Generated by tools/lucide/lucide2vector.py. -->",
+        "<vector xmlns:android=\"http://schemas.android.com/apk/res/android\"",
+        "    android:width=\"24dp\"",
+        "    android:height=\"24dp\"",
+        "    android:tint=\"?attr/colorControlNormal\"",
+        "    android:viewportWidth=\"24\"",
+        "    android:viewportHeight=\"24\">",
+    ]
+    for d, filled in paths:
+        out.append("    <path")
+        out.append(f"        android:fillColor=\"{'#FFFFFFFF' if filled else '#00000000'}\"")
+        out.append(f"        android:pathData=\"{d}\"")
+        out.append("        android:strokeWidth=\"2\"")
+        out.append("        android:strokeColor=\"#FFFFFFFF\"")
+        out.append("        android:strokeLineCap=\"round\"")
+        out.append("        android:strokeLineJoin=\"round\" />")
+    out.append("</vector>")
+    return "\n".join(out) + "\n"
+
+
+def main():
+    icons_dir, out_dir, list_file = Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3])
+    out_dir.mkdir(parents=True, exist_ok=True)
+    missing = []
+    names = [l.strip() for l in list_file.read_text().splitlines()
+             if l.strip() and not l.startswith("#")]
+    for name in names:
+        svg = icons_dir / f"{name}.svg"
+        if not svg.exists():
+            missing.append(name)
+            continue
+        target = out_dir / f"ic_{name.replace('-', '_')}.xml"
+        target.write_text(convert(svg, name))
+    print(f"generated {len(names) - len(missing)} icons")
+    if missing:
+        print("missing: " + ", ".join(missing))
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RadarView">
+        <!-- Small avatar rendering without labels and ticks. -->
+        <attr name="radarCompact" format="boolean" />
+        <!-- Seconds per sweep revolution. -->
+        <attr name="radarSweepSeconds" format="float" />
+    </declare-styleable>
+</resources>

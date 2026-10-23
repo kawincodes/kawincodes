@@ -1,0 +1,216 @@
+import java.security.MessageDigest
+
+plugins {
+    id 'com.android.application'
+}
+
+// ---------------------------------------------------------------------------------------------
+// Cloudflare Tunnel engine (cloudflared) bundling
+//
+// Android 10+ refuses to exec() files an app wrote into its own data directory (W^X), so the
+// engine ships inside the APK as lib/<abi>/libcloudflared.so. The package installer extracts it
+// to nativeLibraryDir, which is executable. Binaries are downloaded once from the official
+// GitHub release, verified against the pinned SHA-256 values below and cached in .engine-cache/.
+// ---------------------------------------------------------------------------------------------
+def engineVersion = providers.gradleProperty('ksession.engineVersion').getOrElse('2026.10.3')
+def bundleEngine = providers.gradleProperty('ksession.bundleEngine').getOrElse('true').toBoolean()
+def allowUnverifiedEngine = providers.gradleProperty('ksession.allowUnverifiedEngine').getOrElse('false').toBoolean()
+def engineAbis = providers.gradleProperty('ksession.abis')
+        .getOrElse('arm64-v8a,armeabi-v7a,x86_64,x86')
+        .split(',').collect { it.trim() }.findAll { !it.isEmpty() }
+
+// Android ABI -> cloudflared release asset.
+def engineAssets = [
+        'arm64-v8a'  : 'cloudflared-linux-arm64',
+        'armeabi-v7a': 'cloudflared-linux-armhf',
+        'x86_64'     : 'cloudflared-linux-amd64',
+        'x86'        : 'cloudflared-linux-386',
+]
+
+// SHA-256 of the official release assets, keyed by version then ABI.
+def engineChecksums = [
+        '2026.10.3': [
+                'arm64-v8a'  : '89297ebfb9e8c99c0dc013a1140601453cf3798d8306c5591651f4a3f5210be8',
+                'armeabi-v7a': '458928ef2729ad71ebf7c88c289f9ecb2ac8bc6810a3bd4d70778592b9b4268b',
+                'x86_64'     : '053b80b0a23031a038fdbf3c073f59f82b8f1f152aa67971d7383ffafc0dbab0',
+                'x86'        : '7c533230928eae6443d6d87dce16e0af67fa1f60fb56860dca4e09883a8ee394',
+        ],
+]
+
+def pinnedChecksums = engineChecksums.get(engineVersion, [:])
+def engineCacheDir = rootProject.file(".engine-cache/${engineVersion}")
+def generatedJniLibs = layout.buildDirectory.dir('generated/ksession/jniLibs').get().asFile
+
+def sha256Of = { File f ->
+    MessageDigest md = MessageDigest.getInstance('SHA-256')
+    f.withInputStream { is ->
+        byte[] buf = new byte[1 << 16]
+        int n
+        while ((n = is.read(buf)) > 0) md.update(buf, 0, n)
+    }
+    md.digest().encodeHex().toString()
+}
+
+def fetchCloudflared = tasks.register('fetchCloudflared') {
+    group = 'ksession'
+    description = "Downloads and verifies cloudflared ${engineVersion} for ${engineAbis}"
+    inputs.property('engineVersion', engineVersion)
+    inputs.property('engineAbis', engineAbis)
+    outputs.dir(generatedJniLibs)
+    doLast {
+        if (pinnedChecksums.isEmpty() && !allowUnverifiedEngine) {
+            throw new GradleException("No pinned SHA-256 for cloudflared ${engineVersion}. Add it to " +
+                    "engineChecksums in app/build.gradle or pass -Pksession.allowUnverifiedEngine=true.")
+        }
+        engineCacheDir.mkdirs()
+        engineAbis.each { abi ->
+            String asset = engineAssets[abi]
+            if (asset == null) throw new GradleException("Unsupported ABI for cloudflared: ${abi}")
+            File cached = new File(engineCacheDir, asset)
+            String expected = pinnedChecksums[abi]
+            if (!cached.isFile() || (expected != null && sha256Of(cached) != expected)) {
+                String url = "https://github.com/cloudflare/cloudflared/releases/download/${engineVersion}/${asset}"
+                logger.lifecycle("Downloading ${url}")
+                File tmp = new File(engineCacheDir, asset + '.part')
+                try {
+                    new URL(url).withInputStream { input -> tmp.withOutputStream { it << input } }
+                } catch (Exception e) {
+                    tmp.delete()
+                    throw new GradleException("Could not download ${url}: ${e.message}. " +
+                            "Build with -Pksession.bundleEngine=false to skip bundling the engine.", e)
+                }
+                String actual = sha256Of(tmp)
+                if (expected != null && actual != expected) {
+                    tmp.delete()
+                    throw new GradleException("Checksum mismatch for ${asset}: expected ${expected}, got ${actual}")
+                }
+                cached.delete()
+                if (!tmp.renameTo(cached)) throw new GradleException("Could not move ${tmp} to ${cached}")
+            }
+            File outDir = new File(generatedJniLibs, abi)
+            outDir.mkdirs()
+            File target = new File(outDir, 'libcloudflared.so')
+            if (!target.isFile() || target.length() != cached.length()) {
+                java.nio.file.Files.copy(cached.toPath(), target.toPath(),
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+            }
+        }
+    }
+}
+
+android {
+    namespace 'com.kawincodes.ksession'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'com.kawincodes.ksession'
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+
+        buildConfigField 'String', 'ENGINE_VERSION', "\"${engineVersion}\""
+        buildConfigField 'boolean', 'ENGINE_BUNDLED', "${bundleEngine}"
+        buildConfigField 'String', 'ENGINE_SHA256',
+                "\"${pinnedChecksums.collect { k, v -> "${k}=${v}" }.join(';')}\""
+    }
+
+    flavorDimensions = ['distribution']
+    productFlavors {
+        // Play-compatible build: modern targetSdk, engine bundled in the APK.
+        store {
+            dimension 'distribution'
+            targetSdk 36
+            buildConfigField 'boolean', 'RUNTIME_ENGINE_INSTALL', 'false'
+        }
+        // Sideload build: targetSdk 28 keeps exec() of app-private files allowed, so the
+        // engine can be downloaded, installed and updated from inside the app.
+        sideload {
+            dimension 'distribution'
+            targetSdk 28
+            applicationIdSuffix '.sideload'
+            versionNameSuffix '-sideload'
+            buildConfigField 'boolean', 'RUNTIME_ENGINE_INSTALL', 'true'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    splits {
+        abi {
+            enable bundleEngine
+            reset()
+            include(*engineAbis)
+            universalApk true
+        }
+    }
+
+    sourceSets {
+        main {
+            if (bundleEngine) {
+                jniLibs.srcDirs += [generatedJniLibs]
+            }
+        }
+    }
+
+    packaging {
+        jniLibs {
+            // Extract native libs to disk so libcloudflared.so can be executed.
+            useLegacyPackaging = true
+            keepDebugSymbols += ['**/libcloudflared.so']
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        buildConfig true
+        viewBinding false
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            returnDefaultValues = true
+        }
+    }
+
+    lint {
+        // The sideload flavor intentionally targets API 28 (see above).
+        disable 'ExpiredTargetSdkVersion', 'OldTargetApi'
+        abortOnError true
+        checkReleaseBuilds true
+    }
+}
+
+if (bundleEngine) {
+    tasks.named('preBuild').configure { dependsOn fetchCloudflared }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'androidx.core:core:1.16.0'
+    implementation 'androidx.activity:activity:1.10.1'
+    implementation 'androidx.fragment:fragment:1.8.8'
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.9.2'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.9.2'
+    implementation 'androidx.browser:browser:1.8.0'
+    implementation 'androidx.biometric:biometric:1.1.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'com.google.zxing:core:3.5.3'
+
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.json:json:20250517'
+}

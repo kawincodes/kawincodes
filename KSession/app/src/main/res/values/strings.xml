@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KSession</string>
+    <string name="app_tagline">Cloudflare Tunnels in your pocket</string>
+
+    <string name="nav_chat">Chat</string>
+    <string name="nav_radar">Radar</string>
+    <string name="nav_tunnels">Tunnels</string>
+    <string name="nav_cloud">Cloud</string>
+
+    <string name="action_copy">Copy</string>
+    <string name="action_share">Share</string>
+    <string name="action_open">Open</string>
+    <string name="action_start">Start</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_restart">Restart</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_ok">OK</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_save">Save</string>
+    <string name="action_logs">Logs</string>
+    <string name="action_qr">QR code</string>
+    <string name="action_stop_all">Stop all</string>
+    <string name="copied">Copied</string>
+    <string name="no_browser">No browser found to open the link</string>
+
+    <string name="status_stopped">Stopped</string>
+    <string name="status_preparing">Preparing</string>
+    <string name="status_connecting">Connecting</string>
+    <string name="status_online">Online</string>
+    <string name="status_degraded">Degraded</string>
+    <string name="status_stopping">Stopping</string>
+    <string name="status_error">Error</string>
+
+    <string name="type_quick">Quick</string>
+    <string name="type_token">Token</string>
+    <string name="type_managed">Managed</string>
+
+    <string name="qr_title">Scan to open</string>
+    <string name="tile_label">KSession</string>
+    <string name="fgs_subtype">Keeps user-started Cloudflare Tunnel connections open so local services stay reachable.</string>
+</resources>

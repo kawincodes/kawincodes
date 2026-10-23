@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- KSession "radical radar" palette. Brand teal/violet from the kawincodes profile. -->
+    <color name="ks_bg">#FF05070D</color>
+    <color name="ks_bg_glow">#FF0B1A22</color>
+    <color name="ks_surface">#FF0D1117</color>
+    <color name="ks_surface_2">#FF121A26</color>
+    <color name="ks_surface_3">#FF182233</color>
+    <color name="ks_outline">#FF1F2A3A</color>
+    <color name="ks_outline_bright">#FF2B3B52</color>
+
+    <color name="ks_teal">#FF00C9A7</color>
+    <color name="ks_teal_glow">#FF2CF5D0</color>
+    <color name="ks_teal_dim">#3300C9A7</color>
+    <color name="ks_violet">#FF7C3AED</color>
+    <color name="ks_violet_light">#FFA78BFA</color>
+    <color name="ks_violet_dim">#337C3AED</color>
+    <color name="ks_amber">#FFFFB020</color>
+    <color name="ks_orange">#FFFF8A3D</color>
+    <color name="ks_red">#FFFF4D6D</color>
+    <color name="ks_blue">#FF38BDF8</color>
+
+    <color name="ks_text">#FFE6EDF3</color>
+    <color name="ks_text_muted">#FF8B98A9</color>
+    <color name="ks_text_faint">#FF5B6B7F</color>
+    <color name="ks_on_accent">#FF04110E</color>
+
+    <!-- Radar -->
+    <color name="radar_ring">#FF163036</color>
+    <color name="radar_grid">#FF0F2329</color>
+    <color name="radar_sweep">#FF2CF5D0</color>
+    <color name="radar_core">#FF00C9A7</color>
+
+    <!-- Tunnel status -->
+    <color name="status_online">#FF2CF5D0</color>
+    <color name="status_connecting">#FFFFB020</color>
+    <color name="status_degraded">#FFFF8A3D</color>
+    <color name="status_stopping">#FFA78BFA</color>
+    <color name="status_error">#FFFF4D6D</color>
+    <color name="status_stopped">#FF5B6B7F</color>
+
+    <!-- Log levels -->
+    <color name="log_debug">#FF5B6B7F</color>
+    <color name="log_info">#FFC9D4E0</color>
+    <color name="log_warn">#FFFFB020</color>
+    <color name="log_error">#FFFF4D6D</color>
+
+    <color name="ic_launcher_background">#FF05070D</color>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="ks_gutter">16dp</dimen>
+    <dimen name="ks_gap">12dp</dimen>
+    <dimen name="ks_gap_small">8dp</dimen>
+    <dimen name="ks_radius_card">20dp</dimen>
+    <dimen name="ks_radius_sheet">28dp</dimen>
+    <dimen name="ks_radius_bubble">20dp</dimen>
+    <dimen name="ks_radius_chip">14dp</dimen>
+    <dimen name="ks_icon">20dp</dimen>
+    <dimen name="ks_icon_small">16dp</dimen>
+    <dimen name="ks_outline">1dp</dimen>
+    <dimen name="ks_touch">48dp</dimen>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Bottom navigation destinations (used by Navigator / ChatEngine.UiDelegate). -->
+    <item name="nav_chat" type="id" />
+    <item name="nav_radar" type="id" />
+    <item name="nav_tunnels" type="id" />
+    <item name="nav_cloud" type="id" />
+</resources>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.KSession" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/ks_teal</item>
+        <item name="colorOnPrimary">@color/ks_on_accent</item>
+        <item name="colorPrimaryContainer">@color/ks_teal_dim</item>
+        <item name="colorOnPrimaryContainer">@color/ks_teal_glow</item>
+        <item name="colorSecondary">@color/ks_violet_light</item>
+        <item name="colorOnSecondary">@color/ks_bg</item>
+        <item name="colorSecondaryContainer">@color/ks_violet_dim</item>
+        <item name="colorOnSecondaryContainer">@color/ks_violet_light</item>
+        <item name="colorTertiary">@color/ks_amber</item>
+        <item name="colorError">@color/ks_red</item>
+        <item name="android:colorBackground">@color/ks_bg</item>
+        <item name="colorSurface">@color/ks_surface</item>
+        <item name="colorOnSurface">@color/ks_text</item>
+        <item name="colorOnSurfaceVariant">@color/ks_text_muted</item>
+        <item name="colorSurfaceVariant">@color/ks_surface_2</item>
+        <item name="colorSurfaceContainerLowest">@color/ks_bg</item>
+        <item name="colorSurfaceContainerLow">@color/ks_surface</item>
+        <item name="colorSurfaceContainer">@color/ks_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/ks_surface_2</item>
+        <item name="colorSurfaceContainerHighest">@color/ks_surface_3</item>
+        <item name="colorOutline">@color/ks_outline_bright</item>
+        <item name="colorOutlineVariant">@color/ks_outline</item>
+        <item name="colorControlNormal">@color/ks_text_muted</item>
+        <item name="android:textColorPrimary">@color/ks_text</item>
+        <item name="android:textColorSecondary">@color/ks_text_muted</item>
+        <item name="android:windowBackground">@drawable/bg_app</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="shapeAppearanceCornerSmall">@style/ShapeAppearance.KSession.Small</item>
+        <item name="shapeAppearanceCornerMedium">@style/ShapeAppearance.KSession.Medium</item>
+        <item name="shapeAppearanceCornerLarge">@style/ShapeAppearance.KSession.Large</item>
+        <item name="materialCardViewStyle">@style/Widget.KSession.Card</item>
+        <item name="bottomNavigationStyle">@style/Widget.KSession.BottomNav</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.KSession.BottomSheet</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.KSession.Dialog</item>
+        <item name="textInputStyle">@style/Widget.KSession.TextInput</item>
+        <item name="chipStyle">@style/Widget.KSession.Chip</item>
+    </style>
+
+    <style name="ThemeOverlay.KSession.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.KSession.BottomSheet</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="ThemeOverlay.KSession.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/ks_surface_2</item>
+        <item name="colorSurfaceContainerHigh">@color/ks_surface_2</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.KSession.Large</item>
+    </style>
+</resources>
