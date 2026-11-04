@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-KAWIN.OS - asset generator for the GitHub profile README.
+KAWIN.OS - asset generator (shadcn/ui + Material styling, Radix Icons) for the GitHub profile README.
 
 Builds every custom animated SVG panel used by README.md:
 
@@ -23,6 +23,7 @@ Rendering notes
 """
 from __future__ import annotations
 
+import json
 import math
 import random
 from html import escape
@@ -44,10 +45,10 @@ ROTATOR = [
     "Automating workflows from idea to deployment",
     "Learning in public and shipping with purpose",
 ]
-CHIPS = [  # (label, palette token)
-    ("OPEN TO COLLABORATE", "ok"),
-    ("AI · CLOUD · AUTOMATION", "accent"),
-    ("SHIP · LEARN · IMPROVE", "secondary"),
+CHIPS = [  # (label, palette token, Radix icon)
+    ("OPEN TO COLLABORATE", "ok", "CheckCircledIcon"),
+    ("AI · CLOUD · AUTOMATION", "accent", "MagicWandIcon"),
+    ("SHIP · LEARN · IMPROVE", "primary", "RocketIcon"),
 ]
 MODULES = ["FULL-STACK", "REST APIs", "AI/LLM", "CLOUD-NATIVE", "AUTOMATION", "SAAS"]
 TIMEZONE = "IST UTC+05:30"
@@ -79,16 +80,16 @@ TERMINAL = [
     ("cmd", ""),
 ]
 
-SECTIONS = [  # (slug, title, subtitle)  -> assets/sections/NN-slug.svg
-    ("whoami", "WHOAMI", "identity.sys · who I am & what I build"),
-    ("capabilities", "CAPABILITIES", "modules.core · what I can deliver"),
-    ("arsenal", "ARSENAL", "stack.lock · languages, frameworks, cloud & AI"),
-    ("pipeline", "PIPELINE", "workflow.yml · how ideas become shipped software"),
-    ("missions", "ACTIVE MISSIONS", "status.live · current direction & research queue"),
-    ("telemetry", "TELEMETRY", "metrics.stream · live GitHub analytics"),
-    ("mission-select", "MISSION SELECT", "options.menu · pick a path, launch a brief"),
-    ("knowledge-base", "KNOWLEDGE BASE", "faq.db · quick answers"),
-    ("comms", "COMMS", "uplink.cfg · open a channel"),
+SECTIONS = [  # (slug, title, subtitle, Radix icon)  -> assets/sections/NN-slug.svg
+    ("whoami", "Whoami", "identity.sys · who I am & what I build", "PersonIcon"),
+    ("capabilities", "Capabilities", "modules.core · what I can deliver", "LightningBoltIcon"),
+    ("arsenal", "Arsenal", "stack.lock · languages, frameworks, cloud & AI", "StackIcon"),
+    ("pipeline", "Pipeline", "workflow.yml · how ideas become shipped software", "UpdateIcon"),
+    ("missions", "Active Missions", "status.live · current direction & research queue", "TargetIcon"),
+    ("telemetry", "Telemetry", "metrics.stream · live GitHub analytics", "BarChartIcon"),
+    ("mission-select", "Mission Select", "options.menu · pick a path, launch a brief", "RocketIcon"),
+    ("knowledge-base", "Knowledge Base", "faq.db · quick answers", "ReaderIcon"),
+    ("comms", "Comms", "uplink.cfg · open a channel", "PaperPlaneIcon"),
 ]
 
 MISSIONS = [  # (title, outcome)
@@ -125,23 +126,24 @@ CLOSING = [
 
 MONO = ("'JetBrains Mono','Fira Code','Cascadia Code','SF Mono',SFMono-Regular,"
         "ui-monospace,Menlo,Consolas,'Liberation Mono','DejaVu Sans Mono',monospace")
-DISPLAY = ("'Orbitron','Rajdhani','Bahnschrift','DIN Alternate','Eurostile',"
-           "'Segoe UI','Helvetica Neue',Arial,sans-serif")
+DISPLAY = ("'Inter','Geist','Roboto','Segoe UI Variable','Segoe UI','SF Pro Display',"
+           "'Helvetica Neue',Arial,sans-serif")
+SANS = DISPLAY
 MONO_RATIO = 0.6  # advance width of one monospace glyph, in em
 
-# Theme: neon-green "phosphor terminal" HUD with amber accents (no pink / blue).
-# Every colour in every panel comes from this dict - retheme here.
+# Theme: shadcn/ui zinc surfaces + Material-style tonal accents in electric blue
+# and hot pink. Every colour in every panel comes from this dict - retheme here.
 DARK = dict(
-    void="#010402", deep="#03100A", panel="#061A10", panel2="#0A2416",
-    edge="#16402A", grid="#1D5A3A",
-    text="#E8FFF3", muted="#7FA592", dim="#3E6652",
-    primary="#00FF9C",     # neon phosphor green
-    glow="#A7FFD8",        # bright mint highlight
-    secondary="#B6FF3B",   # acid lime
-    secondary2="#6FBF00",  # deep lime (gradients)
-    accent="#FFB000",      # amber
-    hot="#FF6A00",         # ember orange (glitch / hot spots)
-    ok="#3DFF8A",          # status green
+    void="#09090B", deep="#0C0C12", panel="#18181B", panel2="#1F1F25",
+    edge="#27272A", grid="#2E2E3A",
+    text="#FAFAFA", muted="#A1A1AA", dim="#52525B",
+    primary="#60A5FA",     # blue-400
+    glow="#BFDBFE",        # blue-200 highlight
+    secondary="#38BDF8",   # sky-400
+    secondary2="#2563EB",  # blue-600 (gradients)
+    accent="#F472B6",      # pink-400
+    hot="#EC4899",         # pink-500 (glitch / hot spots)
+    ok="#22D3EE",          # status "online" (cyan, stays in the blue family)
 )
 
 # ════════════════════════════════════════════════════════════════════════
@@ -229,6 +231,15 @@ def display_width(text: str, size: float, tracking: float = 0.1) -> float:
     return (em + tracking * (len(text) - 1)) * size
 
 
+RADIX = json.loads((Path(__file__).with_name("radix-icons.json")).read_text(encoding="utf-8"))
+
+
+def icon(name: str, x: float, y: float, size: float, fill: str, extra: str = "") -> str:
+    """Draw a Radix icon (15x15 grid) with its top-left corner at (x, y)."""
+    paths = "".join(f'<path d="{d}" fill-rule="evenodd" clip-rule="evenodd"/>' for d in RADIX[name])
+    return f'<g transform="translate({num(x)} {num(y)}) scale({num(size / 15)})" fill="{fill}"{extra}>{paths}</g>'
+
+
 REDUCED_MOTION = """
 .rm{display:none}
 @media (prefers-reduced-motion: reduce){.am{display:none}.rm{display:inline}}
@@ -282,21 +293,21 @@ $rm
 
     defs = f"""
 <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-  <stop offset="0" stop-color="#010503"/><stop offset=".66" stop-color="#03100A"/><stop offset="1" stop-color="#081A0E"/>
+  <stop offset="0" stop-color="#09090B"/><stop offset=".66" stop-color="#0C0C12"/><stop offset="1" stop-color="#170A1F"/>
 </linearGradient>
 <radialGradient id="nebC"><stop offset="0" stop-color="{P['primary']}" stop-opacity=".20"/><stop offset="1" stop-color="{P['primary']}" stop-opacity="0"/></radialGradient>
-<radialGradient id="nebV"><stop offset="0" stop-color="#00A86B" stop-opacity=".24"/><stop offset="1" stop-color="#00A86B" stop-opacity="0"/></radialGradient>
+<radialGradient id="nebV"><stop offset="0" stop-color="#2563EB" stop-opacity=".24"/><stop offset="1" stop-color="#2563EB" stop-opacity="0"/></radialGradient>
 <radialGradient id="nebM"><stop offset="0" stop-color="{P['hot']}" stop-opacity=".16"/><stop offset="1" stop-color="{P['hot']}" stop-opacity="0"/></radialGradient>
 <radialGradient id="coreGlow"><stop offset="0" stop-color="{P['primary']}" stop-opacity=".30"/><stop offset=".55" stop-color="{P['secondary2']}" stop-opacity=".10"/><stop offset="1" stop-color="{P['secondary2']}" stop-opacity="0"/></radialGradient>
 <radialGradient id="horizon" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="{P['hot']}" stop-opacity=".45"/><stop offset=".5" stop-color="{P['secondary2']}" stop-opacity=".18"/><stop offset="1" stop-color="{P['secondary2']}" stop-opacity="0"/></radialGradient>
-<linearGradient id="titleFill" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".6" stop-color="#DFFFEE"/><stop offset="1" stop-color="{P['glow']}"/></linearGradient>
+<linearGradient id="titleFill" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".45" stop-color="#BFDBFE"/><stop offset="1" stop-color="#F9A8D4"/></linearGradient>
 <linearGradient id="rule" gradientUnits="userSpaceOnUse" x1="40" y1="0" x2="{W - 40}" y2="0"><stop offset="0" stop-color="{P['primary']}" stop-opacity="0"/><stop offset=".15" stop-color="{P['primary']}" stop-opacity=".55"/><stop offset=".85" stop-color="{P['secondary']}" stop-opacity=".55"/><stop offset="1" stop-color="{P['secondary']}" stop-opacity="0"/></linearGradient>
 <linearGradient id="hline" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{W}" y2="0"><stop offset="0" stop-color="{P['secondary']}" stop-opacity="0"/><stop offset=".5" stop-color="{P['accent']}" stop-opacity=".9"/><stop offset="1" stop-color="{P['secondary']}" stop-opacity="0"/></linearGradient>
-<linearGradient id="floorFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#03140B" stop-opacity="1"/><stop offset="1" stop-color="#03140B" stop-opacity="0"/></linearGradient>
+<linearGradient id="floorFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0C0C14" stop-opacity="1"/><stop offset="1" stop-color="#0C0C14" stop-opacity="0"/></linearGradient>
 <linearGradient id="band" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{P['void']}" stop-opacity="0"/><stop offset=".55" stop-color="{P['void']}" stop-opacity=".82"/><stop offset="1" stop-color="{P['void']}" stop-opacity=".92"/></linearGradient>
 <linearGradient id="sweepFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{P['primary']}" stop-opacity="0"/><stop offset=".5" stop-color="{P['primary']}" stop-opacity=".06"/><stop offset="1" stop-color="{P['primary']}" stop-opacity="0"/></linearGradient>
 <linearGradient id="wedge" gradientUnits="userSpaceOnUse" x1="{cx}" y1="{cy}" x2="{cx}" y2="{cy - 80}"><stop offset="0" stop-color="{P['primary']}" stop-opacity=".42"/><stop offset="1" stop-color="{P['primary']}" stop-opacity="0"/></linearGradient>
-<pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1" fill="#1D4A33" fill-opacity=".55"/></pattern>
+<pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1" fill="#2A2A3A" fill-opacity=".55"/></pattern>
 <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="1.2" fill="#000" fill-opacity=".16"/></pattern>
 <filter id="glow" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <filter id="glowSm" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -319,7 +330,7 @@ $rm
         r = rnd.choice([0.6, 0.8, 0.8, 1.1, 1.4])
         d, dl = rnd.uniform(2.2, 5.5), -rnd.uniform(0, 5)
         stars.append(f'<circle class="tw" style="--d:{d:.1f}s;--dl:{dl:.1f}s" cx="{x:.0f}" cy="{y:.0f}" r="{r}"/>')
-    b.append(f'<g fill="#DCFFEC">{"".join(stars)}</g>')
+    b.append(f'<g fill="#E0E7FF">{"".join(stars)}</g>')
 
     # ── synth grid floor ─────────────────────────────────────────────────
     b.append(f'<ellipse cx="640" cy="{HZ}" rx="760" ry="64" fill="url(#horizon)"/>')
@@ -340,7 +351,7 @@ $rm
     # ── reactor core ─────────────────────────────────────────────────────
     r_ = []
     r_.append(f'<circle cx="{cx}" cy="{cy}" r="190" fill="url(#coreGlow)"/>')
-    r_.append(f'<circle cx="{cx}" cy="{cy}" r="150" stroke="{P["primary"]}" stroke-opacity=".35" stroke-width="1.2" fill="#020A05" fill-opacity=".55"/>')
+    r_.append(f'<circle cx="{cx}" cy="{cy}" r="150" stroke="{P["primary"]}" stroke-opacity=".35" stroke-width="1.2" fill="#0B0B12" fill-opacity=".55"/>')
     ticks = []
     for i in range(72):
         a = math.radians(i * 5)
@@ -369,7 +380,7 @@ $rm
         r_.append(f'<circle class="blip" style="--dl:{delay:.2f}s" cx="{num(cx + rad * math.cos(a))}" '
                   f'cy="{num(cy + rad * math.sin(a))}" r="3.2" fill="{P["glow"]}" filter="url(#glowSm)"/>')
     r_.append(f'<circle class="pulse" cx="{cx}" cy="{cy}" r="52" stroke="{P["primary"]}" stroke-width="1.6"/>')
-    r_.append(f'<polygon points="{hexagon(cx, cy, 46)}" fill="#04130B" stroke="{P["primary"]}" stroke-width="2.2" filter="url(#glowSm)"/>')
+    r_.append(f'<polygon points="{hexagon(cx, cy, 46)}" fill="#111827" stroke="{P["primary"]}" stroke-width="2.2" filter="url(#glowSm)"/>')
     r_.append(f'<polygon class="spin rev" style="--d:24s" points="{hexagon(cx, cy, 35)}" stroke="{P["secondary"]}" stroke-opacity=".75" stroke-width="1.3" stroke-dasharray="6 4"/>')
     r_.append(f'<text x="{cx}" y="{cy + 10}" text-anchor="middle" font-size="28" font-weight="700" fill="{P["glow"]}" filter="url(#glowSm)">&lt;/&gt;</text>')
     r_.append(f'<g class="spin" style="--d:12s"><circle cx="{cx + 150}" cy="{cy}" r="4.5" fill="{P["glow"]}" filter="url(#glowSm)"/></g>')
@@ -386,9 +397,10 @@ $rm
 
     # ── HUD: top bar ─────────────────────────────────────────────────────
     b.append(f'<text x="40" y="40" font-size="14" xml:space="preserve">'
-             f'<tspan fill="{P["primary"]}" font-weight="700">◢ KAWIN.OS</tspan>'
+             f'<tspan fill="{P["primary"]}" font-weight="700" dx="22">KAWIN.OS</tspan>'
              f'<tspan fill="{P["muted"]}">   v2026.11  //  PROFILE.SYS  //  </tspan>'
-             f'<tspan fill="{P["secondary"]}">IDENTITY VERIFIED</tspan></text>')
+             f'<tspan fill="{P["accent"]}">IDENTITY VERIFIED</tspan></text>')
+    b.append(icon("DashboardIcon", 40, 27, 15, P["primary"]))
     b.append(f'<text x="1222" y="40" font-size="14" text-anchor="end" xml:space="preserve" fill="{P["muted"]}">'
              f'{t(TIMEZONE)}  ·  NODE IN  ·  <tspan fill="{P["ok"]}">LINK SECURE</tspan></text>')
     b.append(f'<circle class="blink" cx="1236" cy="35" r="4.5" fill="{P["ok"]}" filter="url(#glowSm)"/>')
@@ -456,16 +468,15 @@ $rm
 
     # status chips
     cx_ = x0
-    for label, colour in CHIPS:
-        glyph = {"ok": "●", "accent": "◆", "secondary": "▲"}[colour]
-        text = f"{glyph} {label}"
-        w = len(text) * 13 * MONO_RATIO + 28
+    for label, colour, glyph in CHIPS:
+        tw_ = len(label) * 13 * MONO_RATIO
+        w = tw_ + 52
         col = P[colour]
-        b.append(f'<g><rect x="{num(cx_)}" y="306" width="{num(w)}" height="30" rx="5" fill="{col}" fill-opacity=".08" '
-                 f'stroke="{col}" stroke-opacity=".55"/>'
-                 f'<text x="{num(cx_ + 14)}" y="326" font-size="13" font-weight="700" fill="{col}" '
-                 f'textLength="{num(len(text) * 13 * MONO_RATIO)}" lengthAdjust="spacing">{t(text)}</text></g>')
-        cx_ += w + 12
+        b.append(f'<g><rect x="{num(cx_)}" y="305" width="{num(w)}" height="32" rx="16" fill="{col}" fill-opacity=".12" '
+                 f'stroke="{col}" stroke-opacity=".5"/>' + icon(glyph, cx_ + 13, 313.5, 15, col) +
+                 f'<text x="{num(cx_ + 36)}" y="326" font-size="13" font-weight="700" fill="{col}" '
+                 f'textLength="{num(tw_)}" lengthAdjust="spacing">{t(label)}</text></g>')
+        cx_ += w + 10
 
     # ── HUD: bottom bar ──────────────────────────────────────────────────
     b.append(f'<rect x="0" y="388" width="{W}" height="{H - 388}" fill="url(#band)"/>')
@@ -563,8 +574,8 @@ $rm
     cur_x.append((end, -50.0))
 
     defs = f"""
-<linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B1C13"/><stop offset="1" stop-color="#07140D"/></linearGradient>
-<linearGradient id="body" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#050E09"/><stop offset="1" stop-color="#030A06"/></linearGradient>
+<linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1C1C22"/><stop offset="1" stop-color="#141418"/></linearGradient>
+<linearGradient id="body" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0E0E12"/><stop offset="1" stop-color="#0A0A0D"/></linearGradient>
 <radialGradient id="glare" cx=".85" cy="0" r=".9"><stop offset="0" stop-color="{P['secondary2']}" stop-opacity=".16"/><stop offset="1" stop-color="{P['secondary2']}" stop-opacity="0"/></radialGradient>
 <radialGradient id="glare2" cx="0" cy="1" r=".8"><stop offset="0" stop-color="{P['primary']}" stop-opacity=".09"/><stop offset="1" stop-color="{P['primary']}" stop-opacity="0"/></radialGradient>
 <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="1" fill="#000" fill-opacity=".18"/></pattern>
@@ -624,6 +635,7 @@ def status_board() -> str:
     style = css("""
 text{font-family:$mono}
 .disp,.disp text{font-family:$display;font-weight:700}
+.sans{font-family:$display}
 @media (prefers-reduced-motion: no-preference){
  .shimmer{animation:shimmer var(--d,2.4s) ease-in-out infinite;animation-delay:var(--dl,0s)}
  .spin{transform-box:fill-box;transform-origin:50% 50%;animation:spin 1.4s linear infinite}
@@ -639,36 +651,47 @@ text{font-family:$mono}
 """, mono=MONO, display=DISPLAY)
 
     defs = f"""
-<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#020604"/><stop offset="1" stop-color="#06140C"/></linearGradient>
-<linearGradient id="panel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0A1C12"/><stop offset="1" stop-color="#06110B"/></linearGradient>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#09090B"/><stop offset="1" stop-color="#140A1A"/></linearGradient>
+<linearGradient id="panel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A1A21"/><stop offset="1" stop-color="#131317"/></linearGradient>
 <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-<pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".9" fill="#1D4A33" fill-opacity=".5"/></pattern>
+<pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".9" fill="#2A2A3A" fill-opacity=".5"/></pattern>
 <filter id="glowSm" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="elev" x="-10%" y="-10%" width="120%" height="125%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity=".5"/></filter>
 <clipPath id="frame"><rect width="{W}" height="{H}" rx="20"/></clipPath>
 """
     b = [f'<rect width="{W}" height="{H}" fill="url(#bg)"/>', f'<rect width="{W}" height="{H}" fill="url(#dots)"/>']
     # header strip
-    b.append(f'<text x="34" y="44" font-size="15" xml:space="preserve"><tspan fill="{P["primary"]}" font-weight="700">◢ SYSTEM STATUS</tspan>'
+    b.append(icon("DashboardIcon", 34, 31, 16, P["primary"]))
+    b.append(f'<text x="58" y="44" font-size="15" xml:space="preserve"><tspan fill="{P["primary"]}" font-weight="700">SYSTEM STATUS</tspan>'
              f'<tspan fill="{P["muted"]}">  //  CURRENT DIRECTION · RESEARCH QUEUE · UPLINK</tspan></text>')
     b.append(f'<circle class="blink" cx="{W - 120}" cy="39" r="5" fill="{P["ok"]}" filter="url(#glowSm)"/>'
              f'<text x="{W - 106}" y="44" font-size="14" font-weight="700" fill="{P["ok"]}">LIVE FEED</text>')
     b.append(f'<line x1="34" y1="60" x2="{W - 34}" y2="60" stroke="{P["edge"]}"/>')
 
-    def panel(ix: int, code: str, title: str, colour: str) -> tuple[float, float]:
+    def pill(xr: float, yb: float, label: str, colour: str, cls: str = "") -> None:
+        """shadcn Badge (right-aligned at xr, text baseline yb)."""
+        w = len(label) * 11 * MONO_RATIO + 22
+        col = P[colour]
+        b.append(f'<rect x="{num(xr - w)}" y="{yb - 13}" width="{num(w)}" height="18" rx="9" fill="{col}" fill-opacity=".14" '
+                 f'stroke="{col}" stroke-opacity=".45"/><circle{cls} cx="{num(xr - w + 9)}" cy="{yb - 4}" r="2.6" fill="{col}"/>'
+                 f'<text x="{num(xr - w + 16)}" y="{yb}" font-size="11" font-weight="700" fill="{col}">{t(label)}</text>')
+
+    def panel(ix: int, glyph: str, title: str, colour: str) -> tuple[float, float]:
         x = 24 + ix * (pw + gap)
         col = P[colour]
-        b.append(f'<rect x="{x}" y="{top}" width="{pw}" height="{ph}" rx="14" fill="url(#panel)" stroke="{col}" stroke-opacity=".35"/>')
-        b.append(f'<path d="M{x + 14} {top}h60" stroke="{col}" stroke-width="3" stroke-linecap="round" filter="url(#glowSm)"/>')
-        b.append(f'<text x="{x + 20}" y="{top + 34}" font-size="14" xml:space="preserve">'
-                 f'<tspan fill="{col}" font-weight="700">[{code}]</tspan><tspan fill="{P["text"]}" font-weight="700"> {t(title)}</tspan></text>')
-        return x, top + 66
+        b.append(f'<rect x="{x}" y="{top}" width="{pw}" height="{ph}" rx="16" fill="url(#panel)" stroke="{P["edge"]}" filter="url(#elev)"/>')
+        b.append(f'<rect x="{x + 18}" y="{top + 16}" width="30" height="30" rx="9" fill="{col}" fill-opacity=".15" stroke="{col}" stroke-opacity=".45"/>')
+        b.append(icon(glyph, x + 25.5, top + 23.5, 15, col))
+        b.append(f'<text x="{x + 60}" y="{top + 36}" font-size="15" font-weight="700" fill="{P["text"]}" class="sans">{t(title)}</text>')
+        b.append(f'<line x1="{x + 18}" y1="{top + 58}" x2="{x + pw - 18}" y2="{top + 58}" stroke="{P["edge"]}"/>')
+        return x, top + 84
 
     # A — active missions
-    x, y = panel(0, "A1", "ACTIVE MISSIONS", "primary")
+    x, y = panel(0, "TargetIcon", "Active missions", "primary")
     for i, (name, note) in enumerate(MISSIONS):
-        yy = y + i * 54
+        yy = y + i * 50
         b.append(f'<text x="{x + 20}" y="{yy}" font-size="14" font-weight="700" fill="{P["text"]}">{t(name)}</text>')
-        b.append(f'<text x="{x + pw - 20}" y="{yy}" font-size="11" font-weight="700" text-anchor="end" fill="{P["ok"]}">● LIVE</text>')
+        pill(x + pw - 18, yy, "Live", "ok", ' class="blink"')
         b.append(f'<text x="{x + 20}" y="{yy + 18}" font-size="12" fill="{P["muted"]}">{t(note)}</text>')
         # uniform "activity" track + travelling highlight (deliberately not a progress level)
         b.append(f'<svg x="{x + 20}" y="{yy + 26}" width="{pw - 40}" height="3">'
@@ -677,28 +700,29 @@ text{font-family:$mono}
                  f'height="3" fill="url(#shine)"/></svg>')
 
     # B — research queue
-    x, y = panel(1, "B2", "RESEARCH QUEUE", "accent")
+    x, y = panel(1, "MagicWandIcon", "Research queue", "accent")
     for i, (name, note) in enumerate(RESEARCH):
-        yy = y + i * 54
+        yy = y + i * 50
         b.append(f'<g transform="translate({x + 28} {yy - 5})"><circle r="8" stroke="{P["edge"]}" stroke-width="2.5" fill="none"/>'
-                 f'<path class="spin" d="M0 -8 A8 8 0 0 1 8 0" stroke="{P["secondary"]}" stroke-width="2.5" fill="none" stroke-linecap="round"/></g>')
+                 f'<path class="spin" d="M0 -8 A8 8 0 0 1 8 0" stroke="{P["accent"]}" stroke-width="2.5" fill="none" stroke-linecap="round"/></g>')
         b.append(f'<text x="{x + 46}" y="{yy}" font-size="14" font-weight="700" fill="{P["text"]}">{t(name)}</text>')
         b.append(f'<text x="{x + 46}" y="{yy + 18}" font-size="12" fill="{P["muted"]}">{t(note)}</text>')
-        b.append(f'<text x="{x + pw - 20}" y="{yy}" font-size="11" font-weight="700" text-anchor="end" fill="{P["secondary"]}">'
-                 f'SYNCING<tspan class="dots">...</tspan></text>')
+        pill(x + pw - 18, yy, "Learning", "accent")
 
     # C — uplink / availability
-    x, y = panel(2, "C3", "UPLINK", "ok")
-    ox, oy = x + 46, y + 8
+    x, y = panel(2, "PaperPlaneIcon", "Uplink", "ok")
+    ox, oy = x + 38, y - 2
     b.append(f'<circle class="pulse" cx="{ox}" cy="{oy}" r="14" stroke="{P["ok"]}" stroke-width="2" fill="none"/>')
     b.append(f'<circle cx="{ox}" cy="{oy}" r="9" fill="{P["ok"]}" filter="url(#glowSm)"/>')
     b.append(f'<text class="disp" x="{ox + 28}" y="{oy + 14}" font-size="38" fill="{P["ok"]}" textLength="112" lengthAdjust="spacing">OPEN</text>')
     b.append(f'<text x="{ox + 150}" y="{oy - 2}" font-size="12" fill="{P["muted"]}">to thoughtful</text>')
     b.append(f'<text x="{ox + 150}" y="{oy + 14}" font-size="12" fill="{P["muted"]}">collaborations</text>')
+    glyphs = ["EnvelopeClosedIcon", "ChatBubbleIcon", "GlobeIcon", "MixIcon", "GitHubLogoIcon"]
     for i, (key, val) in enumerate(UPLINK):
-        yy = y + 64 + i * 38
+        yy = y + 50 + i * 36
         b.append(f'<line x1="{x + 20}" y1="{yy - 22}" x2="{x + pw - 20}" y2="{yy - 22}" stroke="{P["edge"]}" stroke-dasharray="2 4"/>')
-        b.append(f'<text x="{x + 20}" y="{yy}" font-size="12" font-weight="700" fill="{P["ok"]}">{t(key)}</text>')
+        b.append(icon(glyphs[i], x + 20, yy - 11, 13, P["primary"] if i % 2 == 0 else P["accent"]))
+        b.append(f'<text x="{x + 40}" y="{yy}" font-size="11" font-weight="700" fill="{P["muted"]}">{t(key)}</text>')
         b.append(f'<text x="{x + 112}" y="{yy}" font-size="13" fill="{P["text"]}" textLength="{num(len(val) * 13 * MONO_RATIO)}" '
                  f'lengthAdjust="spacing">{t(val)}</text>')
 
@@ -715,90 +739,76 @@ text{font-family:$mono}
 # ════════════════════════════════════════════════════════════════════════
 
 
-def section_header(idx: int, total: int, title: str, subtitle: str, accent: str) -> str:
-    """A self-contained HUD strip: it carries its own background plate, so it reads
-    the same on GitHub's light and dark themes (no <picture>/srcset switching)."""
+def section_header(idx: int, total: int, title: str, subtitle: str, accent: str, glyph: str) -> str:
+    """shadcn/ui-style card header: Material tonal icon container + Radix icon, title,
+    outline pill badge and a linear progress indicator. Carries its own surface, so it
+    reads the same on GitHub's light and dark themes."""
     P = DARK
     A = P[accent]
-    W, H = 1000, 104
-    hx, hy = 54, 52
-    tx, ty = 108, 60
-    title_w = display_width(title, 34, 0.1)
+    other = P["accent"] if accent == "primary" else P["primary"]
+    W, H = 1000, 112
+    ix, iy, isz = 26, 28, 56                      # tonal icon container
+    tx = ix + isz + 22
     sub = [("// ", accent, True), (subtitle, "muted", False)]
-    sub_w = sum(len(s[0]) for s in sub) * 15 * MONO_RATIO
-    line_x1, line_x2 = tx + title_w + 28, 830   # rail sits beside the title, clear of the subtitle row
-    travel = max(line_x2 - line_x1 - 10, 40)
+    sub_w = sum(len(x[0]) for x in sub) * 14 * MONO_RATIO
+    prog_w, prog_x = 200, W - 26 - 200
+    fill_w = prog_w * idx / total
 
     style = css("""
 text{font-family:$mono}
-.disp,.disp text{font-family:$display;font-weight:700}
+.sans{font-family:$sans}
 @media (prefers-reduced-motion: no-preference){
- .spin{transform-box:view-box;transform-origin:${hx}px ${hy}px;animation:spin 18s linear infinite}
- .blink{animation:blink 1.1s steps(1) infinite}
- .ride{animation:ride 3.4s ease-in-out infinite alternate}
- .cur{animation:cur 1.6s ease-in-out infinite}
- .sweep{animation:sweep 6s linear infinite}
+ .ring{transform-box:fill-box;transform-origin:50% 50%;animation:ring 2.8s ease-out infinite}
+ .sheen{animation:sheen 7s ease-in-out infinite}
+ .cur{animation:cur 1.2s steps(1) infinite}
+ .bar{animation:bar 2.4s ease-in-out infinite}
 }
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes blink{0%{opacity:1}50%{opacity:0}}
-@keyframes ride{from{transform:translateX(0)}to{transform:translateX(${travel}px)}}
-@keyframes cur{0%,100%{opacity:1}50%{opacity:.35}}
-@keyframes sweep{from{transform:translateX(0)}to{transform:translateX(${sweep}px)}}
-""", mono=MONO, display=DISPLAY, hx=hx, hy=hy, travel=num(travel), sweep=W + 240)
+@keyframes ring{0%{transform:scale(1);opacity:.55}100%{transform:scale(1.35);opacity:0}}
+@keyframes sheen{0%{transform:translateX(0)}60%,100%{transform:translateX(${sweep}px)}}
+@keyframes cur{0%{opacity:1}50%{opacity:0}}
+@keyframes bar{0%{transform:translateX(-60px)}100%{transform:translateX(${barw}px)}}
+""", mono=MONO, sans=SANS, sweep=W + 300, barw=num(fill_w + 60))
 
-    defs = (f'<linearGradient id="plate" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#03100A"/>'
-            f'<stop offset="1" stop-color="#071A10"/></linearGradient>'
-            f'<linearGradient id="base" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{W}" y2="0">'
-            f'<stop offset="0" stop-color="{A}"/><stop offset=".5" stop-color="{A}" stop-opacity=".35"/>'
-            f'<stop offset="1" stop-color="{A}" stop-opacity="0"/></linearGradient>'
-            f'<linearGradient id="rail" gradientUnits="userSpaceOnUse" x1="{num(line_x1)}" y1="0" x2="{line_x2}" y2="0">'
-            f'<stop offset="0" stop-color="{A}" stop-opacity=".9"/><stop offset="1" stop-color="{A}" stop-opacity=".1"/></linearGradient>'
-            f'<linearGradient id="shine" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{A}" stop-opacity="0"/>'
-            f'<stop offset=".5" stop-color="{A}" stop-opacity=".07"/><stop offset="1" stop-color="{A}" stop-opacity="0"/></linearGradient>'
-            '<pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".8" fill="#1D4A33" fill-opacity=".6"/></pattern>'
-            '<pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="1" fill="#000" fill-opacity=".18"/></pattern>'
-            '<filter id="glowSm" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.8" result="b"/>'
-            '<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'
-            f'<clipPath id="frame"><rect width="{W}" height="{H}" rx="14"/></clipPath>')
+    defs = (f'<linearGradient id="surface" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#121217"/>'
+            f'<stop offset="1" stop-color="#0C0C10"/></linearGradient>'
+            f'<radialGradient id="halo" cx="0" cy="0" r="1"><stop offset="0" stop-color="{A}" stop-opacity=".22"/>'
+            f'<stop offset="1" stop-color="{A}" stop-opacity="0"/></radialGradient>'
+            f'<linearGradient id="duo" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{W}" y2="0">'
+            f'<stop offset="0" stop-color="{A}"/><stop offset="1" stop-color="{other}"/></linearGradient>'
+            f'<linearGradient id="prog" gradientUnits="userSpaceOnUse" x1="{prog_x}" y1="0" x2="{prog_x + prog_w}" y2="0">'
+            f'<stop offset="0" stop-color="{P["primary"]}"/><stop offset="1" stop-color="{P["accent"]}"/></linearGradient>'
+            '<linearGradient id="shine" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/>'
+            '<stop offset=".5" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
+            '<linearGradient id="bshine" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/>'
+            '<stop offset=".5" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
+            '<filter id="elev" x="-10%" y="-30%" width="120%" height="160%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity=".45"/></filter>'
+            f'<clipPath id="frame"><rect width="{W}" height="{H}" rx="16"/></clipPath>'
+            f'<clipPath id="progc"><rect x="{prog_x}" y="72" width="{num(fill_w)}" height="6" rx="3"/></clipPath>')
 
-    glow = ' filter="url(#glowSm)"'
-    b = [f'<rect width="{W}" height="{H}" fill="url(#plate)"/>', f'<rect width="{W}" height="{H}" fill="url(#dots)"/>',
-         f'<rect class="sweep" x="-240" width="240" height="{H}" fill="url(#shine)"/>']
-    b.append(f'<polygon class="spin" points="{hexagon(hx, hy, 38)}" stroke="{A}" stroke-opacity=".55" stroke-width="1.2" '
-             f'stroke-dasharray="5 7" fill="none"/>')
-    b.append(f'<polygon points="{hexagon(hx, hy, 30)}" stroke="{A}" stroke-width="2" fill="{A}" fill-opacity=".1"{glow}/>')
-    b.append(f'<text x="{hx}" y="{hy + 7}" text-anchor="middle" font-size="20" font-weight="700" fill="{A}">{idx:02d}</text>')
-    b.append(f'<text class="disp" x="{tx}" y="{ty}" font-size="34" fill="{P["text"]}" textLength="{num(title_w)}" '
-             f'lengthAdjust="spacing">{t(title)}</text>')
-    sub_svg, _ = mono_text(sub, tx + 2, ty + 26, 15, P)
+    b = [f'<rect width="{W}" height="{H}" fill="url(#surface)"/>',
+         f'<ellipse cx="{ix + isz / 2}" cy="{iy + isz / 2}" rx="260" ry="150" fill="url(#halo)"/>',
+         f'<rect class="sheen" x="-300" width="300" height="{H}" fill="url(#shine)"/>']
+    # Material tonal icon container + pulse ring + Radix icon
+    b.append(f'<rect class="ring" x="{ix}" y="{iy}" width="{isz}" height="{isz}" rx="16" fill="none" stroke="{A}" stroke-width="1.5"/>')
+    b.append(f'<rect x="{ix}" y="{iy}" width="{isz}" height="{isz}" rx="16" fill="{A}" fill-opacity=".14" stroke="{A}" stroke-opacity=".45"/>')
+    b.append(icon(glyph, ix + (isz - 28) / 2, iy + (isz - 28) / 2, 28, A))
+    # title + subtitle
+    b.append(f'<text class="sans" x="{tx}" y="58" font-size="32" font-weight="700" letter-spacing="-.5" fill="{P["text"]}">{t(title)}</text>')
+    sub_svg, _ = mono_text(sub, tx + 1, 86, 14, P)
     b.append(sub_svg)
-    b.append(f'<rect class="cur" x="{num(tx + 2 + sub_w + 5)}" y="{ty + 14}" width="8" height="15" fill="{A}" fill-opacity=".85"/>')
-    if line_x2 - line_x1 > 60:                      # rail with ticks and a travelling pulse
-        ry = ty - 18
-        ticks = "".join(f'<line x1="{num(xx)}" y1="{ry}" x2="{num(xx)}" y2="{ry - 4 if k % 4 == 0 else ry - 2}"/>'
-                        for k, xx in enumerate(range(int(line_x1), line_x2, 12)))
-        b.append(f'<line x1="{num(line_x1)}" y1="{ry}" x2="{line_x2}" y2="{ry}" stroke="url(#rail)" stroke-width="1.5"/>'
-                 f'<g stroke="{A}" stroke-opacity=".45">{ticks}</g>'
-                 f'<circle class="ride" cx="{num(line_x1 + 5)}" cy="{ry}" r="3.5" fill="{A}"{glow}/>')
-    rx_ = W - 28                                    # right-hand meta: section counter + pips
-    b.append(f'<text x="{rx_}" y="40" font-size="13" text-anchor="end" xml:space="preserve">'
-             f'<tspan fill="{A}" font-weight="700">SEC.{idx:02d}</tspan><tspan fill="{P["muted"]}"> / {total:02d}</tspan></text>')
-    pip_w, pip_gap = 9, 4
-    px0 = rx_ - total * pip_w - (total - 1) * pip_gap
-    for k in range(1, total + 1):
-        xx = px0 + (k - 1) * (pip_w + pip_gap)
-        if k < idx:
-            b.append(f'<rect x="{xx}" y="56" width="{pip_w}" height="6" rx="1" fill="{A}" fill-opacity=".55"/>')
-        elif k == idx:
-            b.append(f'<rect class="blink" x="{xx}" y="56" width="{pip_w}" height="6" rx="1" fill="{A}"{glow}/>')
-        else:
-            b.append(f'<rect x="{xx + .5}" y="56.5" width="{pip_w - 1}" height="5" rx="1" fill="none" stroke="{P["dim"]}"/>')
-    b.append(f'<text x="{rx_}" y="86" font-size="11" text-anchor="end" fill="{P["dim"]}">KAWIN.OS</text>')
-    b.append(f'<line x1="14" y1="{H - 2}" x2="{W - 14}" y2="{H - 2}" stroke="url(#base)" stroke-width="2"/>')
-    b.append(f'<rect width="{W}" height="{H}" fill="url(#scan)"/>')
+    b.append(f'<rect class="cur" x="{num(tx + 1 + sub_w + 4)}" y="74" width="7" height="14" rx="1" fill="{A}"/>')
+    # outline pill badge (shadcn "Badge variant=outline") + linear progress (Material)
+    pill = f"Section {idx:02d} / {total:02d}"
+    pw = len(pill) * 12 * MONO_RATIO + 26
+    b.append(f'<rect x="{num(W - 26 - pw)}" y="30" width="{num(pw)}" height="26" rx="13" fill="{P["panel"]}" stroke="{P["edge"]}"/>')
+    b.append(f'<circle cx="{num(W - 26 - pw + 13)}" cy="43" r="3.5" fill="{A}"/>')
+    b.append(f'<text x="{num(W - 26 - pw + 22)}" y="47.5" font-size="12" fill="{P["muted"]}">{t(pill)}</text>')
+    b.append(f'<rect x="{prog_x}" y="72" width="{prog_w}" height="6" rx="3" fill="{P["edge"]}"/>')
+    b.append(f'<rect x="{prog_x}" y="72" width="{num(fill_w)}" height="6" rx="3" fill="url(#prog)"/>')
+    b.append(f'<g clip-path="url(#progc)"><rect class="bar" x="{prog_x}" y="72" width="60" height="6" fill="url(#bshine)" opacity=".5"/></g>')
+    b.append(f'<line x1="16" y1="{H - 1.5}" x2="{W - 16}" y2="{H - 1.5}" stroke="url(#duo)" stroke-width="3" stroke-linecap="round"/>')
     body = f'<g clip-path="url(#frame)">{"".join(b)}</g>'
-    body += (f'<rect x=".75" y=".75" width="{W - 1.5}" height="{H - 1.5}" rx="13.5" fill="none" '
-             f'stroke="{A}" stroke-opacity=".32" stroke-width="1.5"/>')
+    body += (f'<rect x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="15.5" fill="none" stroke="{P["edge"]}"/>')
     return doc(W, H, f"{idx:02d} // {title}", f"Section header — {subtitle}", style, defs, body)
 
 
@@ -828,11 +838,11 @@ $rm
 @keyframes tw{0%,100%{opacity:.15}50%{opacity:1}}
 """, mono=MONO, rm=REDUCED_MOTION, floor=H - HZ)
     defs = f"""
-<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#010503"/><stop offset=".6" stop-color="#04100A"/><stop offset="1" stop-color="#0A1A0C"/></linearGradient>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#09090B"/><stop offset=".6" stop-color="#0D0D14"/><stop offset="1" stop-color="#160B1C"/></linearGradient>
 <radialGradient id="horizon" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="{P['hot']}" stop-opacity=".5"/><stop offset=".5" stop-color="{P['secondary2']}" stop-opacity=".2"/><stop offset="1" stop-color="{P['secondary2']}" stop-opacity="0"/></radialGradient>
 <linearGradient id="hline" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{W}" y2="0"><stop offset="0" stop-color="{P['secondary']}" stop-opacity="0"/><stop offset=".5" stop-color="{P['accent']}" stop-opacity=".9"/><stop offset="1" stop-color="{P['secondary']}" stop-opacity="0"/></linearGradient>
 <linearGradient id="wave" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{W}" y2="0"><stop offset="0" stop-color="{P['primary']}" stop-opacity="0"/><stop offset=".3" stop-color="{P['primary']}"/><stop offset=".7" stop-color="{P['secondary']}"/><stop offset="1" stop-color="{P['secondary']}" stop-opacity="0"/></linearGradient>
-<linearGradient id="floorFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#03140B"/><stop offset="1" stop-color="#03140B" stop-opacity="0"/></linearGradient>
+<linearGradient id="floorFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0C0C14"/><stop offset="1" stop-color="#0C0C14" stop-opacity="0"/></linearGradient>
 <linearGradient id="band" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{P['void']}" stop-opacity="0"/><stop offset=".6" stop-color="{P['void']}" stop-opacity=".85"/><stop offset="1" stop-color="{P['void']}" stop-opacity=".92"/></linearGradient>
 <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="1.2" fill="#000" fill-opacity=".16"/></pattern>
 <filter id="glowSm" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -844,7 +854,7 @@ $rm
     for _ in range(40):
         stars.append(f'<circle class="tw" style="--d:{rnd.uniform(2, 5):.1f}s;--dl:-{rnd.uniform(0, 5):.1f}s" '
                      f'cx="{rnd.uniform(16, W - 16):.0f}" cy="{rnd.uniform(14, HZ - 20):.0f}" r="{rnd.choice([0.6, 0.9, 1.2])}"/>')
-    b.append(f'<g fill="#DCFFEC">{"".join(stars)}</g>')
+    b.append(f'<g fill="#E0E7FF">{"".join(stars)}</g>')
     b.append(f'<ellipse cx="640" cy="{HZ}" rx="760" ry="70" fill="url(#horizon)"/>')
     verticals = "".join(f'<line x1="640" y1="{HZ - 60}" x2="{640 + k * 80}" y2="{H}"/>' for k in range(-22, 23))
     b.append(f'<g clip-path="url(#floorClip)" stroke="{P["primary"]}" stroke-opacity=".4" stroke-width="1.1">{verticals}</g>')
@@ -931,9 +941,9 @@ def main() -> None:
     write("terminal.svg", terminal())
     write("status.svg", status_board())
     write("footer.svg", footer())
-    accents = ["primary", "accent", "secondary"]
-    for i, (slug, title, subtitle) in enumerate(SECTIONS, start=1):
-        write(f"sections/{i:02d}-{slug}.svg", section_header(i, len(SECTIONS), title, subtitle, accents[(i - 1) % 3]))
+    for i, (slug, title, subtitle, glyph) in enumerate(SECTIONS, start=1):
+        accent = "primary" if i % 2 else "accent"          # alternate blue / pink
+        write(f"sections/{i:02d}-{slug}.svg", section_header(i, len(SECTIONS), title, subtitle, accent, glyph))
 
 if __name__ == "__main__":
     main()
