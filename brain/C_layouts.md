@@ -1,6 +1,6 @@
 # Appendix C — Layout inventory (all app layouts)
 
-211 app-specific layouts (library layouts such as `abc_*`, `mtrl_*`, `material_*`, `ucrop_*`, `design_*` are omitted). For each layout: the classes that inflate it, layouts that `<include>` it, and the full widget tree with ids and labels (English / Tamil).
+211 layouts: 209 app-specific, plus 2 Material-library `m3expressive_*` dialog layouts that are packaged with them (other library layouts such as `abc_*`, `mtrl_*`, `material_*`, `ucrop_*`, `design_*` are omitted). For each layout: the classes that inflate it, layouts that `<include>` it, and the full widget tree with ids and labels (English / Tamil).
 
 ## `ac_complex.xml`
 - Inflated by: `loananddepositanalyisreport`

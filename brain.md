@@ -1,8 +1,10 @@
 # brain.md — FinSoft II · Venus Micro-Finance Daily / Weekly Collection (Android) — complete decode
 
-> Functional specification reverse-engineered from the uploaded `base1.apk`. It covers every screen, function and data flow: all **390 app classes**, **146 activity classes** (143 declared in the manifest, plus 3 orphans), **211 app layouts**, **30 menus**, **3 services**, the local SQLite schema, and every SQL Server table and stored procedure the app uses.
+> Functional specification reverse-engineered from the uploaded `base1.apk`. It covers every screen, function and data flow: all **390 app classes**, **146 activity classes** (143 declared in the manifest, plus 3 orphans), **209 app layouts**, **30 menus**, **3 services**, the local SQLite schema, and every SQL Server table and stored procedure the app uses.
 >
 > Decoded on 2026-11-04 with **JADX 1.5.5** (Java source) and **apktool 2.12.1** (resources, manifest, smali), using the static-analysis workflow of [morluto/rea](https://github.com/morluto/rea) (APK → manifest → class/method inventory → decompilation → references). The app was never run.
+>
+> **Raw extraction:** every SQL query in full, an image of every screen (English and Tamil), all drawables, UI messages, SharedPreferences keys and intent extras are in the companion file [**work.md**](work.md).
 >
 > **Redaction policy:** the app does not hardcode database passwords. It downloads them at registration (described below). The two embedded secrets, the Google Maps API key in the manifest and an SMS-gateway API key in `editing_collectionswithfulloptions_act`, are written as `[REDACTED]`. No customer data was present in the APK.
 
@@ -43,13 +45,13 @@
 | Step | Tool | Result |
 |---|---|---|
 | Archive triage | `unzip -l`, Python | 1,819 entries, 8 DEX, assets (20 fonts, 2 images), no `lib/` |
-| Resources and manifest | apktool 2.12.1 `d` | Manifest, 337 layouts (211 app-specific), 30 menus, strings in English and Tamil, smali for all 8 DEX files |
+| Resources and manifest | apktool 2.12.1 `d` | Manifest, 337 layouts (209 app-specific, plus 2 Material-library `m3expressive_*` dialog layouts), 30 menus, strings in English and Tamil, smali for all 8 DEX files |
 | Java decompilation | JADX 1.5.5 (`--show-bad-code`) | 6,849 classes → 7,513 Java files. 40 classes had partial decompile errors (28 of them app classes, still readable; smali used as ground truth) |
 | Signing | APK Signing Block parse + `openssl x509` | v2 block only, debug certificate |
 | Cross-reference index | Custom scripts | For each of the 390 app classes: layouts, menus, screens started, intent extras, prefs keys, SQL literals (1,629), stored procedures (135), tables, URLs, methods, toasts |
 | Semantic analysis | 18 parallel reviewers, one per module, each with the module's sources and a checklist | Module chapters in §8. Every class and layout was verified as covered |
 
-**Coverage:** 390 / 390 app classes · 146 / 146 activity classes · 211 / 211 app layouts · 30 / 30 menus · 3 / 3 app services · 135 / 135 stored procedures · 70 local SQLite tables · 64 remote tables.
+**Coverage:** 390 / 390 app classes · 146 / 146 activity classes · 209 / 209 app layouts · 30 / 30 menus · 3 / 3 app services · 135 / 135 stored procedures · 70 local SQLite tables · 64 remote tables.
 
 **Decompiler caveat:** JADX sometimes replaces a numeric literal with an unrelated library constant that has the same value. For example, `PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS` in the GPS service is really the number 300000 ms, and `constantvalues.Partydetails_AccessRequest` used as a request code is really 9001. This document gives the real numbers.
 
@@ -761,9 +763,11 @@ The bulky reference material is generated straight from the decompiled code and 
 |---|---|
 | [A — Local SQLite schema](brain/A_local_sqlite_schema.md) | Every `CREATE TABLE` in the app (70 tables), with every distinct column definition and the classes that create, read and write each table |
 | [B — SQL Server tables and stored procedures](brain/B_sql_server_tables_and_procedures.md) | All 64 remote tables and all 135 stored procedures, with parameter counts, calling classes and example call text |
-| [C — Layout inventory](brain/C_layouts.md) | All 211 app layouts: which class inflates each one, `<include>` relations, and the full widget tree with ids and English/Tamil labels |
+| [C — Layout inventory](brain/C_layouts.md) | All 209 app layouts (plus the 2 Material `m3expressive_*` dialog layouts packaged alongside): which class inflates each one, `<include>` relations, and the full widget tree with ids and English/Tamil labels |
 | [D — Strings (English / Tamil)](brain/D_strings_en_ta.md) | Every app string resource in both languages, plus string arrays |
 | [E — Class index](brain/E_class_index.md) | All 390 app classes with kind, size, documenting module, layouts and decompiler warnings |
 | [F — Menus](brain/F_menus.md) | All app menus and their items, icons, default visibility and inflating classes |
+
+**Companion extraction:** [work.md](work.md) has the complete SQL catalogue (all 1,664 statements with parameters and result columns, indexed by table and stored procedure), rendered images of every screen and layout, the drawable assets, every UI message, and the SharedPreferences and intent-extra contracts.
 
 **Not recoverable from the APK:** the *bodies* of the 135 SQL Server stored procedures, the server-side table definitions (columns are inferred from the queries), the content of the `SoftSettings` / `SMSTemplates` / `AndroidMenus` rows, and the licensing server's internal logic. These exist only on the servers. The app only shows how they are called and what fields come back.
