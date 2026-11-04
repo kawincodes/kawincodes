@@ -42,10 +42,7 @@
 <!-- ═══════════════════════════════════════ 01 · WHOAMI ═══════════════════════════════════════ -->
 
 <a name="whoami"></a>
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/sections/01-whoami-dark.svg" />
-  <img src="assets/sections/01-whoami-light.svg" width="100%" alt="01 // WHOAMI — identity.sys: who I am and what I build" />
-</picture>
+<a href="#whoami"><img src="assets/sections/01-whoami.svg" width="100%" alt="01 // WHOAMI — identity.sys: who I am and what I build" /></a>
 
 <a href="#mission-select"><img src="assets/terminal.svg" width="100%" alt="Terminal session — whoami: P Kawin Raju, Full-Stack Developer · AI Builder · Cloud Enthusiast. Mission: I turn practical ideas into dependable software products. Status: open to thoughtful collaborations." /></a>
 
@@ -211,10 +208,7 @@ status:
 <!-- ═══════════════════════════════════════ 02 · CAPABILITIES ═══════════════════════════════════════ -->
 
 <a name="capabilities"></a>
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/sections/02-capabilities-dark.svg" />
-  <img src="assets/sections/02-capabilities-light.svg" width="100%" alt="02 // CAPABILITIES — modules.core: what I can deliver" />
-</picture>
+<a href="#capabilities"><img src="assets/sections/02-capabilities.svg" width="100%" alt="02 // CAPABILITIES — modules.core: what I can deliver" /></a>
 
 | MODULE | WHAT I BUILD | WHAT YOU GET |
 |:--|:--|:--|
@@ -255,10 +249,7 @@ status:
 <!-- ═══════════════════════════════════════ 03 · ARSENAL ═══════════════════════════════════════ -->
 
 <a name="arsenal"></a>
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/sections/03-arsenal-dark.svg" />
-  <img src="assets/sections/03-arsenal-light.svg" width="100%" alt="03 // ARSENAL — stack.lock: languages, frameworks, cloud and AI" />
-</picture>
+<a href="#arsenal"><img src="assets/sections/03-arsenal.svg" width="100%" alt="03 // ARSENAL — stack.lock: languages, frameworks, cloud and AI" /></a>
 
 | LAYER | LOADOUT | DEPLOYED FOR |
 |:--|:--|:--|
@@ -335,10 +326,7 @@ mindmap
 <!-- ═══════════════════════════════════════ 04 · PIPELINE ═══════════════════════════════════════ -->
 
 <a name="pipeline"></a>
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/sections/04-pipeline-dark.svg" />
-  <img src="assets/sections/04-pipeline-light.svg" width="100%" alt="04 // PIPELINE — workflow.yml: how ideas become shipped software" />
-</picture>
+<a href="#pipeline"><img src="assets/sections/04-pipeline.svg" width="100%" alt="04 // PIPELINE — workflow.yml: how ideas become shipped software" /></a>
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'fontSize':'15px', 'lineColor':'#D98E00', 'clusterBkg':'#06120C', 'clusterBorder':'#1D4A33', 'titleColor':'#7FA592'}}}%%
@@ -378,10 +366,7 @@ flowchart TB
 <!-- ═══════════════════════════════════════ 05 · ACTIVE MISSIONS ═══════════════════════════════════════ -->
 
 <a name="missions"></a>
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/sections/05-missions-dark.svg" />
-  <img src="assets/sections/05-missions-light.svg" width="100%" alt="05 // ACTIVE MISSIONS — status.live: current direction and research queue" />
-</picture>
+<a href="#missions"><img src="assets/sections/05-missions.svg" width="100%" alt="05 // ACTIVE MISSIONS — status.live: current direction and research queue" /></a>
 
 <a href="#mission-select"><img src="assets/status.svg" width="100%" alt="System status — active missions: AI-native products, SaaS foundations, platform automation, cloud-native engineering, open-source learning. Research queue: agents and retrieval, Rust backends, Kubernetes ops, event-driven systems, secure SaaS. Uplink: open to thoughtful collaborations." /></a>
 
@@ -412,10 +397,7 @@ flowchart TB
 <!-- ═══════════════════════════════════════ 06 · TELEMETRY ═══════════════════════════════════════ -->
 
 <a name="telemetry"></a>
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/sections/06-telemetry-dark.svg" />
-  <img src="assets/sections/06-telemetry-light.svg" width="100%" alt="06 // TELEMETRY — metrics.stream: live GitHub analytics" />
-</picture>
+<a href="#telemetry"><img src="assets/sections/06-telemetry.svg" width="100%" alt="06 // TELEMETRY — metrics.stream: live GitHub analytics" /></a>
 
 <div align="center">
 
@@ -458,10 +440,7 @@ flowchart TB
 <!-- ═══════════════════════════════════════ 07 · MISSION SELECT ═══════════════════════════════════════ -->
 
 <a name="mission-select"></a>
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/sections/07-mission-select-dark.svg" />
-  <img src="assets/sections/07-mission-select-light.svg" width="100%" alt="07 // MISSION SELECT — options.menu: pick a path, launch a brief" />
-</picture>
+<a href="#mission-select"><img src="assets/sections/07-mission-select.svg" width="100%" alt="07 // MISSION SELECT — options.menu: pick a path, launch a brief" /></a>
 
 #### ◢ CHOOSE YOUR PATH
 
@@ -549,10 +528,7 @@ sequenceDiagram
 <!-- ═══════════════════════════════════════ 08 · KNOWLEDGE BASE ═══════════════════════════════════════ -->
 
 <a name="knowledge-base"></a>
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/sections/08-knowledge-base-dark.svg" />
-  <img src="assets/sections/08-knowledge-base-light.svg" width="100%" alt="08 // KNOWLEDGE BASE — faq.db: quick answers" />
-</picture>
+<a href="#knowledge-base"><img src="assets/sections/08-knowledge-base.svg" width="100%" alt="08 // KNOWLEDGE BASE — faq.db: quick answers" /></a>
 
 <details>
 <summary><b>❯ Why two GitHub accounts?</b></summary>
@@ -619,7 +595,7 @@ India Standard Time — **IST, UTC+05:30**.
 <summary><b>❯ How is this profile built?</b></summary>
 <br/>
 
-- **Animated panels** (hero, terminal, status board, section headers, footer) are hand-built SVGs with CSS and SMIL animation, generated by `scripts/build_assets.py` — pure Python, no dependencies. They respect `prefers-reduced-motion`, and the section headers switch between light and dark variants with your GitHub theme.
+- **Animated panels** (hero, terminal, status board, section headers, footer) are hand-built SVGs with CSS and SMIL animation, generated by `scripts/build_assets.py` — pure Python, no dependencies. They respect `prefers-reduced-motion`, and every panel carries its own HUD background, so it looks the same in GitHub's light and dark themes.
 - **Live data** comes from GitHub Profile Summary Cards, GitHub Readme Streak Stats, Skill Icons, shields.io and the komarev profile-views counter.
 - **Diagrams** are native GitHub Mermaid blocks.
 
@@ -630,10 +606,7 @@ India Standard Time — **IST, UTC+05:30**.
 <!-- ═══════════════════════════════════════ 09 · COMMS ═══════════════════════════════════════ -->
 
 <a name="comms"></a>
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/sections/09-comms-dark.svg" />
-  <img src="assets/sections/09-comms-light.svg" width="100%" alt="09 // COMMS — uplink.cfg: open a channel" />
-</picture>
+<a href="#comms"><img src="assets/sections/09-comms.svg" width="100%" alt="09 // COMMS — uplink.cfg: open a channel" /></a>
 
 | CHANNEL | ADDRESS | BEST FOR |
 |:--|:--|:--|

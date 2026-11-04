@@ -8,7 +8,7 @@ Builds every custom animated SVG panel used by README.md:
     assets/terminal.svg          typed `whoami` terminal session
     assets/status.svg            "system status" dashboard
     assets/footer.svg            end-of-transmission footer
-    assets/sections/*.svg        section headers (dark + light variants)
+    assets/sections/*.svg        section headers (self-contained HUD strips)
 
 Standard library only. Edit the CONTENT block below, then run:
 
@@ -79,7 +79,7 @@ TERMINAL = [
     ("cmd", ""),
 ]
 
-SECTIONS = [  # (slug, title, subtitle)  -> assets/sections/NN-slug-{dark,light}.svg
+SECTIONS = [  # (slug, title, subtitle)  -> assets/sections/NN-slug.svg
     ("whoami", "WHOAMI", "identity.sys · who I am & what I build"),
     ("capabilities", "CAPABILITIES", "modules.core · what I can deliver"),
     ("arsenal", "ARSENAL", "stack.lock · languages, frameworks, cloud & AI"),
@@ -130,7 +130,7 @@ DISPLAY = ("'Orbitron','Rajdhani','Bahnschrift','DIN Alternate','Eurostile',"
 MONO_RATIO = 0.6  # advance width of one monospace glyph, in em
 
 # Theme: neon-green "phosphor terminal" HUD with amber accents (no pink / blue).
-# Every colour in every panel comes from these two dicts - retheme here.
+# Every colour in every panel comes from this dict - retheme here.
 DARK = dict(
     void="#010402", deep="#03100A", panel="#061A10", panel2="#0A2416",
     edge="#16402A", grid="#1D5A3A",
@@ -142,11 +142,6 @@ DARK = dict(
     accent="#FFB000",      # amber
     hot="#FF6A00",         # ember orange (glitch / hot spots)
     ok="#3DFF8A",          # status green
-)
-LIGHT = dict(  # deeper tones that stay readable on GitHub's white background
-    text="#1F2328", muted="#57606A", dim="#AFB8C1", edge="#D0D7DE",
-    primary="#047857", glow="#065F46", secondary="#4D7C0F", secondary2="#3F6212",
-    accent="#B45309", hot="#C2410C", ok="#15803D",
 )
 
 # ════════════════════════════════════════════════════════════════════════
@@ -720,17 +715,18 @@ text{font-family:$mono}
 # ════════════════════════════════════════════════════════════════════════
 
 
-def section_header(idx: int, total: int, title: str, subtitle: str, theme: str, accent: str) -> str:
-    P = DARK if theme == "dark" else LIGHT
+def section_header(idx: int, total: int, title: str, subtitle: str, accent: str) -> str:
+    """A self-contained HUD strip: it carries its own background plate, so it reads
+    the same on GitHub's light and dark themes (no <picture>/srcset switching)."""
+    P = DARK
     A = P[accent]
-    W, H = 1000, 96
-    hx, hy = 42, 46
+    W, H = 1000, 104
+    hx, hy = 54, 52
+    tx, ty = 108, 60
     title_w = display_width(title, 34, 0.1)
     sub = [("// ", accent, True), (subtitle, "muted", False)]
-    sub_n = sum(len(s[0]) for s in sub)
-    sub_w = sub_n * 15 * MONO_RATIO
-    line_x1 = 96 + title_w + 28        # rail sits beside the title (y=38), clear of the subtitle row
-    line_x2 = 850
+    sub_w = sum(len(s[0]) for s in sub) * 15 * MONO_RATIO
+    line_x1, line_x2 = tx + title_w + 28, 830   # rail sits beside the title, clear of the subtitle row
     travel = max(line_x2 - line_x1 - 10, 40)
 
     style = css("""
@@ -741,54 +737,69 @@ text{font-family:$mono}
  .blink{animation:blink 1.1s steps(1) infinite}
  .ride{animation:ride 3.4s ease-in-out infinite alternate}
  .cur{animation:cur 1.6s ease-in-out infinite}
+ .sweep{animation:sweep 6s linear infinite}
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes blink{0%{opacity:1}50%{opacity:0}}
 @keyframes ride{from{transform:translateX(0)}to{transform:translateX(${travel}px)}}
 @keyframes cur{0%,100%{opacity:1}50%{opacity:.35}}
-""", mono=MONO, display=DISPLAY, hx=hx, hy=hy, travel=num(travel))
+@keyframes sweep{from{transform:translateX(0)}to{transform:translateX(${sweep}px)}}
+""", mono=MONO, display=DISPLAY, hx=hx, hy=hy, travel=num(travel), sweep=W + 240)
 
-    defs = (f'<linearGradient id="base" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{W}" y2="0">'
-            f'<stop offset="0" stop-color="{A}"/><stop offset=".45" stop-color="{P["secondary"]}" stop-opacity=".6"/>'
-            f'<stop offset="1" stop-color="{P["secondary"]}" stop-opacity="0"/></linearGradient>'
+    defs = (f'<linearGradient id="plate" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#03100A"/>'
+            f'<stop offset="1" stop-color="#071A10"/></linearGradient>'
+            f'<linearGradient id="base" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{W}" y2="0">'
+            f'<stop offset="0" stop-color="{A}"/><stop offset=".5" stop-color="{A}" stop-opacity=".35"/>'
+            f'<stop offset="1" stop-color="{A}" stop-opacity="0"/></linearGradient>'
             f'<linearGradient id="rail" gradientUnits="userSpaceOnUse" x1="{num(line_x1)}" y1="0" x2="{line_x2}" y2="0">'
             f'<stop offset="0" stop-color="{A}" stop-opacity=".9"/><stop offset="1" stop-color="{A}" stop-opacity=".1"/></linearGradient>'
+            f'<linearGradient id="shine" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{A}" stop-opacity="0"/>'
+            f'<stop offset=".5" stop-color="{A}" stop-opacity=".07"/><stop offset="1" stop-color="{A}" stop-opacity="0"/></linearGradient>'
+            '<pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".8" fill="#1D4A33" fill-opacity=".6"/></pattern>'
+            '<pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="1" fill="#000" fill-opacity=".18"/></pattern>'
             '<filter id="glowSm" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.8" result="b"/>'
-            '<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>')
+            '<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'
+            f'<clipPath id="frame"><rect width="{W}" height="{H}" rx="14"/></clipPath>')
 
-    glow = ' filter="url(#glowSm)"' if theme == "dark" else ""
-    b = []
+    glow = ' filter="url(#glowSm)"'
+    b = [f'<rect width="{W}" height="{H}" fill="url(#plate)"/>', f'<rect width="{W}" height="{H}" fill="url(#dots)"/>',
+         f'<rect class="sweep" x="-240" width="240" height="{H}" fill="url(#shine)"/>']
     b.append(f'<polygon class="spin" points="{hexagon(hx, hy, 38)}" stroke="{A}" stroke-opacity=".55" stroke-width="1.2" '
              f'stroke-dasharray="5 7" fill="none"/>')
     b.append(f'<polygon points="{hexagon(hx, hy, 30)}" stroke="{A}" stroke-width="2" fill="{A}" fill-opacity=".1"{glow}/>')
     b.append(f'<text x="{hx}" y="{hy + 7}" text-anchor="middle" font-size="20" font-weight="700" fill="{A}">{idx:02d}</text>')
-    b.append(f'<text class="disp" x="96" y="56" font-size="34" fill="{P["text"]}" textLength="{num(title_w)}" '
+    b.append(f'<text class="disp" x="{tx}" y="{ty}" font-size="34" fill="{P["text"]}" textLength="{num(title_w)}" '
              f'lengthAdjust="spacing">{t(title)}</text>')
-    sub_svg, _ = mono_text(sub, 98, 82, 15, P)
+    sub_svg, _ = mono_text(sub, tx + 2, ty + 26, 15, P)
     b.append(sub_svg)
-    b.append(f'<rect class="cur" x="{num(98 + sub_w + 5)}" y="70" width="8" height="15" fill="{A}" fill-opacity=".85"/>')
-    # rail with ticks and a travelling pulse
-    if line_x2 - line_x1 > 60:
-        ticks = "".join(f'<line x1="{num(xx)}" y1="38" x2="{num(xx)}" y2="{34 if k % 4 == 0 else 36}"/>'
+    b.append(f'<rect class="cur" x="{num(tx + 2 + sub_w + 5)}" y="{ty + 14}" width="8" height="15" fill="{A}" fill-opacity=".85"/>')
+    if line_x2 - line_x1 > 60:                      # rail with ticks and a travelling pulse
+        ry = ty - 18
+        ticks = "".join(f'<line x1="{num(xx)}" y1="{ry}" x2="{num(xx)}" y2="{ry - 4 if k % 4 == 0 else ry - 2}"/>'
                         for k, xx in enumerate(range(int(line_x1), line_x2, 12)))
-        b.append(f'<line x1="{num(line_x1)}" y1="38" x2="{line_x2}" y2="38" stroke="url(#rail)" stroke-width="1.5"/>'
+        b.append(f'<line x1="{num(line_x1)}" y1="{ry}" x2="{line_x2}" y2="{ry}" stroke="url(#rail)" stroke-width="1.5"/>'
                  f'<g stroke="{A}" stroke-opacity=".45">{ticks}</g>'
-                 f'<circle class="ride" cx="{num(line_x1 + 5)}" cy="38" r="3.5" fill="{A}"{glow}/>')
-    # right-hand meta: section counter + pips
-    b.append(f'<text x="{W}" y="34" font-size="13" text-anchor="end" xml:space="preserve">'
+                 f'<circle class="ride" cx="{num(line_x1 + 5)}" cy="{ry}" r="3.5" fill="{A}"{glow}/>')
+    rx_ = W - 28                                    # right-hand meta: section counter + pips
+    b.append(f'<text x="{rx_}" y="40" font-size="13" text-anchor="end" xml:space="preserve">'
              f'<tspan fill="{A}" font-weight="700">SEC.{idx:02d}</tspan><tspan fill="{P["muted"]}"> / {total:02d}</tspan></text>')
     pip_w, pip_gap = 9, 4
-    px0 = W - total * pip_w - (total - 1) * pip_gap
+    px0 = rx_ - total * pip_w - (total - 1) * pip_gap
     for k in range(1, total + 1):
         xx = px0 + (k - 1) * (pip_w + pip_gap)
         if k < idx:
-            b.append(f'<rect x="{xx}" y="50" width="{pip_w}" height="6" rx="1" fill="{A}" fill-opacity=".55"/>')
+            b.append(f'<rect x="{xx}" y="56" width="{pip_w}" height="6" rx="1" fill="{A}" fill-opacity=".55"/>')
         elif k == idx:
-            b.append(f'<rect class="blink" x="{xx}" y="50" width="{pip_w}" height="6" rx="1" fill="{A}"{glow}/>')
+            b.append(f'<rect class="blink" x="{xx}" y="56" width="{pip_w}" height="6" rx="1" fill="{A}"{glow}/>')
         else:
-            b.append(f'<rect x="{xx + .5}" y="50.5" width="{pip_w - 1}" height="5" rx="1" fill="none" stroke="{P["dim"]}"/>')
-    b.append(f'<line x1="0" y1="93" x2="{W}" y2="93" stroke="url(#base)" stroke-width="1.6"/>')
-    return doc(W, H, f"{idx:02d} // {title}", f"Section header — {subtitle}", style, defs, "".join(b))
+            b.append(f'<rect x="{xx + .5}" y="56.5" width="{pip_w - 1}" height="5" rx="1" fill="none" stroke="{P["dim"]}"/>')
+    b.append(f'<text x="{rx_}" y="86" font-size="11" text-anchor="end" fill="{P["dim"]}">KAWIN.OS</text>')
+    b.append(f'<line x1="14" y1="{H - 2}" x2="{W - 14}" y2="{H - 2}" stroke="url(#base)" stroke-width="2"/>')
+    b.append(f'<rect width="{W}" height="{H}" fill="url(#scan)"/>')
+    body = f'<g clip-path="url(#frame)">{"".join(b)}</g>'
+    body += (f'<rect x=".75" y=".75" width="{W - 1.5}" height="{H - 1.5}" rx="13.5" fill="none" '
+             f'stroke="{A}" stroke-opacity=".32" stroke-width="1.5"/>')
+    return doc(W, H, f"{idx:02d} // {title}", f"Section header — {subtitle}", style, defs, body)
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -922,10 +933,7 @@ def main() -> None:
     write("footer.svg", footer())
     accents = ["primary", "accent", "secondary"]
     for i, (slug, title, subtitle) in enumerate(SECTIONS, start=1):
-        for theme in ("dark", "light"):
-            write(f"sections/{i:02d}-{slug}-{theme}.svg",
-                  section_header(i, len(SECTIONS), title, subtitle, theme, accents[(i - 1) % 3]))
-
+        write(f"sections/{i:02d}-{slug}.svg", section_header(i, len(SECTIONS), title, subtitle, accents[(i - 1) % 3]))
 
 if __name__ == "__main__":
     main()
