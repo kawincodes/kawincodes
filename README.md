@@ -196,7 +196,12 @@ status:
   conditions:
     - type: Learning
       status: "True"
-      message: agents & retrieval · Rust backends · Kubernetes observability · event-driven systems · secure SaaS
+      topics:
+        - agents & retrieval
+        - rust backends
+        - kubernetes observability
+        - event-driven systems
+        - secure multi-tenant saas
 ```
 
 </details>
@@ -288,7 +293,7 @@ status:
 <br/>
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#04110B', 'primaryTextColor':'#E8FFF3', 'primaryBorderColor':'#00FF9C', 'lineColor':'#FFB000', 'cScale0':'#00FF9C', 'cScale1':'#FFB000', 'cScale2':'#B6FF3B', 'cScale3':'#00C27A', 'cScale4':'#FF8A00', 'cScale5':'#8FD400', 'cScale6':'#00FF9C', 'cScale7':'#FFB000', 'cScale8':'#B6FF3B', 'cScaleLabel0':'#03140B', 'cScaleLabel1':'#1A1000', 'cScaleLabel2':'#0D1400', 'cScaleLabel3':'#03140B', 'cScaleLabel4':'#1A0E00', 'cScaleLabel5':'#0D1400', 'cScaleLabel6':'#03140B', 'cScaleLabel7':'#1A1000', 'cScaleLabel8':'#0D1400'}}}%%
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#04110B', 'primaryTextColor':'#E8FFF3', 'primaryBorderColor':'#00FF9C', 'lineColor':'#FFB000', 'cScale0':'#00FF9C', 'cScale1':'#FFB000', 'cScale2':'#B6FF3B', 'cScale3':'#00C27A', 'cScale4':'#FF8A00', 'cScale5':'#8FD400', 'cScale6':'#00FF9C', 'cScale7':'#FFB000', 'cScale8':'#B6FF3B', 'cScaleInv0':'#04110B', 'cScaleInv1':'#140E02', 'cScaleInv2':'#0B1404', 'cScaleInv3':'#04110B', 'cScaleInv4':'#140E02', 'cScaleInv5':'#0B1404', 'cScaleInv6':'#04110B', 'cScaleInv7':'#140E02', 'cScaleInv8':'#0B1404', 'cScaleLabel0':'#03140B', 'cScaleLabel1':'#1A1000', 'cScaleLabel2':'#0D1400', 'cScaleLabel3':'#03140B', 'cScaleLabel4':'#1A0E00', 'cScaleLabel5':'#0D1400', 'cScaleLabel6':'#03140B', 'cScaleLabel7':'#1A1000', 'cScaleLabel8':'#0D1400'}}}%%
 mindmap
   root((KAWIN.OS))
     Frontend
@@ -336,7 +341,7 @@ mindmap
 </picture>
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'fontSize':'15px', 'lineColor':'#D98E00', 'textColor':'#FFB000', 'edgeLabelBackground':'#0A0F0B', 'clusterBkg':'#06120C', 'clusterBorder':'#1D4A33', 'titleColor':'#7FA592'}}}%%
+%%{init: {'theme':'base', 'themeVariables': {'fontSize':'15px', 'lineColor':'#D98E00', 'clusterBkg':'#06120C', 'clusterBorder':'#1D4A33', 'titleColor':'#7FA592'}}}%%
 flowchart TB
     subgraph PLAN ["◢ STAGE 1 · PLAN"]
         direction LR
@@ -351,10 +356,11 @@ flowchart TB
         R(["DEPLOY"]):::a --> O(["OBSERVE"]):::a
     end
     PLAN --> MAKE --> RUN
-    RUN -. "learn + iterate" .-> PLAN
+    RUN -.-> L(["↺ LEARN + ITERATE → BACK TO STAGE 1"]):::loop
     classDef g fill:#04110B,stroke:#00FF9C,stroke-width:2px,color:#E8FFF3
     classDef l fill:#0B1404,stroke:#B6FF3B,stroke-width:2px,color:#F4FFE0
     classDef a fill:#140E02,stroke:#FFB000,stroke-width:2px,color:#FFF4D6
+    classDef loop fill:#0A0F0B,stroke:#FFB000,stroke-width:1.5px,stroke-dasharray:5 4,color:#FFB000
 ```
 
 | # | PHASE | WHAT HAPPENS | OUTPUT |
