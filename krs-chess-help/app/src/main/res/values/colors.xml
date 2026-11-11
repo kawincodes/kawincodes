@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App palette: board green, piece cream and a quiet teal on a near-black green. -->
+    <color name="krs_primary">#FFA9D18E</color>
+    <color name="krs_on_primary">#FF18370A</color>
+    <color name="krs_primary_container">#FF2F4E21</color>
+    <color name="krs_on_primary_container">#FFC4EEA8</color>
+    <color name="krs_secondary">#FFE3C598</color>
+    <color name="krs_on_secondary">#FF402D0B</color>
+    <color name="krs_secondary_container">#FF594320</color>
+    <color name="krs_on_secondary_container">#FFFFDEAF</color>
+    <color name="krs_tertiary">#FFA0CFD2</color>
+    <color name="krs_on_tertiary">#FF00373A</color>
+    <color name="krs_tertiary_container">#FF1E4D51</color>
+    <color name="krs_on_tertiary_container">#FFBCEBEE</color>
+    <color name="krs_error">#FFFFB4AB</color>
+    <color name="krs_on_error">#FF690005</color>
+    <color name="krs_error_container">#FF93000A</color>
+    <color name="krs_on_error_container">#FFFFDAD6</color>
+    <color name="krs_background">#FF11140E</color>
+    <color name="krs_on_background">#FFE1E4D9</color>
+    <color name="krs_surface_variant">#FF44483E</color>
+    <color name="krs_on_surface_variant">#FFC4C8BA</color>
+    <color name="krs_outline">#FF8E9286</color>
+    <color name="krs_outline_variant">#FF44483E</color>
+    <color name="krs_surface_bright">#FF373A33</color>
+    <color name="krs_surface_container_lowest">#FF0C0F09</color>
+    <color name="krs_surface_container_low">#FF191D16</color>
+    <color name="krs_surface_container">#FF1D211A</color>
+    <color name="krs_surface_container_high">#FF282B24</color>
+    <color name="krs_surface_container_highest">#FF33362E</color>
+    <color name="krs_inverse_surface">#FFE1E4D9</color>
+    <color name="krs_inverse_on_surface">#FF2E312A</color>
+    <color name="krs_inverse_primary">#FF48682F</color>
+
+    <!-- Launcher icon -->
+    <color name="icon_board_dark">#FF2E4A27</color>
+    <color name="icon_board_light">#FF3D5E33</color>
+    <color name="icon_knight">#FFF1E7CD</color>
+
+    <!-- Mini board -->
+    <color name="board_light">#FFECE3C6</color>
+    <color name="board_dark">#FF6F9A5B</color>
+    <color name="board_move_highlight">#99F4E04D</color>
+    <color name="piece_white_fill">#FFFFFFFF</color>
+    <color name="piece_white_outline">#FF1C1C1C</color>
+    <color name="piece_black_fill">#FF1A1A1A</color>
+    <color name="piece_black_outline">#FFF4F4F4</color>
+    <color name="arrow_fill">#FFFF9100</color>
+    <color name="arrow_outline">#FF3A2100</color>
+    <color name="arrow_target_fill">#40FF9100</color>
+
+    <!-- Floating overlay (explicit colours: it is drawn outside any activity) -->
+    <color name="overlay_surface">#F5191D16</color>
+    <color name="overlay_outline">#FF4A5043</color>
+    <color name="overlay_bubble">#F52F4E21</color>
+    <color name="overlay_accent">#FFF1E7CD</color>
+    <color name="overlay_text">#FFE7EADF</color>
+    <color name="overlay_text_muted">#FFB4B9AA</color>
+    <color name="overlay_move">#FFB5E09A</color>
+    <color name="overlay_error">#FFFFB4AB</color>
+    <color name="overlay_threat">#FFE9C897</color>
+    <color name="overlay_button">#FF2C3127</color>
+    <color name="overlay_button_active">#FF3B5F2B</color>
+    <color name="overlay_button_stop">#FF5B2420</color>
+    <color name="overlay_ripple">#40FFFFFF</color>
+    <color name="overlay_chip_good">#FF37602A</color>
+    <color name="overlay_chip_neutral">#FF45493E</color>
+    <color name="overlay_chip_bad">#FF7A2B25</color>
+</resources>

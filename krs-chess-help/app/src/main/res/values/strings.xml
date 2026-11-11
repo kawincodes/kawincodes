@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KRS Chess Help</string>
+    <string name="app_tagline">Reads the chess board on your screen and suggests a move.</string>
+
+    <!-- API key -->
+    <string name="section_api_key">Claude API key</string>
+    <string name="api_key_hint">Anthropic API key</string>
+    <string name="api_key_help">Create a key at console.anthropic.com. It is stored encrypted on this device and is only sent to the API. To remove it, clear the field and save.</string>
+    <string name="api_key_open_console">Open console.anthropic.com</string>
+    <string name="api_key_console_url" translatable="false">https://console.anthropic.com/</string>
+    <string name="api_key_save">Save</string>
+    <string name="api_key_test">Test connection</string>
+    <string name="api_key_status_none">No API key saved.</string>
+    <string name="api_key_status_saved">API key saved.</string>
+    <string name="api_key_status_removed">API key removed.</string>
+    <string name="api_key_status_save_failed">This device could not store the key securely, so it was not saved.</string>
+    <string name="api_key_status_empty">Enter an API key first.</string>
+    <string name="api_key_status_testing">Testing the connection…</string>
+    <string name="api_key_status_test_ok">Connection OK: %1$s</string>
+    <string name="api_key_status_test_failed">Connection failed: %1$s</string>
+    <string name="error_unknown">unknown error</string>
+    <string name="error_no_app_for_link">No app on this device can open that.</string>
+    <string name="session_not_wired">The capture service is not part of this build yet.</string>
+
+    <!-- Model and analysis -->
+    <string name="section_analysis">Analysis</string>
+    <string name="model_title">Model</string>
+    <string name="model_note_opus">Best accuracy (default)</string>
+    <string name="model_note_sonnet">Fast and cheaper</string>
+    <string name="model_note_haiku">Fastest, lowest cost</string>
+    <string name="model_note_fable">Most capable, highest cost</string>
+    <string name="model_choice">%1$s — %2$s</string>
+    <string name="effort_title">Thinking effort</string>
+    <string name="effort_low">Low</string>
+    <string name="effort_medium">Medium</string>
+    <string name="effort_high">High</string>
+    <string name="advise_for_title">Advise for</string>
+    <string name="advise_for_bottom">Side at the bottom</string>
+    <string name="advise_for_white">White</string>
+    <string name="advise_for_black">Black</string>
+    <string name="advise_for_both">Both</string>
+
+    <!-- Switches -->
+    <string name="section_behaviour">Behaviour</string>
+    <string name="auto_advise_title">Auto-advise when the board changes</string>
+    <string name="auto_advise_note">Watches the board and suggests a move as soon as it is your turn. Each suggestion is one paid API request.</string>
+    <string name="draw_on_board_title">Draw the move arrow over the board</string>
+    <string name="draw_on_board_note">Shows the suggested move directly on top of the chess app.</string>
+    <string name="send_screen_title">Send a full-screen screenshot for context</string>
+    <string name="send_screen_note">Improves turn detection (clocks, move list), but sends more of your screen than just the board.</string>
+
+    <!-- Advanced -->
+    <string name="section_advanced">Advanced</string>
+    <string name="base_url_hint">Custom API base URL</string>
+    <string name="base_url_help">Leave empty to use api.anthropic.com.</string>
+    <string name="base_url_error">Enter a full https:// address. This value is not saved.</string>
+
+    <!-- Permissions -->
+    <string name="section_permissions">Permissions</string>
+    <string name="perm_overlay_title">Display over other apps</string>
+    <string name="perm_overlay_granted">Allowed</string>
+    <string name="perm_overlay_missing">Required to show the floating button and the move.</string>
+    <string name="perm_notifications_title">Notifications</string>
+    <string name="perm_notifications_granted">Allowed</string>
+    <string name="perm_notifications_missing">Recommended: shows that capture is running and lets you stop it.</string>
+    <string name="perm_grant">Allow</string>
+    <string name="perm_open_settings">Settings</string>
+
+    <!-- Start / stop -->
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="status_running">Running. Open your chess app and tap the floating knight.</string>
+    <string name="status_ready">Ready to start.</string>
+    <string name="status_need_overlay">Allow “Display over other apps” to start.</string>
+    <string name="status_need_key">No API key saved: you will be asked whether to use the local engine only.</string>
+    <string name="status_capture_denied">Screen capture was not allowed, so nothing was started.</string>
+    <string name="status_capture_unavailable">Screen capture is not available on this device.</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_overlay_title">Permission needed</string>
+    <string name="dialog_overlay_message">KRS Chess Help shows its button and the suggested move on top of your chess app. Allow “Display over other apps” for KRS Chess Help, then come back and press Start.</string>
+    <string name="dialog_overlay_open">Open settings</string>
+    <string name="dialog_no_key_title">No API key</string>
+    <string name="dialog_no_key_message">Without a Claude API key the app cannot read a board from the screen with Claude. It can only suggest moves from its small built-in engine, which is much weaker and works only while it can follow the game from the starting position.</string>
+    <string name="dialog_no_key_add">Add a key</string>
+    <string name="dialog_no_key_local">Use local engine only</string>
+    <string name="disclosure_title">Before you start</string>
+    <string name="disclosure_message">What this app does while it is running:\n\n• It captures your screen. Stop it from the floating panel, the notification or this screen.\n\n• It sends the image of the chess board to Anthropic\'s API to be analysed. If “Send a full-screen screenshot” is on, a downscaled picture of your whole screen is sent too, including anything else visible on it.\n\n• Requests are made with your own API key. Every analysis costs money, charged by Anthropic to your account.\n\nFair play: this app is meant for study, puzzles, analysis and games against bots. Using move assistance in live games against other people breaks the rules of chess sites and can get your account closed.</string>
+    <string name="disclosure_accept">I understand</string>
+
+    <!-- Floating overlay -->
+    <string name="overlay_bubble_description">KRS Chess Help: suggest a move</string>
+    <string name="overlay_bubble_alert">!</string>
+    <string name="overlay_title_ready">Ready</string>
+    <string name="overlay_title_working">Working…</string>
+    <string name="overlay_hide">Hide</string>
+    <string name="overlay_rescan">Rescan</string>
+    <string name="overlay_switch_turn">Switch turn</string>
+    <string name="overlay_flip">Flip</string>
+    <string name="overlay_auto_on">Auto: on</string>
+    <string name="overlay_auto_off">Auto: off</string>
+    <string name="overlay_stop">Stop</string>
+    <string name="overlay_alternatives_label">Also good</string>
+    <string name="overlay_alternative_with_note">%1$s — %2$s</string>
+    <string name="overlay_threat">Watch out: %1$s</string>
+    <string name="overlay_mini_board_description">Board as read from the screen</string>
+    <string name="overlay_mini_board_move_description">Board as read from the screen, suggested move %1$s</string>
+</resources>

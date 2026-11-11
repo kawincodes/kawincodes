@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.KrsChessHelp" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/krs_primary</item>
+        <item name="colorOnPrimary">@color/krs_on_primary</item>
+        <item name="colorPrimaryContainer">@color/krs_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/krs_on_primary_container</item>
+        <item name="colorPrimaryInverse">@color/krs_inverse_primary</item>
+        <item name="colorSecondary">@color/krs_secondary</item>
+        <item name="colorOnSecondary">@color/krs_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/krs_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/krs_on_secondary_container</item>
+        <item name="colorTertiary">@color/krs_tertiary</item>
+        <item name="colorOnTertiary">@color/krs_on_tertiary</item>
+        <item name="colorTertiaryContainer">@color/krs_tertiary_container</item>
+        <item name="colorOnTertiaryContainer">@color/krs_on_tertiary_container</item>
+        <item name="colorError">@color/krs_error</item>
+        <item name="colorOnError">@color/krs_on_error</item>
+        <item name="colorErrorContainer">@color/krs_error_container</item>
+        <item name="colorOnErrorContainer">@color/krs_on_error_container</item>
+        <item name="android:colorBackground">@color/krs_background</item>
+        <item name="colorOnBackground">@color/krs_on_background</item>
+        <item name="colorSurface">@color/krs_background</item>
+        <item name="colorOnSurface">@color/krs_on_background</item>
+        <item name="colorSurfaceVariant">@color/krs_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/krs_on_surface_variant</item>
+        <item name="colorSurfaceInverse">@color/krs_inverse_surface</item>
+        <item name="colorOnSurfaceInverse">@color/krs_inverse_on_surface</item>
+        <item name="colorOutline">@color/krs_outline</item>
+        <item name="colorOutlineVariant">@color/krs_outline_variant</item>
+        <item name="colorSurfaceDim">@color/krs_background</item>
+        <item name="colorSurfaceBright">@color/krs_surface_bright</item>
+        <item name="colorSurfaceContainerLowest">@color/krs_surface_container_lowest</item>
+        <item name="colorSurfaceContainerLow">@color/krs_surface_container_low</item>
+        <item name="colorSurfaceContainer">@color/krs_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/krs_surface_container_high</item>
+        <item name="colorSurfaceContainerHighest">@color/krs_surface_container_highest</item>
+    </style>
+
+    <!-- Screen sections -->
+    <style name="Widget.Krs.SectionCard" parent="Widget.Material3.CardView.Filled">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/section_spacing</item>
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainer</item>
+        <item name="contentPadding">@dimen/card_padding</item>
+    </style>
+
+    <style name="Widget.Krs.SectionTitle" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?attr/textAppearanceTitleMedium</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+
+    <style name="Widget.Krs.Caption" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- A two-line row that opens a chooser. -->
+    <style name="Widget.Krs.PickerRow" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="Widget.Krs.RowTitle" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyLarge</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <!-- Floating panel -->
+    <style name="Widget.Krs.OverlayButton" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/overlay_text</item>
+        <item name="android:background">@drawable/overlay_button_bg</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+</resources>

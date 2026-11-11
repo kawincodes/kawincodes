@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.krstech.chesshelp.overlay.OverlayRootLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/panelRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.krstech.chesshelp.overlay.MaxHeightLinearLayout
+        android:id="@+id/panelCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/overlay_panel_bg"
+        android:orientation="vertical">
+
+        <!-- Header: drag here to move the panel. -->
+        <LinearLayout
+            android:id="@+id/panelHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:minHeight="46dp"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="4dp">
+
+            <TextView
+                android:id="@+id/panelTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="8dp"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:textColor="@color/overlay_text"
+                android:textSize="15sp"
+                android:drawableStart="@drawable/ic_knight" />
+
+            <Button
+                android:id="@+id/hideButton"
+                style="@style/Widget.Krs.OverlayButton"
+                android:layout_width="wrap_content"
+                android:layout_weight="0"
+                android:background="?android:attr/selectableItemBackground"
+                android:minWidth="56dp"
+                android:text="@string/overlay_hide"
+                android:textColor="@color/overlay_text_muted" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/panelProgress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/overlay_move"
+            android:visibility="gone" />
+
+        <ScrollView
+            android:id="@+id/panelScroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:overScrollMode="ifContentScrolls"
+            android:scrollbars="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="8dp">
+
+                <LinearLayout
+                    android:id="@+id/summaryRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.krstech.chesshelp.overlay.MiniBoardView
+                        android:id="@+id/miniBoard"
+                        android:layout_width="@dimen/overlay_mini_board_size"
+                        android:layout_height="@dimen/overlay_mini_board_size"
+                        android:layout_marginEnd="12dp" />
+
+                    <LinearLayout
+                        android:id="@+id/moveColumn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/moveText"
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:autoSizeMaxTextSize="32sp"
+                            android:autoSizeMinTextSize="16sp"
+                            android:autoSizeStepGranularity="1sp"
+                            android:autoSizeTextType="uniform"
+                            android:fontFamily="sans-serif-medium"
+                            android:gravity="center_vertical"
+                            android:maxLines="1"
+                            android:textColor="@color/overlay_move" />
+
+                        <TextView
+                            android:id="@+id/evalChip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:background="@drawable/overlay_chip_bg"
+                            android:fontFamily="sans-serif-medium"
+                            android:maxLines="1"
+                            android:paddingStart="10dp"
+                            android:paddingTop="3dp"
+                            android:paddingEnd="10dp"
+                            android:paddingBottom="3dp"
+                            android:textColor="@color/overlay_text"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/sourceText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:textColor="@color/overlay_text_muted"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/bodyText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingMultiplier="1.1"
+                    android:textColor="@color/overlay_text"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/alternativesText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingMultiplier="1.1"
+                    android:textColor="@color/overlay_text_muted"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/threatText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/overlay_threat"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/footerText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/overlay_text_muted"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
+
+            <Button
+                android:id="@+id/rescanButton"
+                style="@style/Widget.Krs.OverlayButton"
+                android:text="@string/overlay_rescan" />
+
+            <Button
+                android:id="@+id/switchTurnButton"
+                style="@style/Widget.Krs.OverlayButton"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1.4"
+                android:text="@string/overlay_switch_turn" />
+
+            <Button
+                android:id="@+id/flipButton"
+                style="@style/Widget.Krs.OverlayButton"
+                android:layout_marginStart="6dp"
+                android:text="@string/overlay_flip" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp">
+
+            <Button
+                android:id="@+id/autoButton"
+                style="@style/Widget.Krs.OverlayButton"
+                android:layout_weight="2"
+                android:text="@string/overlay_auto_off" />
+
+            <Button
+                android:id="@+id/stopButton"
+                style="@style/Widget.Krs.OverlayButton"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/overlay_button_stop_bg"
+                android:text="@string/overlay_stop" />
+        </LinearLayout>
+    </com.krstech.chesshelp.overlay.MaxHeightLinearLayout>
+</com.krstech.chesshelp.overlay.OverlayRootLayout>

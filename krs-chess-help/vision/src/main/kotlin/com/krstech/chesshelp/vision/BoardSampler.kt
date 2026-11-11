@@ -76,6 +76,9 @@ object BoardSampler {
         var toneCount = 0
         /** Solid bright share of the solid interior: near 1 for a light piece, near 0 for a dark one. */
         var lightness = 0f
+        var plainBright = 0f
+        var thickBright = 0f
+        var thickDark = 0f
     }
 
     /** Per-cell features plus the working-resolution luma and piece-interior mask of every cell. */
@@ -472,6 +475,13 @@ object BoardSampler {
             }
             val thickBright = erodedCount(a, scratch, n, rounds)
             val thickDark = erodedCount(b, scratch, n, rounds)
+            run {
+                var above = 0
+                for (k in split / binWidth until TONE_BINS) above += f.toneHist[k]
+                f.plainBright = above.toFloat() / f.toneCount
+                f.thickBright = thickBright.toFloat() / f.toneCount
+                f.thickDark = thickDark.toFloat() / f.toneCount
+            }
             f.lightness = if (thickBright + thickDark > 0) thickBright.toFloat() / (thickBright + thickDark) else {
                 // nothing solid at all (a tiny or very thin piece): fall back to the plain share
                 var above = 0

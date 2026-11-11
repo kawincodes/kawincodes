@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.krstech.chesshelp.overlay.OverlayRootLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bubbleRoot"
+    android:layout_width="@dimen/overlay_bubble_size"
+    android:layout_height="@dimen/overlay_bubble_size"
+    android:background="@drawable/overlay_bubble_bg"
+    android:contentDescription="@string/overlay_bubble_description">
+
+    <ImageView
+        android:id="@+id/bubbleIcon"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_gravity="center"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_knight" />
+
+    <TextView
+        android:id="@+id/bubbleLabel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:autoSizeMaxTextSize="18sp"
+        android:autoSizeMinTextSize="9sp"
+        android:autoSizeStepGranularity="1sp"
+        android:autoSizeTextType="uniform"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:importantForAccessibility="no"
+        android:maxLines="1"
+        android:paddingStart="7dp"
+        android:paddingEnd="7dp"
+        android:textColor="@color/overlay_accent"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/bubbleSpinner"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/overlay_move"
+        android:padding="1dp"
+        android:visibility="gone" />
+</com.krstech.chesshelp.overlay.OverlayRootLayout>

@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        app:subtitle="@string/app_tagline"
+        app:subtitleTextColor="?attr/colorOnSurfaceVariant"
+        app:title="@string/app_name"
+        app:titleTextColor="?attr/colorOnSurface" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/screen_horizontal_padding"
+            android:paddingTop="8dp"
+            android:paddingEnd="@dimen/screen_horizontal_padding"
+            android:paddingBottom="8dp">
+
+            <!-- API key -->
+            <com.google.android.material.card.MaterialCardView style="@style/Widget.Krs.SectionCard">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Widget.Krs.SectionTitle"
+                        android:text="@string/section_api_key" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/apiKeyLayout"
+                        style="?attr/textInputOutlinedStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/api_key_hint"
+                        app:endIconMode="password_toggle">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/apiKeyInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:imeOptions="actionDone"
+                            android:importantForAutofill="no"
+                            android:inputType="textPassword"
+                            android:maxLines="1"
+                            android:saveEnabled="false" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        style="@style/Widget.Krs.Caption"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/api_key_help" />
+
+                    <Button
+                        android:id="@+id/openConsoleButton"
+                        style="?attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="-12dp"
+                        android:text="@string/api_key_open_console" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/saveKeyButton"
+                            style="?attr/materialButtonTonalStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/api_key_save" />
+
+                        <Button
+                            android:id="@+id/testButton"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="@string/api_key_test" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/apiKeyStatus"
+                        style="@style/Widget.Krs.Caption"
+                        android:layout_marginTop="8dp"
+                        android:accessibilityLiveRegion="polite"
+                        android:textColor="?attr/colorOnSurface" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Model, effort, side -->
+            <com.google.android.material.card.MaterialCardView style="@style/Widget.Krs.SectionCard">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Widget.Krs.SectionTitle"
+                        android:layout_marginBottom="0dp"
+                        android:text="@string/section_analysis" />
+
+                    <LinearLayout
+                        android:id="@+id/modelRow"
+                        style="@style/Widget.Krs.PickerRow">
+
+                        <TextView
+                            style="@style/Widget.Krs.RowTitle"
+                            android:text="@string/model_title" />
+
+                        <TextView
+                            android:id="@+id/modelValue"
+                            style="@style/Widget.Krs.Caption" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/effortRow"
+                        style="@style/Widget.Krs.PickerRow">
+
+                        <TextView
+                            style="@style/Widget.Krs.RowTitle"
+                            android:text="@string/effort_title" />
+
+                        <TextView
+                            android:id="@+id/effortValue"
+                            style="@style/Widget.Krs.Caption" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/adviseForRow"
+                        style="@style/Widget.Krs.PickerRow">
+
+                        <TextView
+                            style="@style/Widget.Krs.RowTitle"
+                            android:text="@string/advise_for_title" />
+
+                        <TextView
+                            android:id="@+id/adviseForValue"
+                            style="@style/Widget.Krs.Caption" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Switches -->
+            <com.google.android.material.card.MaterialCardView style="@style/Widget.Krs.SectionCard">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Widget.Krs.SectionTitle"
+                        android:layout_marginBottom="0dp"
+                        android:text="@string/section_behaviour" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/autoAdviseSwitch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="@string/auto_advise_title"
+                        android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+                    <TextView
+                        style="@style/Widget.Krs.Caption"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/auto_advise_note" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/drawOnBoardSwitch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="@string/draw_on_board_title"
+                        android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+                    <TextView
+                        style="@style/Widget.Krs.Caption"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/draw_on_board_note" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/sendScreenSwitch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="@string/send_screen_title"
+                        android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+                    <TextView
+                        style="@style/Widget.Krs.Caption"
+                        android:text="@string/send_screen_note" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Permissions -->
+            <com.google.android.material.card.MaterialCardView style="@style/Widget.Krs.SectionCard">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Widget.Krs.SectionTitle"
+                        android:text="@string/section_permissions" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:minHeight="56dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Widget.Krs.RowTitle"
+                                android:text="@string/perm_overlay_title" />
+
+                            <TextView
+                                android:id="@+id/overlayStatus"
+                                style="@style/Widget.Krs.Caption" />
+                        </LinearLayout>
+
+                        <Button
+                            android:id="@+id/overlayButton"
+                            style="?attr/materialButtonTonalStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="@string/perm_grant" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:minHeight="56dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Widget.Krs.RowTitle"
+                                android:text="@string/perm_notifications_title" />
+
+                            <TextView
+                                android:id="@+id/notificationStatus"
+                                style="@style/Widget.Krs.Caption" />
+                        </LinearLayout>
+
+                        <Button
+                            android:id="@+id/notificationButton"
+                            style="?attr/materialButtonTonalStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="@string/perm_grant" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Advanced -->
+            <com.google.android.material.card.MaterialCardView style="@style/Widget.Krs.SectionCard">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Widget.Krs.SectionTitle"
+                        android:text="@string/section_advanced" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/baseUrlLayout"
+                        style="?attr/textInputOutlinedStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/base_url_hint"
+                        app:helperText="@string/base_url_help">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/baseUrlInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:imeOptions="actionDone"
+                            android:importantForAutofill="no"
+                            android:inputType="textUri"
+                            android:maxLines="1"
+                            android:saveEnabled="false" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurfaceContainerLow"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/screen_horizontal_padding"
+        android:paddingTop="10dp"
+        android:paddingEnd="@dimen/screen_horizontal_padding"
+        android:paddingBottom="12dp">
+
+        <TextView
+            android:id="@+id/sessionStatus"
+            style="@style/Widget.Krs.Caption"
+            android:layout_marginBottom="8dp"
+            android:accessibilityLiveRegion="polite" />
+
+        <Button
+            android:id="@+id/startButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:text="@string/start"
+            android:textAppearance="?attr/textAppearanceTitleMedium" />
+    </LinearLayout>
+</LinearLayout>

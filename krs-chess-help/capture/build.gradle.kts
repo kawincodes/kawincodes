@@ -41,4 +41,6 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    // Mocks the (final, constructor-less) platform classes so the capture lifecycle can run on the JVM.
+    testImplementation("org.mockito:mockito-core:5.14.2")
 }

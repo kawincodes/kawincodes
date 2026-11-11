@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="screen_horizontal_padding">16dp</dimen>
+    <dimen name="section_spacing">12dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+
+    <dimen name="overlay_bubble_size">56dp</dimen>
+    <dimen name="overlay_panel_max_width">300dp</dimen>
+    <dimen name="overlay_panel_margin">8dp</dimen>
+    <dimen name="overlay_panel_gap">6dp</dimen>
+    <dimen name="overlay_mini_board_size">132dp</dimen>
+    <!-- Used on Android 10 and older, where the bar sizes cannot be queried without a window. -->
+    <dimen name="overlay_legacy_status_bar">28dp</dimen>
+</resources>
