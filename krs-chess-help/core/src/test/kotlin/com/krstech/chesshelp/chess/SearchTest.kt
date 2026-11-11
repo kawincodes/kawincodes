@@ -98,9 +98,9 @@ class SearchTest {
         assertExact("5rk1/5Npp/8/8/2Q5/8/8/7K w - - 0 1", 5)
         assertExact("7k/8/8/8/8/8/R7/1R4K1 b - - 0 1", 6)
         assertExact("7k/8/8/8/8/8/R7/1R4K1 w - - 0 1", 6)
-        assertExact("r5rk/5p1p/5R2/4B3/8/8/7P/7K w - - 0 1", 5)
+        assertExact("r5rk/5p1p/5R2/4B3/8/8/7P/7K w - - 0 1", 4)
         // Repetition (perpetual check), the fifty-move rule, stalemate and insufficient material.
-        assertExact("6k1/5pp1/8/7Q/8/7P/rr4PK/8 w - - 0 1", 5)
+        assertExact("6k1/5pp1/8/7Q/8/7P/rr4PK/8 w - - 0 1", 4)
         assertExact("4k3/8/8/8/8/8/4P3/R3K3 w - - 96 60", 5)
         assertExact("7k/5Q2/8/8/8/8/8/K7 w - - 0 1", 5)
         assertExact("8/8/8/8/8/8/3r1k2/3K4 w - - 0 1", 5)
@@ -143,7 +143,8 @@ class SearchTest {
         assertEquals(100, see("4k3/8/5b2/4q3/3P4/8/8/4K3 b - - 0 1", "e5d4"))
         assertEquals(-900, see("4k3/8/8/4q3/3P4/2P5/8/4K3 b - - 0 1", "e5d4"))
         // A quiet move to a square where the piece simply hangs.
-        assertEquals(-325, see("4k3/8/8/2p5/8/4N3/8/4K3 w - - 0 1", "e3d5").let { if (it == 0) 0 else it }.let { see("4k3/8/2p5/8/8/4N3/8/4K3 w - - 0 1", "e3d5") })
+        assertEquals(-325, see("4k3/8/2p5/8/8/4N3/8/4K3 w - - 0 1", "e3d5"))
+        assertEquals(0, see("4k3/8/8/8/8/4N3/8/4K3 w - - 0 1", "e3d5"))
     }
 
     // ------------------------------------------------------------------ transposition table

@@ -1,15 +1,14 @@
 package com.krstech.chesshelp.capture
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import com.krstech.chesshelp.vision.BoardRect
 import com.krstech.chesshelp.vision.Frame
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
-import java.awt.image.BufferedImage
-import java.io.ByteArrayInputStream
 import java.io.File
-import javax.imageio.ImageIO
 import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,8 +18,8 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 /**
- * Renders with the real Android graphics code (Robolectric's native graphics mode) and inspects the
- * encoded images pixel by pixel. The images are also written to `build/render-preview` for a look.
+ * Renders, encodes and decodes with the real Android graphics code (Robolectric's native graphics mode)
+ * and inspects the result pixel by pixel. The images are also written to `build/render-preview` for a look.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
@@ -49,19 +48,19 @@ class BoardImageRendererTest {
 
     private fun marker(row: Int, col: Int): Int = 0xFF000000.toInt() or ((40 + row * 25) shl 16) or ((40 + col * 25) shl 8) or 200
 
-    private fun decode(bytes: ByteArray): BufferedImage = assertNotNull(ImageIO.read(ByteArrayInputStream(bytes)))
+    private fun decode(bytes: ByteArray): Bitmap = assertNotNull(BitmapFactory.decodeByteArray(bytes, 0, bytes.size))
 
     private fun save(name: String, bytes: ByteArray) {
         File("build/render-preview").apply { mkdirs() }.resolve(name).writeBytes(bytes)
     }
 
-    private fun BufferedImage.rgb(x: Int, y: Int): Int = getRGB(x, y) and 0xFFFFFF
+    private fun Bitmap.rgb(x: Int, y: Int): Int = getPixel(x, y) and 0xFFFFFF
 
     private fun isText(rgb: Int): Boolean =
         ((rgb shr 16) and 0xFF) > 170 && ((rgb shr 8) and 0xFF) > 170 && (rgb and 0xFF) > 170
 
     /** Bounding box (minX, minY, maxX, maxY) of the label pixels inside a region of the margin. */
-    private fun BufferedImage.textBounds(x0: Int, y0: Int, x1: Int, y1: Int): IntArray? {
+    private fun Bitmap.textBounds(x0: Int, y0: Int, x1: Int, y1: Int): IntArray? {
         var minX = Int.MAX_VALUE
         var minY = Int.MAX_VALUE
         var maxX = -1
@@ -84,7 +83,7 @@ class BoardImageRendererTest {
         assertEquals(812, image.width)
         assertEquals(812, image.height)
         for (y in 0 until image.height step 7) for (x in 0 until image.width step 7) {
-            assertEquals(0xFF, image.getRGB(x, y) ushr 24, "pixel ($x,$y) must be opaque")
+            assertEquals(0xFF, image.getPixel(x, y) ushr 24, "pixel ($x,$y) must be opaque")
         }
 
         for (row in 0 until 8) for (col in 0 until 8) {
@@ -135,7 +134,7 @@ class BoardImageRendererTest {
         assertEquals(8, columnShapes.size, "c1..c8 must all look different")
     }
 
-    private fun shape(image: BufferedImage, bounds: IntArray): String = buildString {
+    private fun shape(image: Bitmap, bounds: IntArray): String = buildString {
         for (y in bounds[1]..bounds[3]) {
             for (x in bounds[0]..bounds[2]) append(if (isText(image.rgb(x, y))) '#' else '.')
             append('\n')
@@ -146,7 +145,7 @@ class BoardImageRendererTest {
     fun aCaptureWithoutAlphaStillRendersTheBoard() {
         val image = decode(BoardImageRenderer.boardPng(screenshot(alpha = 0x00), rect))
         assertEquals(marker(3, 5) and 0xFFFFFF, image.rgb(44 + 5 * 96 + 48, 44 + 3 * 96 + 48))
-        assertEquals(0xFF, image.getRGB(400, 400) ushr 24)
+        assertEquals(0xFF, image.getPixel(400, 400) ushr 24)
         val jpeg = decode(BoardImageRenderer.screenJpeg(screenshot(alpha = 0x00), 600))
         assertTrue(colorDistance(BACKGROUND, jpeg.rgb(10, 10)) < 12, "background survives: %06x".format(jpeg.rgb(10, 10)))
     }
