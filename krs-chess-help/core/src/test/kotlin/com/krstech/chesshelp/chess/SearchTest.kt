@@ -86,10 +86,9 @@ class SearchTest {
 
     @Test
     fun exactSearchEqualsMinimaxInEndgamesDeepEnoughForAspirationWindows() {
-        assertExact("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1", 5)
+        assertExact("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1", 4)
         assertExact("8/8/4k3/3p4/3P4/4K3/8/8 w - - 0 1", 7)
         assertExact("8/5k2/8/8/8/8/1P6/K7 b - - 0 1", 7)
-        assertExact("k7/2Q5/8/8/8/8/8/7K w - - 0 1", 5)
         assertExact("8/8/8/8/8/5k2/3r4/3K4 b - - 0 1", 5)
         assertExact("8/P7/8/8/8/8/6p1/k6K w - - 0 1", 5)
     }

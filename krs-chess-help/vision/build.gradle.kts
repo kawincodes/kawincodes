@@ -26,4 +26,16 @@ dependencies {
 tasks.withType<Test>().configureEach {
     systemProperty("java.awt.headless", "true")
     testLogging { events("failed") }
+
+    // RealFixturesTest and RandomScenesTest are steered by environment variables. Gradle does not track
+    // those by itself and would report the task as up to date (or restore it from the build cache)
+    // instead of running the tests against the screenshots that were just pointed to.
+    val fixtures = providers.environmentVariable("KRS_VISION_FIXTURES").orNull
+    inputs.property("krsVisionFixtures", fixtures ?: "")
+    inputs.property("krsVisionRandomScenes", providers.environmentVariable("KRS_VISION_RANDOM_SCENES").orNull ?: "")
+    if (!fixtures.isNullOrBlank()) {
+        // the screenshots live outside the project, so their content is not a tracked input either
+        outputs.upToDateWhen { false }
+        outputs.cacheIf { false }
+    }
 }

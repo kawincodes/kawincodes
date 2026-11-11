@@ -196,6 +196,18 @@ class ChangeWatcherTest {
     }
 
     @Test
+    fun aClockSetBackDoesNotStretchTheWaits() {
+        watcher.reset(1_000_000)
+        assertEquals(none, watcher.onFrame(fp(1), 5_000))     // an hour "earlier": the settle time restarts
+        assertEquals(none, watcher.onFrame(fp(1), 5_250))
+        assertEquals(settled, watcher.onFrame(fp(1), 5_500))
+        assertEquals(none, watcher.onFrame(fp(2), 900_000))
+        assertEquals(none, watcher.onFrame(fp(2), 2_000))     // set back again while a change is pending
+        assertEquals(none, watcher.onFrame(fp(2), 2_250))
+        assertEquals(changed, watcher.onFrame(fp(2), 2_600))
+    }
+
+    @Test
     fun adoptMakesTheChangedPictureTheNewBaseline() {
         watcher.adopt(fp(1))
         watcher.onFrame(fp(2), 0)

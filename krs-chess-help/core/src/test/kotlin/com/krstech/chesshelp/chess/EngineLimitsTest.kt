@@ -77,16 +77,15 @@ class EngineLimitsTest {
         Engine().analyze(start, SearchLimits(maxDepth = 2))
         for (position in listOf(start, middlegame, tactical)) {
             val limits = SearchLimits(maxDepth = 64, timeMs = 60_000, multiPv = 3)
-            val begin = System.nanoTime()
             val polls = AtomicInteger()
-            val (result, wallMs) = timed {
-                Engine().analyze(position, limits) {
-                    polls.incrementAndGet()
-                    System.nanoTime() - begin > 150_000_000L
-                }
+            val begin = System.nanoTime()
+            val result = Engine().analyze(position, limits) {
+                polls.incrementAndGet()
+                System.nanoTime() - begin > 150_000_000L
             }
+            val wallMs = (System.nanoTime() - begin) / 1_000_000
             assertSoundResult(position, result, limits)
-            assertTrue(wallMs in 140..600, "stop requested after 150 ms, returned after $wallMs ms")
+            assertTrue(wallMs in 150..600, "stop requested after 150 ms, returned after $wallMs ms")
             assertTrue(polls.get() > 20, "shouldStop was polled only ${polls.get()} times")
             assertTrue(result.depth >= 3)
             println("stop after 150 ms: returned after $wallMs ms, ${polls.get()} polls, depth ${result.depth}")

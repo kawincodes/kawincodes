@@ -168,6 +168,23 @@ class RealPipelineTest {
         brain.stop()
     }
 
+    @Test
+    fun theRealClaudeServiceIsReachedThroughTheFactory() {
+        val position = start.after("e4")
+        val oracle = BrainOracle.forKnownPosition(position, true, listOf("e4"), Briefings.build(position, emptyList()))
+        val request = com.krstech.chesshelp.claude.AdviceRequest(position.toFen(), "", listOf("e4"))
+        // A key that cannot be sent is refused by the client before any network traffic.
+        val service = ClaudeAdviceService.Factory.create(com.krstech.chesshelp.claude.ClaudeConfig(apiKey = "  "))
+        try {
+            kotlin.test.assertFailsWith<com.krstech.chesshelp.claude.ClaudeException.InvalidApiKey> {
+                service.advise(request, oracle) {}
+            }
+        } finally {
+            service.close()
+        }
+        kotlin.test.assertFailsWith<IllegalStateException> { service.advise(request, oracle) {} }
+    }
+
     private companion object {
         val BOARD = BoardRect(0, 420, 1080, 1f)
     }

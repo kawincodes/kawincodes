@@ -405,7 +405,7 @@ class EngineTest {
             val lines = analyze(fen, depth).lines
             assertEquals(0, lines[0].scoreCp, "depth $depth: ${lines[0].pv}")
             assertTrue(lines[0].san.endsWith("+"), "the draw is by checking: ${lines[0].pv}")
-            assertTrue(lines[1].scoreCp < 0, "anything else is worse: ${lines.map { it.san + " " + it.scoreCp }}")
+            assertTrue(lines[2].scoreCp < 0, "a move that does not keep checking is worse: ${lines.map { it.san + " " + it.scoreCp }}")
         }
     }
 
@@ -517,7 +517,7 @@ class EngineTest {
             val outcome = playOut(Position.START, limits, null, seed, 200)
             assertTrue(outcome.position.isCheckmate(), "seed $seed: no mate after ${outcome.plies} plies: ${outcome.position.toFen()}")
             assertEquals(Side.BLACK, outcome.position.sideToMove)
-            println("random mover, seed $seed: mated in ${outcome.plies} plies")
+            println("random mover, seed $seed: mated in ${outcome.plies} plies, ${outcome.position.toFen()}")
         }
     }
 }

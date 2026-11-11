@@ -6,7 +6,7 @@ import android.os.Looper
 import android.os.SystemClock
 import android.view.MotionEvent
 import android.view.View
-import android.view.WindowInspector
+import android.view.inspector.WindowInspector
 import android.view.WindowManager
 import android.widget.ScrollView
 import android.widget.TextView

@@ -849,7 +849,6 @@ class ChessBrain(
         if (autoPaused || analysisActive()) return
         // Before a board has ever been found there is nothing to watch: the user starts with a tap.
         val rect = lastRect ?: return
-        if (tracked == null && claudeConfig() == null) return
         val frame = frames.latestFrame() ?: return
         if (!rect.fitsIn(frame.width, frame.height)) return
         val fingerprint = withContext(dispatchers.cpu) { vision.fingerprint(frame, rect) }
@@ -865,6 +864,11 @@ class ChessBrain(
     }
 
     private suspend fun boardChanged(frame: Frame, rect: BoardRect, fingerprint: IntArray) {
+        if (tracked == null && claudeConfig() == null) {
+            // No position and no key: a cycle could only repeat that the board cannot be read.
+            watcher.adopt(fingerprint)
+            return
+        }
         if (boardLost) {
             // While the board is away (another app is in front) every change on screen would otherwise
             // blink the overlay for a clean capture. Look at the frame as it is first.
