@@ -67,6 +67,10 @@ class MainActivity : AppCompatActivity() {
     private var localEngineOnly = false
 
     /** Set once the system stopped showing the notification prompt, so the button opens settings instead. */
+    /** Why the last start attempt ended without a session; shown until the next attempt. */
+    @StringRes
+    private var startNotice: Int? = null
+
     private var notificationPromptExhausted = false
     private var notificationRationaleBeforeRequest = false
 
@@ -402,6 +406,7 @@ class MainActivity : AppCompatActivity() {
         binding.sessionStatus.setText(
             when {
                 running -> R.string.status_running
+                startNotice != null -> startNotice ?: R.string.status_ready
                 !Settings.canDrawOverlays(this) -> R.string.status_need_overlay
                 keyLoaded && savedKey == null && typedKey().isEmpty() -> R.string.status_need_key
                 else -> R.string.status_ready
@@ -416,6 +421,7 @@ class MainActivity : AppCompatActivity() {
         }
         if (!keyLoaded) return
         localEngineOnly = false
+        startNotice = null
         // A key that was typed but not saved yet is what the user expects to be used.
         saveKeyFromInput(announce = false) { continueStart() }
     }
@@ -477,7 +483,7 @@ class MainActivity : AppCompatActivity() {
     private fun requestScreenCapture() {
         val manager = getSystemService(MediaProjectionManager::class.java)
         if (manager == null) {
-            binding.sessionStatus.setText(R.string.status_capture_unavailable)
+            showStartNotice(R.string.status_capture_unavailable)
             return
         }
         // Android 14+ lets the user share a single app instead of the screen; the arrow drawn over the
@@ -490,16 +496,22 @@ class MainActivity : AppCompatActivity() {
         try {
             captureConsent.launch(intent)
         } catch (e: ActivityNotFoundException) {
-            binding.sessionStatus.setText(R.string.status_capture_unavailable)
+            showStartNotice(R.string.status_capture_unavailable)
         }
+    }
+
+    private fun showStartNotice(@StringRes message: Int) {
+        startNotice = message
+        refreshSessionUi()
     }
 
     private fun onCaptureConsent(result: ActivityResult) {
         val data = result.data
         if (result.resultCode == RESULT_OK && data != null) {
+            startNotice = null
             AppGraph.session.start(applicationContext, result.resultCode, data)
         } else {
-            binding.sessionStatus.setText(R.string.status_capture_denied)
+            showStartNotice(R.string.status_capture_denied)
         }
     }
 }
