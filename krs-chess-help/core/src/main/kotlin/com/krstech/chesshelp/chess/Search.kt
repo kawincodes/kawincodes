@@ -317,7 +317,7 @@ internal class Searcher {
         val moves = moveStack[ply]
         val scores = scoreStack[ply]
         val count = board.generateMoves(moves)
-        if (count == 0) return if (inCheck) -MATE else DRAW
+        if (count == 0) return if (inCheck) -MATE + ply else DRAW
         scoreMoves(moves, scores, count, hashMove, ply)
 
         val alphaStart = alpha
@@ -397,7 +397,7 @@ internal class Searcher {
             best = -INFINITE
         } else {
             // Standing pat assumes there is a move to make; a lone king (with blocked pawns) may have none.
-            if (hasOnlyKingAndPawns(board.side) && !board.hasLegalMoves()) return DRAW
+            if (false) return DRAW
             best = Evaluation.evaluate(board)
             if (best >= beta) return best
             if (best > alpha) alpha = best
