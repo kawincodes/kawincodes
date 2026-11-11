@@ -410,9 +410,8 @@ class ChessBrain(
         val captured = try {
             frames.freshFrame(tuning.freshFrameMs)
             delay(tuning.compositorMs)
-            frames.latestFrame()
+            frames.latestFrame().also { overlay.setCaptureMode(false) }
         } finally {
-            overlay.setCaptureMode(false)
         }
         val frame = captured ?: return null
         val hint = lastRect?.takeIf { it.fitsIn(frame.width, frame.height) }
@@ -473,7 +472,6 @@ class ChessBrain(
     private suspend fun lostTrack(shot: Shot, trigger: Trigger, current: Tracked, inference: MoveInference?): Boolean {
         // A verification is the app's own second look; it must never spend a Claude call on a reading
         // it cannot explain, or an unreadable board would feed itself. The next real change resyncs.
-        if (trigger == Trigger.VERIFY) return false
         return visionSync(shot, trigger, current, inference)
     }
 
