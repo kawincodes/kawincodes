@@ -48,7 +48,7 @@ sealed class ClaudeException(message: String, cause: Throwable? = null) : Except
 
     /** 400 and other request errors. [apiMessage] is the API's own explanation. */
     class BadRequest(val apiMessage: String, cause: Throwable? = null) : ClaudeException(apiMessage, cause) {
-        override val userMessage: String get() = "Claude rejected the request: ${shorten(apiMessage)}"
+        override val userMessage: String get() = "Request rejected: ${shorten(apiMessage)}"
     }
 
     /** 5xx other than overload. */

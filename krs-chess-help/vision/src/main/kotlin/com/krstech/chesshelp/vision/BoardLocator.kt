@@ -20,29 +20,31 @@ import kotlin.math.roundToInt
 object BoardLocator {
 
     /** Finds the on-screen 8x8 chessboard (squares area only, excluding borders/coordinate margins), or null. */
-    fun locate(frame: Frame, hint: BoardRect? = null): BoardRect? = locate(frame, hint, null)
-
-    internal fun locate(frame: Frame, hint: BoardRect?, trace: ((String) -> Unit)?): BoardRect? {
+    fun locate(frame: Frame, hint: BoardRect? = null): BoardRect? {
         if (min(frame.width, frame.height) < MIN_FRAME_SIDE) return null
         if (hint != null) {
-            val viaHint = checkHint(frame, hint, trace)
+            val viaHint = checkHint(frame, hint)
             if (viaHint != null) return viaHint
         }
-        return search(frame, trace)
+        return search(frame)
     }
 
     // ------------------------------------------------------------------------------------------------
     // Hint fast path
     // ------------------------------------------------------------------------------------------------
 
-    private fun checkHint(frame: Frame, hint: BoardRect, trace: ((String) -> Unit)?): BoardRect? {
+    /**
+     * Re-fits the grid in a few pixels' neighbourhood of the hinted rectangle and verifies it (including
+     * that the checker does not continue beyond it); costs well under a millisecond.
+     */
+    private fun checkHint(frame: Frame, hint: BoardRect): BoardRect? {
         if (hint.size < MIN_BOARD_PX || hint.left < -2 || hint.top < -2 ||
             hint.right > frame.width + 2 || hint.bottom > frame.height + 2
         ) return null
         val cell = hint.size / 8f
-        val lattice = refine(frame, hint.left.toFloat(), hint.top.toFloat(), cell, margin = 3, cellSlack = 0.4f, trace = trace)
+        val lattice = refine(frame, hint.left.toFloat(), hint.top.toFloat(), cell, margin = 3, cellSlack = 0.4f)
             ?: return null
-        return verify(frame, lattice, maxShift = 0, trace = trace)
+        return verify(frame, lattice, maxShift = 0)
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -51,19 +53,18 @@ object BoardLocator {
 
     private class Proposal(val x0: Int, val y0: Int, val cell: Float, val score: Int)
 
-    private fun search(frame: Frame, trace: ((String) -> Unit)?): BoardRect? {
+    private fun search(frame: Frame): BoardRect? {
         val shortSide = min(frame.width, frame.height)
         val factor = max(1, (shortSide + COARSE_SHORT_SIDE / 2) / COARSE_SHORT_SIDE)
         val proposals = propose(frame, factor)
         var best: BoardRect? = null
         var bestRank = 0f
         for (p in proposals) {
-            trace?.invoke("proposal x0=${p.x0 * factor} y0=${p.y0 * factor} cell=${p.cell * factor} score=${p.score / (49f * FIXED_ONE)}")
             val lattice = refine(
                 frame, (p.x0 * factor).toFloat(), (p.y0 * factor).toFloat(), p.cell * factor,
-                margin = 2 * factor + 4, cellSlack = 0.3f * factor + 0.5f, trace = trace,
+                margin = 2 * factor + 4, cellSlack = 0.3f * factor + 0.5f,
             ) ?: continue
-            val rect = verify(frame, lattice, maxShift = MAX_SHIFT, trace = trace) ?: continue
+            val rect = verify(frame, lattice, maxShift = MAX_SHIFT) ?: continue
             // Several boards on screen (thumbnails next to the main board): the biggest convincing one wins.
             val rank = rect.confidence * rect.size
             if (best == null || rank > bestRank) {
@@ -253,34 +254,22 @@ object BoardLocator {
 
     private class AxisFit(val origin: Float, val cell: Float, val sign: Int, val strength: Float)
 
-    private fun refine(
-        frame: Frame, x0: Float, y0: Float, cell: Float, margin: Int, cellSlack: Float,
-        trace: ((String) -> Unit)?,
-    ): Lattice? {
+    /**
+     * Turns an approximate grid (origin within [margin] px, cell within [cellSlack] px) into a sub-pixel one,
+     * or null when no alternating grid lines are there. Both axes must agree on which squares are light.
+     */
+    private fun refine(frame: Frame, x0: Float, y0: Float, cell: Float, margin: Int, cellSlack: Float): Lattice? {
         // Pass 1: rows/columns through the middle of the cells tolerate the still inaccurate other axis.
-        val fx = fitAxis(frame, true, x0, cell, y0, cell, margin, cellSlack, wide = true) ?: run {
-            trace?.invoke("  refine: no x grid"); return null
-        }
-        val fy = fitAxis(frame, false, y0, cell, fx.origin, fx.cell, margin, cellSlack, wide = true) ?: run {
-            trace?.invoke("  refine: no y grid"); return null
-        }
-        if (fx.sign != fy.sign) {
-            trace?.invoke("  refine: polarity mismatch"); return null
-        }
+        val fx = fitAxis(frame, true, x0, cell, y0, cell, margin, cellSlack, wide = true) ?: return null
+        val fy = fitAxis(frame, false, y0, cell, fx.origin, fx.cell, margin, cellSlack, wide = true) ?: return null
+        if (fx.sign != fy.sign) return null
         // Pass 2: rows/columns hugging the grid lines stay clear of the pieces.
-        val px = fitAxis(frame, true, fx.origin, fx.cell, fy.origin, fy.cell, 3, 0.3f, wide = false) ?: run {
-            trace?.invoke("  refine: no precise x grid"); return null
-        }
-        val py = fitAxis(frame, false, fy.origin, fy.cell, px.origin, px.cell, 3, 0.3f, wide = false) ?: run {
-            trace?.invoke("  refine: no precise y grid"); return null
-        }
+        val px = fitAxis(frame, true, fx.origin, fx.cell, fy.origin, fy.cell, 0, 0f, wide = false) ?: return null
+        val py = fitAxis(frame, false, fy.origin, fy.cell, px.origin, px.cell, 0, 0f, wide = false) ?: return null
         if (px.sign != py.sign) return null
         val meanCell = (px.cell + py.cell) / 2
-        if (abs(px.cell - py.cell) > max(0.6f, 0.015f * meanCell)) {
-            trace?.invoke("  refine: not square ${px.cell} vs ${py.cell}"); return null
-        }
+        if (abs(px.cell - py.cell) > max(0.6f, 0.015f * meanCell)) return null
         if (meanCell * 8 < MIN_BOARD_PX) return null
-        trace?.invoke("  refined x0=${px.origin} y0=${py.origin} sx=${px.cell} sy=${py.cell} strength=${px.strength}/${py.strength}")
         return Lattice(px.origin, py.origin, px.cell, py.cell)
     }
 
@@ -295,8 +284,8 @@ object BoardLocator {
     ): AxisFit? {
         val length = if (horizontal) frame.width else frame.height
         val otherLength = if (horizontal) frame.height else frame.width
-        val lo = max(0, floor(origin - margin).toInt() - 4)
-        val hi = min(length, ceil(origin + 8 * cell + margin).toInt() + 4)
+        val lo = max(0, floor(origin - margin).toInt() - PRECISE_WINDOW - 2)
+        val hi = min(length, ceil(origin + 8 * cell + margin).toInt() + PRECISE_WINDOW + 2)
         if (hi - lo < 16) return null
 
         // Sample lines across the other axis.
@@ -374,16 +363,13 @@ object BoardLocator {
         for (e in 1 until len) edge[e] = profile[e] - profile[e - 1]
         // Polarity: sign that makes the strongest edges near the predicted lines positive.
         var pol = 0L
-        val peak = IntArray(8)
         for (i in 1..7) {
             val e0 = (origin + i * cell).roundToInt() - lo
-            var bestE = -1
             var bestV = 0
-            for (e in e0 - 4..e0 + 4) {
+            for (e in e0 - PRECISE_WINDOW..e0 + PRECISE_WINDOW) {
                 if (e < 1 || e >= len) continue
-                if (abs(edge[e]) > abs(bestV)) { bestV = edge[e]; bestE = e }
+                if (abs(edge[e]) > abs(bestV)) bestV = edge[e]
             }
-            peak[i] = bestE
             pol += if (i and 1 == 0) bestV else -bestV
         }
         val sign = if (pol >= 0) 1 else -1
@@ -395,7 +381,7 @@ object BoardLocator {
             val e0 = (origin + i * cell).roundToInt() - lo
             var bestE = -1
             var bestV = 0
-            for (e in e0 - 4..e0 + 4) {
+            for (e in e0 - PRECISE_WINDOW..e0 + PRECISE_WINDOW) {
                 if (e < 1 || e >= len) continue
                 val v = edge[e] * lineSign
                 if (v > bestV) { bestV = v; bestE = e }
@@ -453,7 +439,13 @@ object BoardLocator {
     // Verification and extent
     // ------------------------------------------------------------------------------------------------
 
-    private fun verify(frame: Frame, lat: Lattice, maxShift: Int, trace: ((String) -> Unit)?): BoardRect? {
+    /**
+     * Decides which 8x8 window of the lattice (within [maxShift] cells of the candidate) is the board, and
+     * whether it is one at all: the steps between the background tones of neighbouring squares must
+     * alternate nearly everywhere inside, the interior corners must be full checker crossings, and the
+     * pattern must not carry on into the ring of cells around the window.
+     */
+    private fun verify(frame: Frame, lat: Lattice, maxShift: Int): BoardRect? {
         val cell = (lat.sx + lat.sy) / 2
         // Background tone of every lattice cell in the neighbourhood (-1 = outside the frame).
         val tones = IntArray(EXT * EXT)
@@ -463,7 +455,7 @@ object BoardLocator {
 
         var bestScore = Int.MIN_VALUE
         var bestDi = 0; var bestDj = 0
-        var bestPairs = 0; var bestCorners = 0; var bestRing = 0; var bestContrast = 0
+        var bestPairs = 0; var bestCorners = 0; var bestRing = 0
         val diffs = IntArray(PAIRS)
         val sorted = IntArray(PAIRS)
         for (dj in -maxShift..maxShift) for (di in -maxShift..maxShift) {
@@ -519,10 +511,9 @@ object BoardLocator {
             val score = pairs + corners - 6 * ring
             if (score > bestScore) {
                 bestScore = score; bestDi = di; bestDj = dj
-                bestPairs = pairs; bestCorners = corners; bestRing = worstSide; bestContrast = contrast
+                bestPairs = pairs; bestCorners = corners; bestRing = worstSide
             }
         }
-        trace?.invoke("  verify shift=($bestDi,$bestDj) pairs=$bestPairs corners=$bestCorners ringWorst=$bestRing contrast=$bestContrast")
         if (bestScore == Int.MIN_VALUE) return null
         if (bestPairs < MIN_PAIR_FITS || bestCorners < MIN_FULL_CORNERS || bestRing > MAX_RING_FITS) return null
 
@@ -633,6 +624,7 @@ object BoardLocator {
     private const val MIN_PROPOSAL_SCORE = 0.16f
     private const val MAX_PROPOSALS = 6
     private const val MIN_LINE_CONTRAST = 3.5f
+    private const val PRECISE_WINDOW = 4            // px searched around a predicted line in the precise fit
     private const val MIN_TONE_CONTRAST = 9
     private const val TONE_SAMPLES = 10
     private const val TONE_WINDOW = 14

@@ -14,7 +14,7 @@ You are the chess assistant inside KRS Chess Help, an Android app that floats a 
 
 A request arrives in one of two forms.
 
-Board images. Read the position and call `submit_position`. If the reading cannot be a legal chess position, the tool result is an error that names the squares or pieces that look wrong; look at those squares again in the image and call `submit_position` with the corrected reading. Once a reading is accepted, the tool result is a briefing: the FEN, every legal move in SAN, and a few lines from a small engine that runs on the phone. Then call `recommend_move`.
+Board images. Read the position and call `submit_position`. If the app cannot accept the reading, because it is not a legal chess position or because it disagrees with what the app's own pixel analysis sees, the tool result is an error naming the squares or pieces in question. Look at those squares again in the image and call `submit_position` again with what you see: corrected where you were wrong, unchanged where the image clearly shows you were right. Once a reading is accepted, the tool result is a briefing: the FEN, every legal move in SAN, and a few lines from a small engine that runs on the phone. Then call `recommend_move`.
 
 A known position. When the app has been following the game move by move, the user message gives the FEN and the briefing directly and there is no image. The position is already verified, so go straight to `recommend_move`.
 
@@ -28,7 +28,7 @@ The board crop is just the 8x8 board, cut out by the app, with labels the app ha
 
 The context screenshot is the whole screen, scaled down. It is there for what surrounds the board: clocks, player names, a move list, turn indicators. When both images are present, read the pieces from the board crop. When only the screenshot is attached, the app could not locate the board itself, so find the board in the screenshot and read it from there.
 
-Report the position as `rows`: eight strings of exactly eight characters. The first string is the top row of the image (r1) and the last is the bottom row (r8); each string runs from the left column (c1) to the right column (c8). Use FEN letters, uppercase PNBRQK for White's pieces and lowercase pnbrqk for Black's, and `.` for an empty square. Report the board the way it is displayed, whichever side is at the bottom; the app does the rotation using `white_at_bottom`.
+Report the position as `rows`: eight strings of exactly eight characters. The first string is the top row of the image (r1) and the last is the bottom row (r8); each string runs from the left column (c1) to the right column (c8). Use FEN letters, uppercase PNBRQK for White's pieces and lowercase pnbrqk for Black's, and `.` for an empty square. Report the board the way it is displayed, whichever side is at the bottom; the app does the rotation using `white_at_bottom`. The app itself speaks in chess squares (e4, g8), which it derives from your rows: with White at the bottom, r1 is rank 8 and c1 is the a-file; with Black at the bottom, r1 is rank 1 and c1 is the h-file.
 
 Orientation. If the board prints coordinates along its own edges, they settle it: digits running from 8 at the top to 1 at the bottom, or letters running a to h from left to right, mean White is at the bottom; the reverse means Black is at the bottom. Without coordinates, go by the pieces: each side's king and unmoved pieces sit on its own back rank and its pawns advance away from it, so White's home rows are at the bottom when White is at the bottom. In most apps the user's own pieces are shown at the bottom.
 
@@ -64,7 +64,7 @@ The explanation is read at a glance in a small overlay: one or two plain sentenc
             "and call it again with a corrected reading whenever the previous call returned an error. " +
             "Do not call it when the user message already gives a FEN and briefing (there is no image then), " +
             "or when no chess board is visible. " +
-            "The result is either an error describing why the position is impossible, " +
+            "The result is either an error naming what the app could not accept, " +
             "or the briefing: the FEN, the legal moves in SAN and a few local engine lines."
 
     const val RECOMMEND_MOVE_DESCRIPTION: String =
@@ -190,13 +190,13 @@ The explanation is read at a glance in a small overlay: one or two plain sentenc
 
     fun positionRejected(problems: List<String>): String {
         val listed = problems.map { it.trim() }.filter { it.isNotEmpty() }
-        val text = StringBuilder("This reading cannot be a legal chess position:")
+        val text = StringBuilder("The app could not accept this reading:")
         if (listed.isEmpty()) text.append("\n- The app's rules engine rejected it.")
         listed.forEach { text.append("\n- ").append(it) }
         text.append(
             "\n\nLook at the image again, especially the squares and pieces named above, " +
-                "and call submit_position with the corrected reading. " +
-                "If many rows look wrong, check whether white_at_bottom should be the other way round."
+                "and call submit_position again with what you see. " +
+                "If the problems suggest the board is the other way round, reconsider white_at_bottom."
         )
         return text.toString()
     }

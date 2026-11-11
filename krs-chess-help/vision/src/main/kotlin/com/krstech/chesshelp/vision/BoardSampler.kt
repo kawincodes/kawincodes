@@ -38,37 +38,43 @@ class BoardSnapshot(
 }
 
 /**
- * Reads piece occupancy from pixels. Per square: estimate the (possibly highlighted) background colour from
- * the band just inside the square's edges, mark everything that differs, flood the background in from the
- * edges so that whatever it cannot reach is the piece (outline plus enclosed fill), then judge the piece's
- * tone from its eroded interior, i.e. the fill rather than the outline.
+ * Reads piece occupancy from pixels.
+ *
+ * Per square: estimate the (possibly highlighted) background colour from the band just inside the square's
+ * edges; mark everything that differs from it; flood the background in from the edges, so that whatever it
+ * cannot reach is the piece - outline plus enclosed fill, even when the fill has the square's own colour.
+ * A square is occupied when that region contains a solid blob tall enough to be a piece (move dots, labels,
+ * capture rings and texture are too small or too thin). The tone comes from what is solid inside the piece:
+ * a light piece keeps its bright fill under erosion, a dark piece only its dark body.
+ *
+ * Known limit: an analysis arrow drawn across an empty square is a solid blob too and reads as a piece.
  */
 object BoardSampler {
 
+    /**
+     * Occupancy of the 64 squares of the board at [rect] (normally the result of [BoardLocator.locate]).
+     * Never throws for odd rectangles; a rectangle that is too small or not on a board yields
+     * `reliable = false`.
+     */
     fun sample(frame: Frame, rect: BoardRect): BoardSnapshot = classify(rect, analyze(frame, rect))
 
-    /** Raw per-cell measurements; exposed to the module's tests for diagnostics. */
+    /** Per-cell measurements. */
     internal class CellFeatures {
+        /** Luma of the square's own (possibly highlighted) background colour. */
         var bgLuma = 0
-        var threshold = 0
-        /** Fraction of the cell covered by the piece region (non-background plus enclosed pixels). */
-        var area = 0f
-        /** Fraction of the cell left after eroding the piece region: solid blobs survive, thin lines and speckle do not. */
+        /**
+         * Share of the cell left after eroding the piece region (everything the background cannot reach from
+         * the cell border): solid blobs survive, thin lines, labels and texture speckle do not.
+         */
         var coreArea = 0f
         /** Share of the cell covered by the biggest solid blob alone. */
         var coreMain = 0f
-        /** Extent of the solid blob (erosion added back) as a fraction of the cell side. */
-        var boxWidth = 0f
+        /** Vertical extent of the solid blobs (erosion added back) as a fraction of the cell side. */
         var boxHeight = 0f
-        /** Piece pixels on the cell's inner border, as a fraction of that border's length. */
-        var borderTouch = 0f
         /** Luma histogram ([TONE_BINS] bins) of the piece region shrunk by one pixel. */
         val toneHist = IntArray(TONE_BINS)
         var toneCount = 0
-        /** Solid bright / solid dark share of the piece interior, split at the board-wide tone (set by classify). */
-        var thickBright = 0f
-        var thickDark = 0f
-        /** `thickBright / (thickBright + thickDark)`: near 1 for a light piece, near 0 for a dark one. */
+        /** Solid bright share of the solid interior: near 1 for a light piece, near 0 for a dark one. */
         var lightness = 0f
     }
 
@@ -101,7 +107,6 @@ object BoardSampler {
         val b = IntArray(n * n)
         val fg = BooleanArray(n * n)
         val outside = BooleanArray(n * n)
-        val piece = BooleanArray(n * n)
         val core = BooleanArray(n * n)
         val scratch = BooleanArray(n * n)
         val queue = IntArray(n * n)
@@ -114,8 +119,6 @@ object BoardSampler {
         val blobArea = IntArray(64)
         val blobTop = IntArray(64)
         val blobBottom = IntArray(64)
-        val blobLeft = IntArray(64)
-        val blobRight = IntArray(64)
 
         /** Fills the n x n working grid with `step x step` block means; coordinates are clamped to the frame. */
         fun load(frame: Frame, x0: Int, y0: Int, step: Int) {
@@ -229,18 +232,39 @@ object BoardSampler {
                 for (d in 0..255) { acc += sideHist[side * 256 + d]; if (acc >= target) { median = d; break } }
                 if (median < low1) { low2 = low1; low1 = median } else if (median < low2) low2 = median
             }
+            // The band can sit under an overlay that the corners escape - a capture ring running along the
+            // middle of every edge, the radial "king in check" glow - or the corners carry a tint the band
+            // escapes (corner-style capture hints). When the two disagree both colours count as background,
+            // so the overlay never becomes part of a piece. A glow (band darker than the corners, and not
+            // by plain darkening) is remembered and taken out of the piece's interior further down.
+            val cornerR = cornerMedian(r, lo, hi)
+            val cornerG = cornerMedian(g, lo, hi)
+            val cornerB = cornerMedian(b, lo, hi)
+            val tintR = bgR - cornerR
+            val tintG = bgG - cornerG
+            val tintB = bgB - cornerB
+            val tint = max(abs(tintR), max(abs(tintG), abs(tintB)))
+            val twoTone = tint >= SECOND_BG_MIN_TINT
+            val bandDarker = tintR * 77 + tintG * 150 + tintB * 29 < 0
+            val ring = twoTone && bandDarker && isUniformDarkening(bgR, bgG, bgB, cornerR, cornerG, cornerB)
+            val glow = bandDarker && !ring && tint >= GLOW_MIN_TINT
+
             // A flat background needs a step proportional to its brightness (a 10 % darkening overlay such
             // as a capture ring must stay background on any square, yet dark artwork on a dark square
             // must not); a textured one needs to clear its own texture.
             val flat = (TAU_RELATIVE * max(bgR, max(bgG, bgB))).roundToInt().coerceIn(TAU_MIN, TAU_FLAT_MAX)
             val tau = min(TAU_MAX, max(flat, (TAU_TEXTURE_GAIN * low2).roundToInt() + TAU_TEXTURE_BASE))
-            f.bgLuma = (bgR * 77 + bgG * 150 + bgB * 29) shr 8
-            f.threshold = tau
+            // under a ring the corners show the square's real colour
+            f.bgLuma = if (ring) (cornerR * 77 + cornerG * 150 + cornerB * 29) shr 8 else (bgR * 77 + bgG * 150 + bgB * 29) shr 8
 
             // --- foreground mask
             for (y in lo until hi) for (x in lo until hi) {
                 val i = y * n + x
-                fg[i] = abs(r[i] - bgR) > tau || abs(g[i] - bgG) > tau || abs(b[i] - bgB) > tau
+                var isFg = abs(r[i] - bgR) > tau || abs(g[i] - bgG) > tau || abs(b[i] - bgB) > tau
+                if (isFg && twoTone) {
+                    isFg = abs(r[i] - cornerR) > tau || abs(g[i] - cornerG) > tau || abs(b[i] - cornerB) > tau
+                }
+                fg[i] = isFg
                 outside[i] = false
             }
 
@@ -268,37 +292,55 @@ object BoardSampler {
                 if (y < hi - 1) { val j = i + n; if (!fg[j] && !outside[j]) { outside[j] = true; queue[tail++] = j } }
             }
 
-            // --- piece region and border contact
-            var pieceCount = 0
-            var touch = 0
+            // --- piece region: whatever the background could not reach (outline plus enclosed fill)
             for (y in lo until hi) for (x in lo until hi) {
                 val i = y * n + x
-                val p = !outside[i]
-                piece[i] = p
-                core[i] = p
-                if (p) {
-                    pieceCount++
-                    if (y == lo || y == hi - 1 || x == lo || x == hi - 1) touch++
-                }
+                core[i] = !outside[i]
             }
-            f.area = pieceCount.toFloat() / inner
-            f.borderTouch = touch.toFloat() / (4 * (hi - lo))
 
             // --- interior tone: the region shrunk by one pixel drops the anti-aliased rim
             erodeCore(lo, hi)
-            java.util.Arrays.fill(f.toneHist, 0)
-            var toneCount = 0
-            for (y in lo until hi) for (x in lo until hi) {
-                val i = y * n + x
-                if (core[i]) { f.toneHist[lumaAt(i) * TONE_BINS / 256]++; toneCount++ }
-            }
-            f.toneCount = toneCount
             val store = cell * n * n
             for (i in 0 until n * n) {
                 out.luma[store + i] = lumaAt(i).toByte()
                 out.interior[store + i] = false
             }
-            for (y in lo until hi) for (x in lo until hi) { val i = y * n + x; out.interior[store + i] = core[i] }
+            var interiorCount = 0
+            for (y in lo until hi) for (x in lo until hi) {
+                val i = y * n + x
+                if (core[i]) { out.interior[store + i] = true; interiorCount++ }
+            }
+            // A glow under the piece (the red "king in check" gradient) is part of the region but not of the
+            // piece; left in, its dark red would outweigh a light piece's fill. Its pixels continue the tint
+            // that separates the band from the corners: they deviate from the background colour in that
+            // very direction. Piece material does not (white goes the other way, black darkens all channels).
+            if (glow) {
+                val vv = (tintR * tintR + tintG * tintG + tintB * tintB).toLong()
+                var glowCount = 0
+                for (y in lo until hi) for (x in lo until hi) {
+                    val i = y * n + x
+                    scratch[i] = false
+                    if (!core[i] || !fg[i]) continue
+                    val dr = r[i] - bgR; val dg = g[i] - bgG; val db = b[i] - bgB
+                    val dot = (dr * tintR + dg * tintG + db * tintB).toLong()
+                    // cos(angle between deviation and tint) >= 0.92
+                    if (dot > 0 && dot * dot * 10000 >= 8464 * vv * (dr * dr + dg * dg + db * db)) { scratch[i] = true; glowCount++ }
+                }
+                // only when a real piece remains; otherwise this was no glow after all
+                if (glowCount > 0 && (interiorCount - glowCount) * 5 >= interiorCount) {
+                    for (y in lo until hi) for (x in lo until hi) {
+                        val i = y * n + x
+                        if (scratch[i]) out.interior[store + i] = false
+                    }
+                }
+            }
+            java.util.Arrays.fill(f.toneHist, 0)
+            var toneCount = 0
+            for (y in lo until hi) for (x in lo until hi) {
+                val i = y * n + x
+                if (out.interior[store + i]) { f.toneHist[lumaAt(i) * TONE_BINS / 256]++; toneCount++ }
+            }
+            f.toneCount = toneCount
 
             // --- solid blob: keep eroding; texture speckle, hatching, labels and thin logos vanish
             val erosions = max(1, (ERODE * n).roundToInt())
@@ -314,40 +356,61 @@ object BoardSampler {
                 var head2 = 0
                 var tail2 = 0
                 queue[tail2++] = start
-                var top = y; var bottom = y; var left = x; var right = x
+                var top = y; var bottom = y
                 while (head2 < tail2) {
                     val i = queue[head2++]
                     val px = i % n
                     val py = i / n
                     if (py < top) top = py
                     if (py > bottom) bottom = py
-                    if (px < left) left = px
-                    if (px > right) right = px
                     if (px > lo && core[i - 1]) { core[i - 1] = false; queue[tail2++] = i - 1 }
                     if (px < hi - 1 && core[i + 1]) { core[i + 1] = false; queue[tail2++] = i + 1 }
                     if (py > lo && core[i - n]) { core[i - n] = false; queue[tail2++] = i - n }
                     if (py < hi - 1 && core[i + n]) { core[i + n] = false; queue[tail2++] = i + n }
                 }
                 blobArea[blobs] = tail2
-                blobTop[blobs] = top; blobBottom[blobs] = bottom; blobLeft[blobs] = left; blobRight[blobs] = right
+                blobTop[blobs] = top; blobBottom[blobs] = bottom
                 blobs++
             }
             var biggest = 0
             for (k in 0 until blobs) if (blobArea[k] > biggest) biggest = blobArea[k]
             var coreCount = 0
-            var top = n; var bottom = -1; var left = n; var right = -1
+            var top = n; var bottom = -1
             for (k in 0 until blobs) {
                 if (blobArea[k] * 8 < biggest) continue
                 coreCount += blobArea[k]
                 if (blobTop[k] < top) top = blobTop[k]
                 if (blobBottom[k] > bottom) bottom = blobBottom[k]
-                if (blobLeft[k] < left) left = blobLeft[k]
-                if (blobRight[k] > right) right = blobRight[k]
             }
             f.coreArea = coreCount.toFloat() / inner
             f.coreMain = biggest.toFloat() / inner
             f.boxHeight = if (bottom < 0) 0f else (bottom - top + 1 + 2 * erosions).toFloat() / n
-            f.boxWidth = if (right < 0) 0f else (right - left + 1 + 2 * erosions).toFloat() / n
+        }
+
+        /** Per-channel median over the four corner patches of the inner region (each patch averaged). */
+        private fun cornerMedian(channel: IntArray, lo: Int, hi: Int): Int {
+            val patch = max(2, (CORNER_PATCH * n).roundToInt())
+            val means = IntArray(4)
+            for (k in 0..3) {
+                val x0 = if (k and 1 == 0) lo else hi - patch
+                val y0 = if (k and 2 == 0) lo else hi - patch
+                var sum = 0
+                for (y in y0 until y0 + patch) for (x in x0 until x0 + patch) sum += channel[y * n + x]
+                means[k] = sum / (patch * patch)
+            }
+            means.sort()
+            return (means[1] + means[2]) / 2
+        }
+
+        /** True when colour 1 is colour 2 darkened by one common factor (a translucent black overlay). */
+        private fun isUniformDarkening(r1: Int, g1: Int, b1: Int, r2: Int, g2: Int, b2: Int): Boolean {
+            var lowest = 2f
+            var highest = 0f
+            var used = 0
+            if (r2 >= 40) { val q = r1.toFloat() / r2; lowest = min(lowest, q); highest = max(highest, q); used++ }
+            if (g2 >= 40) { val q = g1.toFloat() / g2; lowest = min(lowest, q); highest = max(highest, q); used++ }
+            if (b2 >= 40) { val q = b1.toFloat() / b2; lowest = min(lowest, q); highest = max(highest, q); used++ }
+            return used >= 2 && lowest >= 0.72f && highest <= 0.97f && highest - lowest <= 0.05f
         }
 
         /** One round of 4-neighbour erosion of [core] within the inner region. */
@@ -409,8 +472,6 @@ object BoardSampler {
             }
             val thickBright = erodedCount(a, scratch, n, rounds)
             val thickDark = erodedCount(b, scratch, n, rounds)
-            f.thickBright = thickBright.toFloat() / f.toneCount
-            f.thickDark = thickDark.toFloat() / f.toneCount
             f.lightness = if (thickBright + thickDark > 0) thickBright.toFloat() / (thickBright + thickDark) else {
                 // nothing solid at all (a tiny or very thin piece): fall back to the plain share
                 var above = 0
@@ -509,6 +570,9 @@ object BoardSampler {
     private const val TAU_MAX = 120
     private const val TAU_TEXTURE_GAIN = 4f
     private const val TAU_TEXTURE_BASE = 10
+    private const val CORNER_PATCH = 0.08f
+    private const val SECOND_BG_MIN_TINT = 8
+    private const val GLOW_MIN_TINT = 20
     private const val ERODE = 0.045f
     private const val TONE_BINS = 64
     private const val MIN_CORE_AREA = 0.012f
