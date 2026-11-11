@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">KRS Chess Help</string>
-    <string name="app_tagline">Reads the chess board on your screen and suggests a move.</string>
+    <string name="app_tagline">Suggests moves for the board you see</string>
 
     <!-- API key -->
     <string name="section_api_key">Claude API key</string>

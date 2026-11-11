@@ -408,4 +408,116 @@ class EngineTest {
             assertTrue(lines[1].scoreCp < 0, "anything else is worse: ${lines.map { it.san + " " + it.scoreCp }}")
         }
     }
+
+    // ------------------------------------------------------------------ game history
+
+    @Test
+    fun positionsFromTheGameHistoryCountAsRepetitions() {
+        val position = Position.fromFen("k7/2Q5/8/8/8/8/8/7K w - - 0 1")
+        val limits = SearchLimits(maxDepth = 4, timeMs = 60_000, multiPv = 100)
+        val plain = Engine().analyze(position, limits)
+        val favourite = plain.lines[0]
+        assertTrue(favourite.scoreCp > 800)
+        val afterFavourite = position.play(favourite.move)
+
+        // Told that the position after its favourite move occurred before, the engine scores that
+        // move as a draw and wins another way.
+        val engine = Engine()
+        val warned = engine.analyze(position, listOf(Position.START, afterFavourite), limits)
+        assertSoundResult(position, warned, limits)
+        val repeating = warned.lines.single { it.move == favourite.move }
+        assertEquals(0, repeating.scoreCp)
+        assertEquals(1, repeating.pv.size)
+        assertTrue(warned.lines[0].move != favourite.move && warned.lines[0].scoreCp > 800)
+
+        // The history belongs to one call only, and history that can not recur changes nothing:
+        // none at all, positions with other pawns, and anything older than those.
+        assertEquals(plain.lines, engine.analyze(position, limits).lines)
+        assertEquals(plain.lines, engine.analyze(position, emptyList(), limits).lines)
+        val otherPawns = Position.fromFen("k7/2Q5/8/8/8/8/7P/7K b - - 0 1")
+        assertEquals(plain.lines, engine.analyze(position, listOf(Position.START, otherPawns), limits).lines)
+        assertEquals(plain.lines, engine.analyze(position, listOf(afterFavourite, otherPawns), limits).lines)
+    }
+
+    @Test
+    fun losingSideHeadsForARepetition() {
+        // Black is mated in three whatever it plays, unless one of its moves repeats the game.
+        val position = Position.fromFen("7k/8/8/8/8/8/R7/1R4K1 b - - 0 1")
+        val limits = SearchLimits(maxDepth = 8, timeMs = 60_000, multiPv = 3)
+        for (move in position.legalMoves()) {
+            val result = Engine().analyze(position, listOf(position.play(move)), limits)
+            assertSoundResult(position, result, limits)
+            assertEquals(move, result.lines[0].move)
+            assertEquals(0, result.lines[0].scoreCp)
+            assertTrue(result.lines.drop(1).all { it.mateIn != null && it.mateIn!! < 0 })
+        }
+    }
+
+    // ------------------------------------------------------------------ whole games
+
+    private class Outcome(val position: Position, val plies: Int, val mostRepeats: Int)
+
+    /**
+     * Plays the game out with the engine on both sides (or a random mover for the second side when
+     * [opponent] is null), passing the game so far as history. Stops at mate, stalemate,
+     * insufficient material or after [maxPlies].
+     */
+    private fun playOut(start: Position, limits: SearchLimits, opponent: SearchLimits?, seed: Int, maxPlies: Int): Outcome {
+        val engine = Engine()
+        val random = Random(seed)
+        val history = ArrayList<Position>()
+        val occurrences = HashMap<String, Int>()
+        var mostRepeats = 0
+        var position = start
+        while (history.size < maxPlies) {
+            val moves = position.legalMoves()
+            if (moves.isEmpty() || position.isInsufficientMaterial()) break
+            val seen = (occurrences[position.placement() + position.sideToMove] ?: 0) + 1
+            occurrences[position.placement() + position.sideToMove] = seen
+            mostRepeats = maxOf(mostRepeats, seen)
+            val move = when {
+                position.sideToMove == start.sideToMove -> engine.analyze(position, history, limits).lines[0].move
+                opponent != null -> engine.analyze(position, history, opponent).lines[0].move
+                else -> moves[random.nextInt(moves.size)]
+            }
+            history.add(position)
+            position = position.play(move)
+        }
+        return Outcome(position, history.size, mostRepeats)
+    }
+
+    @Test
+    fun convertsWonEndgamesAgainstItself() {
+        val endings = listOf(
+            "8/8/8/4k3/8/8/8/Q3K3 w - - 0 1", // queen
+            "5k2/8/8/8/8/8/8/3QK3 w - - 0 1",
+            "8/5k2/8/8/8/8/1q6/6K1 b - - 0 1",
+            "8/8/8/4k3/8/8/8/R3K3 w - - 0 1", // rook
+            "8/8/8/3k4/8/8/r7/4K3 b - - 0 1",
+            "8/8/3k4/8/8/8/8/2B1KB2 w - - 0 1", // two bishops
+            "8/8/3k4/8/8/8/4P3/4K3 w - - 0 1", // one pawn: promote, then mate with the queen
+            "4k3/8/8/8/8/8/PPP5/2K5 w - - 0 1",
+            "8/8/3k4/8/8/8/5PPP/6K1 w - - 0 1",
+            "8/pp3k2/8/8/8/8/5PPP/3R2K1 w - - 0 1", // rook against two pawns
+        )
+        val limits = SearchLimits(maxDepth = 6, timeMs = 60_000, multiPv = 1)
+        for (fen in endings) {
+            val start = Position.fromFen(fen)
+            val outcome = playOut(start, limits, limits, 0, 120)
+            assertTrue(outcome.position.isCheckmate(), "no mate after ${outcome.plies} plies from $fen: ${outcome.position.toFen()}")
+            assertEquals(start.sideToMove.opposite, outcome.position.sideToMove, "the wrong side was mated in $fen")
+            assertEquals(1, outcome.mostRepeats, "a position was repeated on the way from $fen")
+        }
+    }
+
+    @Test
+    fun matesARandomMoverFromTheStartPosition() {
+        val limits = SearchLimits(maxDepth = 4, timeMs = 60_000, multiPv = 1)
+        for (seed in 1..3) {
+            val outcome = playOut(Position.START, limits, null, seed, 200)
+            assertTrue(outcome.position.isCheckmate(), "seed $seed: no mate after ${outcome.plies} plies: ${outcome.position.toFen()}")
+            assertEquals(Side.BLACK, outcome.position.sideToMove)
+            println("random mover, seed $seed: mated in ${outcome.plies} plies")
+        }
+    }
 }
