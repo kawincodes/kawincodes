@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.withTranslation
 import com.krstech.chesshelp.R
 
 /**
@@ -50,32 +51,30 @@ internal class BoardArrowView(context: Context) : View(context) {
         if (!current.isDrawable) return
         val cell = current.boardSize / 8f
         getLocationOnScreen(location)
-        val save = canvas.save()
-        canvas.translate(-location[0].toFloat(), -location[1].toFloat())
+        canvas.withTranslation(-location[0].toFloat(), -location[1].toFloat()) {
+            val frame = cell * TARGET_STROKE
+            targetStrokePaint.strokeWidth = frame
+            val left = current.boardLeft + current.toCol * cell + frame / 2f
+            val top = current.boardTop + current.toRow * cell + frame / 2f
+            val side = cell - frame
+            val radius = cell * TARGET_RADIUS
+            drawRoundRect(left, top, left + side, top + side, radius, radius, targetFillPaint)
+            drawRoundRect(left, top, left + side, top + side, radius, radius, targetStrokePaint)
 
-        val frame = cell * TARGET_STROKE
-        targetStrokePaint.strokeWidth = frame
-        val left = current.boardLeft + current.toCol * cell + frame / 2f
-        val top = current.boardTop + current.toRow * cell + frame / 2f
-        val side = cell - frame
-        val radius = cell * TARGET_RADIUS
-        canvas.drawRoundRect(left, top, left + side, top + side, radius, radius, targetFillPaint)
-        canvas.drawRoundRect(left, top, left + side, top + side, radius, radius, targetStrokePaint)
-
-        val points = ArrowGeometry.polygon(
-            ArrowGeometry.cellCenter(current.boardLeft.toFloat(), cell, current.fromCol),
-            ArrowGeometry.cellCenter(current.boardTop.toFloat(), cell, current.fromRow),
-            ArrowGeometry.cellCenter(current.boardLeft.toFloat(), cell, current.toCol),
-            ArrowGeometry.cellCenter(current.boardTop.toFloat(), cell, current.toRow),
-            cell,
-        )
-        if (points != null) {
-            path.setPolygon(points)
-            outlinePaint.strokeWidth = cell * ARROW_OUTLINE
-            canvas.drawPath(path, fillPaint)
-            canvas.drawPath(path, outlinePaint)
+            val points = ArrowGeometry.polygon(
+                ArrowGeometry.cellCenter(current.boardLeft.toFloat(), cell, current.fromCol),
+                ArrowGeometry.cellCenter(current.boardTop.toFloat(), cell, current.fromRow),
+                ArrowGeometry.cellCenter(current.boardLeft.toFloat(), cell, current.toCol),
+                ArrowGeometry.cellCenter(current.boardTop.toFloat(), cell, current.toRow),
+                cell,
+            )
+            if (points != null) {
+                path.setPolygon(points)
+                outlinePaint.strokeWidth = cell * ARROW_OUTLINE
+                drawPath(path, fillPaint)
+                drawPath(path, outlinePaint)
+            }
         }
-        canvas.restoreToCount(save)
     }
 
     private companion object {

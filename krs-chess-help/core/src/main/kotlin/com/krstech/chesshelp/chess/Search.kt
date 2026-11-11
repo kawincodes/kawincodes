@@ -10,6 +10,9 @@ import kotlin.math.min
  * memory it needs (about 8.5 MB) and can be reused for any number of [analyze] calls; it is not
  * thread-safe.
  *
+ * A position that repeats an earlier one, on the path from the root or among the game positions
+ * handed to [analyze], is scored as a draw, as are the fifty-move rule and insufficient material.
+ *
  * Scores are centipawns for the side to move. A mate is `MATE - plies from the root`, so the
  * shortest mate always has the best score. Such a score is only ever produced by a line in which
  * every reply of the losing side was searched, so a reported mate is a proven one: the selective
@@ -40,6 +43,10 @@ internal class Searcher {
     private val history = IntArray(2 * 64 * 64)
     private val exchange = IntArray(40)
 
+    /** Open-addressed set of the keys of earlier game positions that could still recur; 0 = empty slot. */
+    private val earlier = LongArray(EARLIER_SLOTS)
+    private var hasEarlier = false
+
     private var rootMoves = IntArray(0)
     private var rootCount = 0
     private var rootInCheck = false
@@ -57,9 +64,9 @@ internal class Searcher {
         val score = IntArray(count)
     }
 
-    fun analyze(position: Position, limits: SearchLimits, stop: () -> Boolean): EngineResult {
+    fun analyze(position: Position, history: List<Position>, limits: SearchLimits, stop: () -> Boolean): EngineResult {
         startNanos = System.nanoTime()
-        prepare(position)
+        prepare(position, history)
         if (rootCount == 0) return EngineResult(emptyList(), 0, 0L, elapsedMs())
 
         val lineCount = min(max(limits.multiPv, 1), rootCount)
@@ -101,8 +108,9 @@ internal class Searcher {
     }
 
     /** Loads [position] and resets everything a previous search left behind. */
-    fun prepare(position: Position) {
+    fun prepare(position: Position, gameHistory: List<Position> = emptyList()) {
         board = position.toBoard()
+        rememberEarlierPositions(gameHistory)
         var moves = IntArray(Board.MAX_MOVES)
         var count = board.generateMoves(moves)
         if (count == moves.size) {
@@ -134,6 +142,49 @@ internal class Searcher {
     }
 
     private fun elapsedMs(): Long = (System.nanoTime() - startNanos) / 1_000_000L
+
+    /**
+     * Collects the positions of the game so far that the search could run into again. Walking
+     * back from the newest, it stops at the first one with other pawns or another number of
+     * pieces than the root: nothing from before a capture or a pawn move can come back.
+     */
+    private fun rememberEarlierPositions(history: List<Position>) {
+        if (hasEarlier) earlier.fill(0L)
+        hasEarlier = false
+        val whitePawns = board.pieces(Board.WHITE, Board.PAWN)
+        val blackPawns = board.pieces(Board.BLACK, Board.PAWN)
+        val pieceCount = java.lang.Long.bitCount(board.occupied)
+        var index = history.size - 1
+        var stored = 0
+        while (index >= 0 && stored < MAX_EARLIER) {
+            val past = history[index--].toBoard()
+            if (past.pieces(Board.WHITE, Board.PAWN) != whitePawns || past.pieces(Board.BLACK, Board.PAWN) != blackPawns ||
+                java.lang.Long.bitCount(past.occupied) != pieceCount
+            ) {
+                break
+            }
+            val key = past.key
+            if (key == 0L || isEarlierPosition(key)) continue
+            var slot = key.toInt() and (EARLIER_SLOTS - 1)
+            while (earlier[slot] != 0L) slot = (slot + 1) and (EARLIER_SLOTS - 1)
+            earlier[slot] = key
+            hasEarlier = true
+            stored++
+        }
+    }
+
+    private fun isEarlierPosition(key: Long): Boolean {
+        var slot = key.toInt() and (EARLIER_SLOTS - 1)
+        while (true) {
+            val stored = earlier[slot]
+            if (stored == key) return true
+            if (stored == 0L) return false
+            slot = (slot + 1) and (EARLIER_SLOTS - 1)
+        }
+    }
+
+    /** The current position occurred before, on the path from the root or earlier in the game. */
+    private fun isRepeated(): Boolean = board.isRepetition() || (hasEarlier && isEarlierPosition(board.key))
 
     // ------------------------------------------------------------------ root
 
@@ -219,7 +270,7 @@ internal class Searcher {
         if (aborted) return 0
 
         val board = board
-        if (board.isRepetition() || board.isInsufficientMaterial()) return DRAW
+        if (isRepeated() || board.isInsufficientMaterial()) return DRAW
         if (board.halfmoveClock >= 100) {
             // A mate delivered by the hundredth half-move still counts.
             return if (inCheck && !board.hasLegalMoves()) -MATE + ply else DRAW
@@ -340,7 +391,7 @@ internal class Searcher {
         val scores = scoreStack[ply]
         val count: Int
         if (inCheck) {
-            if (board.isRepetition()) return DRAW
+            if (isRepeated()) return DRAW
             count = board.generateMoves(moves)
             if (count == 0) return -MATE + ply
             best = -INFINITE
@@ -641,6 +692,10 @@ internal class Searcher {
         private const val ROOT_CAPACITY = 2048
         private const val POLL_MASK = 2047L
         private const val UNINTERRUPTED_NODES = 30_000L
+
+        /** Enough for every position since the last capture or pawn move under the fifty-move rule. */
+        private const val MAX_EARLIER = 128
+        private const val EARLIER_SLOTS = 512
 
         private const val ASPIRATION_MIN_DEPTH = 5
         private const val ASPIRATION_WINDOW = 30

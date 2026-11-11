@@ -39,9 +39,9 @@ data class EngineLine(
 data class EngineResult(val lines: List<EngineLine>, val depth: Int, val nodes: Long, val elapsedMs: Long)
 
 /**
- * A small alpha-beta chess engine. Instances are independent of each other and hold no state
- * between calls that could change a result; an instance keeps about 8.5 MB of search tables
- * (allocated on the first call) for reuse. Calls on one instance are serialised.
+ * A small alpha-beta chess engine. Instances are independent of each other and carry nothing
+ * from one call to the next that could change a result; an instance keeps about 8.5 MB of search
+ * tables (allocated on the first call) for reuse. Calls on one instance are serialised.
  */
 class Engine {
     private var searcher: Searcher? = null
@@ -63,8 +63,23 @@ class Engine {
         position: Position,
         limits: SearchLimits = SearchLimits(),
         shouldStop: () -> Boolean = { false },
+    ): EngineResult = analyze(position, emptyList(), limits, shouldStop)
+
+    /**
+     * As [analyze], for a position inside a game: [history] holds the positions that occurred
+     * before [position] (oldest first, [position] itself not included; both players' turns, as far
+     * as they are known). A line that returns to one of them is scored as a draw by repetition,
+     * which keeps the engine from shuffling to and fro in a won position and lets it steer for a
+     * repetition in a lost one. Without it only repetitions inside the searched line are seen.
+     */
+    @Synchronized
+    fun analyze(
+        position: Position,
+        history: List<Position>,
+        limits: SearchLimits = SearchLimits(),
+        shouldStop: () -> Boolean = { false },
     ): EngineResult {
         val active = searcher ?: Searcher().also { searcher = it }
-        return active.analyze(position, limits, shouldStop)
+        return active.analyze(position, history, limits, shouldStop)
     }
 }

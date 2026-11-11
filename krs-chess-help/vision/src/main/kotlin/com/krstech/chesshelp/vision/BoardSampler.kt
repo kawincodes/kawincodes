@@ -11,9 +11,16 @@ enum class CellState { EMPTY, LIGHT_PIECE, DARK_PIECE }
 class BoardSnapshot(
     val rect: BoardRect,
     val cells: Array<CellState>,
-    /** 0..1 certainty of each cell's state. */
+    /**
+     * 0..1 certainty of each cell's state. Low for borderline blobs and tones, and for "empty" squares on
+     * which this board's pieces would not have been visible (strongly textured or gradient squares).
+     */
     val confidence: FloatArray,
-    /** False when the reading is implausible as a chess position (too many pieces, low certainty ...). */
+    /**
+     * False when the reading should not be trusted as a whole: more than 32 pieces or more than 16 of one
+     * tone, low mean certainty, more than a handful of uncertain squares, or square backgrounds that do not
+     * form a checkerboard (the rectangle is not on a board).
+     */
     val reliable: Boolean,
 ) {
     init {
@@ -47,7 +54,10 @@ class BoardSnapshot(
  * capture rings and texture are too small or too thin). The tone comes from what is solid inside the piece:
  * a light piece keeps its bright fill under erosion, a dark piece only its dark body.
  *
- * Known limit: an analysis arrow drawn across an empty square is a solid blob too and reads as a piece.
+ * Known limits: an analysis arrow drawn across an empty square is a solid blob too and reads as a piece;
+ * a piece with hardly any contrast to a strongly textured square (dark pieces on dark stone or brushed
+ * metal, outline-less light pieces on marble) can be missed - such squares get a low confidence and, when
+ * there are many, the snapshot is flagged unreliable.
  */
 object BoardSampler {
 
@@ -461,9 +471,7 @@ object BoardSampler {
                 // certain when nothing solid is there at all, or when what is there is clearly too small
                 val byArea = 1f - f.coreArea / MIN_CORE_AREA
                 val byBox = (MIN_BOX - f.boxHeight) / BOX_MARGIN
-                // on a strongly textured square a low-contrast piece can hide below the raised threshold
-                val byTexture = (1.3f - f.threshold / 100f).coerceIn(0.3f, 1f)
-                confidence[i] = (max(byArea, byBox) * byTexture).coerceIn(MIN_CONFIDENCE, 1f)
+                confidence[i] = max(byArea, byBox).coerceIn(MIN_CONFIDENCE, 1f)
                 continue
             }
             // Solid (erosion-surviving) bright and dark parts of the interior: a light piece keeps its fill
@@ -494,6 +502,30 @@ object BoardSampler {
             val bySize = min((f.boxHeight - MIN_BOX) / BOX_MARGIN, (f.coreArea - MIN_CORE_AREA) / AREA_MARGIN)
             val byTone = abs(f.lightness - LIGHT_SHARE) / TONE_MARGIN
             confidence[i] = min(bySize, byTone).coerceIn(MIN_CONFIDENCE, 1f)
+        }
+        // An "empty" reading is only worth something where a piece would have shown. On strongly textured
+        // or gradient squares the threshold is high, and a piece whose colours sit within it (dark pieces on
+        // dark stone, outline-less light pieces on marble) leaves no trace: mark such squares as uncertain,
+        // judged by the colours of the pieces that were found elsewhere on this board.
+        for (tone in 0..1) {
+            java.util.Arrays.fill(global, 0)
+            var pieces = 0
+            for (i in 0 until 64) {
+                if (cells[i] != (if (tone == 0) CellState.DARK_PIECE else CellState.LIGHT_PIECE)) continue
+                val f = features[i]
+                for (k in 0 until TONE_BINS) global[k] += f.toneHist[k] * 1024 / f.toneCount
+                pieces++
+            }
+            if (pieces == 0) continue
+            for (i in 0 until 64) {
+                if (cells[i] != CellState.EMPTY) continue
+                val f = features[i]
+                var visible = 0
+                for (k in 0 until TONE_BINS) {
+                    if (abs(k * binWidth + binWidth / 2 - f.bgLuma) >= f.threshold) visible += global[k]
+                }
+                if (visible < HIDDEN_SHARE * 1024 * pieces) confidence[i] = min(confidence[i], HIDDEN_CONFIDENCE)
+            }
         }
         var mean = 0f
         for (c in confidence) mean += c
@@ -599,7 +631,9 @@ object BoardSampler {
     private const val TONE_MARGIN = 0.2f
     private const val MIN_CONFIDENCE = 0.05f
     private const val SHAKY_CONFIDENCE = 0.25f
-    private const val MAX_SHAKY_CELLS = 8
+    private const val MAX_SHAKY_CELLS = 6
+    private const val HIDDEN_SHARE = 0.08f
+    private const val HIDDEN_CONFIDENCE = 0.15f
     private const val MIN_MEAN_CONFIDENCE = 0.6f
     private const val MIN_CHECKER_PAIRS = 84
     private const val MIN_CHECKER_CONTRAST = 6

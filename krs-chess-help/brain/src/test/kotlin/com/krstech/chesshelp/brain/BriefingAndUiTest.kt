@@ -100,7 +100,7 @@ class BriefingAndUiTest {
         val black = BrainUi.board(Position.START, false, move)
         assertEquals("RNBKQBNR", black.rows[0])
         assertEquals(listOf(1, 3, 3, 3), listOf(black.fromRow, black.fromCol, black.toRow, black.toCol))
-        assertEquals(ArrowSpec(40, 600, 1000, 1, 3, 3, 3), BrainUi.arrow(BOARD_RECT, move, false))
+        assertEquals(ArrowSpec(4, 6, 16, 1, 3, 3, 3), BrainUi.arrow(BOARD_RECT, move, false))
     }
 
     @Test

@@ -54,7 +54,18 @@ android {
     }
 
     testOptions {
-        unitTests.isReturnDefaultValues = true
+        unitTests {
+            isReturnDefaultValues = true
+            // The UI tests run on Robolectric, which needs the merged resources and manifest.
+            isIncludeAndroidResources = true
+            all { test ->
+                // Optional mirror for the Android runtime jars Robolectric downloads on first use:
+                // gradle :app:testDebugUnitTest -ProbolectricRepoUrl=https://...
+                providers.gradleProperty("robolectricRepoUrl").orNull?.let {
+                    test.systemProperty("robolectric.dependency.repo.url", it)
+                }
+            }
+        }
     }
 
     lint {
@@ -83,4 +94,6 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test.junit)
+    testImplementation("org.robolectric:robolectric:4.16.1")
+    testImplementation("androidx.test:core:1.7.0")
 }

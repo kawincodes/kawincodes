@@ -43,7 +43,7 @@ class SecretStore internal constructor(
 ) {
     constructor(context: Context) : this(
         context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE),
-        KeystoreCipher(KEY_ALIAS),
+        cipherFactory(),
     )
 
     // Keyed on the stored text, so a key saved through another instance is picked up here too.
@@ -138,6 +138,10 @@ class SecretStore internal constructor(
 
         // Process-wide: Keystore key creation and deletion must not interleave between instances.
         private val LOCK = Any()
+
+        /** Replaced in tests, where there is no Android Keystore. */
+        @Volatile
+        var cipherFactory: () -> SecretCipher = { KeystoreCipher(KEY_ALIAS) }
 
         fun encode(sealed: SealedBytes): String {
             val encoder = Base64.getEncoder()

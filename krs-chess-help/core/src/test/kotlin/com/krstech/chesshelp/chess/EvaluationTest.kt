@@ -137,11 +137,13 @@ class EvaluationTest {
         assertTrue(white("4k3/pppp4/8/8/8/8/PPPP4/2B1KB2 w - - 0 1") > white("4k3/pppp4/8/8/8/8/PPPP4/2B1KN2 w - - 0 1"))
         assertTrue(white("4k3/pppp4/8/8/8/8/PPPP4/4K2R w - - 0 1") > white("4k3/pppp4/8/8/8/8/PPPP4/3RK3 w - - 0 1"))
         assertTrue(white("4k3/8/8/8/3N4/8/8/4K3 w - - 0 1") > white("4k3/8/8/8/8/8/8/N3K3 w - - 0 1"))
-        // A castled king behind its pawns is safer than one in the open centre.
+        // With the heavy pieces still on, a castled king behind its pawns beats one in the open.
         assertTrue(
-            white("r4rk1/ppp2ppp/8/8/8/8/PPP2PPP/R4RK1 w - - 0 1") >
-                white("r4rk1/ppp2ppp/8/8/3K4/8/PPP2PPP/R4R2 w - - 0 1") + 50,
+            white("r2q1rk1/ppp2ppp/2n1bn2/8/8/2N1BN2/PPP2PPP/R2Q1RK1 w - - 0 1") >
+                white("r2q1rk1/ppp2ppp/2n1bn2/8/8/2NKBN2/PPP2PPP/R2Q1R2 w - - 0 1") + 50,
         )
+        // In a pawn ending it is the other way round: the king belongs in the centre.
+        assertTrue(white("4k3/ppp5/8/8/3K4/8/PPP5/8 w - - 0 1") > white("4k3/ppp5/8/8/8/8/PPP5/6K1 w - - 0 1"))
     }
 
     @Test

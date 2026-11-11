@@ -12,6 +12,7 @@ import com.krstech.chesshelp.claude.ClaudeException
 import com.krstech.chesshelp.claude.VisionRequest
 import com.krstech.chesshelp.vision.BoardRect
 import com.krstech.chesshelp.vision.BoardSnapshot
+import com.krstech.chesshelp.vision.CellState
 import com.krstech.chesshelp.vision.Frame
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -60,6 +61,8 @@ class BrainTuning(
  * All state lives on [BrainDispatchers.main]. The public methods may be called from any thread; each
  * one only queues its work there. Only one analysis runs at a time.
  *
+ * @param clock milliseconds used for the rate limits and the auto loop's timing. The default is
+ *   monotonic; a wall clock works too (a jump only shortens or restarts a wait, never extends it).
  * @param analyzer the local engine; replaceable for tests.
  * @param vision the pixel analysis; replaceable for tests.
  */
@@ -71,7 +74,7 @@ class ChessBrain(
     private val claude: AdviceServiceFactory,
     private val scope: CoroutineScope,
     private val dispatchers: BrainDispatchers,
-    private val clock: () -> Long = System::currentTimeMillis,
+    private val clock: () -> Long = MONOTONIC_MILLIS,
     private val analyzer: PositionAnalyzer = EnginePositionAnalyzer(),
     private val vision: BoardVision = PixelBoardVision,
     private val tuning: BrainTuning = BrainTuning(),
@@ -731,7 +734,8 @@ class ChessBrain(
         showWorking(message)
         val last = lastClaudeCallAt
         if (last != null) {
-            val wait = last + tuning.minClaudeGapMs - clock()
+            // Capped so that a clock set back while the app runs cannot stretch the wait.
+            val wait = minOf(last + tuning.minClaudeGapMs - clock(), tuning.minClaudeGapMs)
             if (wait > 0) delay(wait)
         }
         lastClaudeCallAt = clock()
@@ -879,7 +883,7 @@ class ChessBrain(
      * the app drew its result: a move made in between (a bot answering within a second, or anything
      * played during a long Claude call) would otherwise be part of the baseline and go unnoticed.
      * The settled frame is sampled as it is, overlay included; if it reads differently from the
-     * tracked reading outside the squares the app's own windows are known to cover, one clean look follows.
+     * tracked reading on squares the app's own windows are not known to cover, one clean look follows.
      */
     private suspend fun verify(frame: Frame, rect: BoardRect) {
         val current = tracked ?: return
@@ -891,7 +895,10 @@ class ChessBrain(
         val diff = BooleanArray(64)
         var suspicious = false
         for (cell in 0 until 64) {
-            if (seen.cells[cell] == reference.cells[cell] || underArrow(arrow, cell)) continue
+            if (seen.cells[cell] == reference.cells[cell]) continue
+            // The arrow can make an empty square look occupied or change a piece's apparent colour, but it
+            // cannot make a piece vanish: a square under it that now reads empty was moved away from.
+            if (underArrow(arrow, cell) && seen.cells[cell] != CellState.EMPTY) continue
             diff[cell] = true
             if (!overlayMask[cell]) suspicious = true
         }
@@ -910,6 +917,8 @@ class ChessBrain(
     }
 
     private companion object {
+        val MONOTONIC_MILLIS: () -> Long = { System.nanoTime() / 1_000_000 }
+
         /** Long edge of the context screenshot sent next to a board crop. */
         const val SCREEN_CONTEXT_EDGE = 1024
 

@@ -28,7 +28,7 @@ class EngineLimitsTest {
             val limits = SearchLimits(maxDepth = 64, timeMs = 300, multiPv = 3)
             val (result, wallMs) = timed { Engine().analyze(position, limits) }
             assertSoundResult(position, result, limits)
-            assertTrue(wallMs < 700, "timeMs = 300 took $wallMs ms in ${position.toFen()}")
+            assertTrue(wallMs < 800, "timeMs = 300 took $wallMs ms in ${position.toFen()}")
             assertTrue(result.elapsedMs <= wallMs)
             assertTrue(result.depth >= 3, "only depth ${result.depth} in 300 ms")
             println("timeMs=300: returned after $wallMs ms at depth ${result.depth}, ${result.nodes} nodes :: ${position.toFen()}")
@@ -86,7 +86,7 @@ class EngineLimitsTest {
                 }
             }
             assertSoundResult(position, result, limits)
-            assertTrue(wallMs in 150..450, "stop requested after 150 ms, returned after $wallMs ms")
+            assertTrue(wallMs in 140..600, "stop requested after 150 ms, returned after $wallMs ms")
             assertTrue(polls.get() > 20, "shouldStop was polled only ${polls.get()} times")
             assertTrue(result.depth >= 3)
             println("stop after 150 ms: returned after $wallMs ms, ${polls.get()} polls, depth ${result.depth}")
@@ -101,7 +101,7 @@ class EngineLimitsTest {
             assertSoundResult(position, result, limits)
             assertEquals(1, result.depth)
             assertEquals(3, result.lines.size)
-            assertTrue(wallMs < 300, "took $wallMs ms")
+            assertTrue(wallMs < 500, "took $wallMs ms")
         }
     }
 

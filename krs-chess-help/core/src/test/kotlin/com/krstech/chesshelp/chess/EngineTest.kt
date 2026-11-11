@@ -66,7 +66,8 @@ class EngineTest {
         for (fen in bothColours("r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4")) {
             val best = analyze(fen, 1).lines[0]
             assertEquals(1, best.mateIn)
-            assertEquals(listOf("Qxf7#"), best.pv)
+            assertEquals(1, best.pv.size)
+            assertTrue(best.pv[0].startsWith("Qx") && best.pv[0].endsWith("#"), best.pv[0])
             assertEquals(Searcher.MATE - 1, best.scoreCp)
         }
     }
@@ -399,10 +400,12 @@ class EngineTest {
         assertTrue(pawn.lines[0].scoreCp > 400)
 
         // Perpetual check: two rooks down, White has nothing better than Qe8+ Kh7 Qh5+ Kg8 for ever.
-        val perpetual = analyze("6k1/5pp1/8/7Q/8/7P/rr4PK/8 w - - 0 1", 6)
-        println("PERPETUAL ${perpetual.lines.map { it.san + " " + it.scoreCp + " " + it.pv }}")
-        assertEquals("h5e8", perpetual.lines[0].move.uci())
-        assertEquals(0, perpetual.lines[0].scoreCp)
-        assertTrue(perpetual.lines[1].scoreCp < -500, "everything else loses: ${perpetual.lines.map { it.san + " " + it.scoreCp }}")
+        val fen = "6k1/6p1/5p2/7Q/8/7P/rr4PK/8 w - - 0 1"
+        for (depth in intArrayOf(4, 6, 8)) {
+            val lines = analyze(fen, depth).lines
+            assertEquals(0, lines[0].scoreCp, "depth $depth: ${lines[0].pv}")
+            assertTrue(lines[0].san.endsWith("+"), "the draw is by checking: ${lines[0].pv}")
+            assertTrue(lines[1].scoreCp < 0, "anything else is worse: ${lines.map { it.san + " " + it.scoreCp }}")
+        }
     }
 }

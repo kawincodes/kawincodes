@@ -133,6 +133,9 @@ internal class ChangeWatcher(
     }
 
     fun onFrame(fingerprint: IntArray, now: Long): Signal {
+        // A clock that was set back must not make either wait longer than it was meant to be.
+        if (settleAfter - now > settleMs) settleAfter = now + settleMs
+        if (now < candidateSince) candidateSince = now
         val settled = baseline
         if (settled == null) {
             val before = previous

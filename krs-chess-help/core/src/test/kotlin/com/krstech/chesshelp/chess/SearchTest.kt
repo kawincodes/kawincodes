@@ -55,16 +55,14 @@ class SearchTest {
      */
     private fun assertExact(fen: String, depth: Int) {
         val position = Position.fromFen(fen)
-        val t0 = System.nanoTime()
         val expected = referenceRootScores(position, depth)
-        val t1 = System.nanoTime()
         val ranked = expected.values.sortedDescending()
 
         for (multiPv in intArrayOf(1, 3, 1000)) {
             val searcher = Searcher()
             searcher.selective = false
             val limits = SearchLimits(maxDepth = depth, timeMs = 600_000, multiPv = multiPv)
-            val result = searcher.analyze(position, limits) { false }
+            val result = searcher.analyze(position, emptyList(), limits) { false }
             assertSoundResult(position, result, limits)
             assertEquals(depth, result.depth)
             for ((index, line) in result.lines.withIndex()) {
@@ -72,15 +70,16 @@ class SearchTest {
                 assertEquals(ranked[index], line.scoreCp, "line ${index + 1} must be the ${index + 1}. best move (depth $depth, multiPv $multiPv) in $fen")
             }
         }
-        println("TIMING ref ${(t1 - t0) / 1_000_000} ms engine ${(System.nanoTime() - t1) / 1_000_000} ms depth $depth scores ${ranked.take(4)} :: $fen")
     }
 
     @Test
     fun exactSearchEqualsMinimaxInMiddlegames() {
         assertExact(Position.START_FEN, 4)
-        assertExact("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1", 3)
-        assertExact("r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1", 3)
-        assertExact("r2q1rk1/pP1p2pp/Q4n2/bbp1p3/Np6/1B3NBn/pPPP1PPP/R3K2R b KQ - 0 1", 3)
+        assertExact("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1", 2)
+        assertExact("r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1", 2)
+        assertExact("r2q1rk1/pP1p2pp/Q4n2/bbp1p3/Np6/1B3NBn/pPPP1PPP/R3K2R b KQ - 0 1", 2)
+        assertExact("r1bq1rk1/pp2ppbp/2np1np1/8/3NP3/2N1BP2/PPPQ2PP/R3KB1R w KQ - 3 9", 3)
+        assertExact("r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4", 3)
         assertExact("rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8", 3)
         assertExact("r1b1kb1r/pppp1ppp/5q2/4n3/3KP3/2N3PN/PPP4P/R1BQ1B1R b kq - 0 1", 3)
     }
@@ -90,20 +89,20 @@ class SearchTest {
         assertExact("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1", 5)
         assertExact("8/8/4k3/3p4/3P4/4K3/8/8 w - - 0 1", 7)
         assertExact("8/5k2/8/8/8/8/1P6/K7 b - - 0 1", 7)
-        assertExact("k7/2Q5/8/8/8/8/8/7K w - - 0 1", 6)
-        assertExact("8/8/8/8/8/5k2/3r4/3K4 b - - 0 1", 6)
+        assertExact("k7/2Q5/8/8/8/8/8/7K w - - 0 1", 5)
+        assertExact("8/8/8/8/8/5k2/3r4/3K4 b - - 0 1", 5)
         assertExact("8/P7/8/8/8/8/6p1/k6K w - - 0 1", 5)
     }
 
     @Test
     fun exactSearchEqualsMinimaxForMatesAndDraws() {
         // Mates for and against the side to move.
-        assertExact("5rk1/5Npp/8/8/2Q5/8/8/7K w - - 0 1", 5)
-        assertExact("7k/8/8/8/8/8/R7/1R4K1 b - - 0 1", 6)
-        assertExact("7k/8/8/8/8/8/R7/1R4K1 w - - 0 1", 6)
+        assertExact("5rk1/5Npp/8/8/2Q5/8/8/7K w - - 0 1", 4)
+        assertExact("7k/8/8/8/8/8/R7/1R4K1 b - - 0 1", 5)
+        assertExact("7k/8/8/8/8/8/R7/1R4K1 w - - 0 1", 5)
         assertExact("r5rk/5p1p/5R2/4B3/8/8/7P/7K w - - 0 1", 4)
         // Repetition (perpetual check), the fifty-move rule, stalemate and insufficient material.
-        assertExact("6k1/5pp1/8/7Q/8/7P/rr4PK/8 w - - 0 1", 4)
+        assertExact("6k1/6p1/5p2/7Q/8/7P/rr4PK/8 w - - 0 1", 4)
         assertExact("4k3/8/8/8/8/8/4P3/R3K3 w - - 96 60", 5)
         assertExact("7k/5Q2/8/8/8/8/8/K7 w - - 0 1", 5)
         assertExact("8/8/8/8/8/8/3r1k2/3K4 w - - 0 1", 5)

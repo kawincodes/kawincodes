@@ -20,11 +20,14 @@ import com.krstech.chesshelp.vision.BoardSnapshot
 import com.krstech.chesshelp.vision.CellState
 import com.krstech.chesshelp.vision.Frame
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 
-val BOARD_RECT = BoardRect(40, 600, 1000, 0.9f)
+/** Small on purpose: the fake frames are FRAME_SIDE x FRAME_SIDE and only carry two numbers. */
+val BOARD_RECT = BoardRect(4, 6, 16, 0.9f)
+const val FRAME_SIDE = 32
 
 /** What is on the (fake) screen: a board shown as view rows, or no board at all. */
 class Scene(
@@ -119,7 +122,10 @@ class FakeFrames(private val overlay: FakeOverlay) : FrameSource {
     override suspend fun latestFrame(): Frame? {
         if (index < 0) return null
         val stamp = if (overlay.hidden || !overlayInFrames) 0 else overlay.stamp
-        return Frame(2, 1, intArrayOf(index, stamp))
+        val pixels = IntArray(FRAME_SIDE * FRAME_SIDE)
+        pixels[0] = index
+        pixels[1] = stamp
+        return Frame(FRAME_SIDE, FRAME_SIDE, pixels)
     }
 
     override suspend fun freshFrame(timeoutMs: Long): Frame? {
@@ -154,7 +160,7 @@ class FakeVision(private val frames: FakeFrames) : BoardVision {
         return BoardSnapshot(rect, cells, FloatArray(64) { 1f }, scene.reliable)
     }
 
-    override fun fingerprint(frame: Frame, rect: BoardRect): IntArray = frame.pixels.copyOf()
+    override fun fingerprint(frame: Frame, rect: BoardRect): IntArray = frame.pixels.copyOf(2)
 
     override fun differs(a: IntArray, b: IntArray): Boolean = !a.contentEquals(b)
 }
@@ -286,6 +292,7 @@ fun recommends(move: String): (AdviceRequest, PositionOracle, (String) -> Unit) 
 }
 
 /** A brain wired to fakes on the test scheduler. */
+@OptIn(ExperimentalCoroutinesApi::class)
 class Harness(
     scope: TestScope,
     tuning: BrainTuning = BrainTuning(),

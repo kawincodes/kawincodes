@@ -95,7 +95,7 @@ class ChessBrainTest {
         assertEquals("Claude Opus 5.5", advice.source)
         assertEquals("1.2k in / 0.3k out", advice.footer)
         assertEquals(BoardUi(BoardView.toRows(start, true), 6, 4, 4, 4), advice.board)
-        assertEquals(ArrowSpec(40, 600, 1000, 6, 4, 4, 4), h.overlay.arrow)
+        assertEquals(ArrowSpec(4, 6, 16, 6, 4, 4, 4), h.overlay.arrow)
 
         assertEquals(UiState.Working(BrainUi.LOOKING, null), h.overlay.states[1])
         assertTrue(UiState.Working(BrainUi.READING, null) in h.overlay.states)
@@ -258,7 +258,7 @@ class ChessBrainTest {
         assertEquals("Nf3", advice.moveSan)
         assertEquals("Equal", advice.evaluation)
         assertNull(advice.threat)
-        assertEquals(ArrowSpec(40, 600, 1000, 7, 6, 5, 5), h.overlay.arrow)
+        assertEquals(ArrowSpec(4, 6, 16, 7, 6, 5, 5), h.overlay.arrow)
         assertTrue(UiState.Working(BrainUi.ASKING, BrainUi.board(start.after("e4", "e5"), true)) in h.overlay.states)
     }
 
@@ -329,7 +329,7 @@ class ChessBrainTest {
         h.show(start)
         tap(h)
         assertEquals(advice, h.overlay.state)
-        assertEquals(ArrowSpec(40, 600, 1000, 6, 4, 4, 4), h.overlay.arrow)
+        assertEquals(ArrowSpec(4, 6, 16, 6, 4, 4, 4), h.overlay.arrow)
         assertEquals(1, h.claude.calls)
     }
 
@@ -364,7 +364,7 @@ class ChessBrainTest {
         black.show(start, whiteAtBottom = false)
         black.claude.vision = reads(start, whiteAtBottom = false, move = "e4")
         tap(black)
-        assertEquals(ArrowSpec(40, 600, 1000, 1, 3, 3, 3), black.overlay.arrow)
+        assertEquals(ArrowSpec(4, 6, 16, 1, 3, 3, 3), black.overlay.arrow)
         black.show(start.after("e4"), whiteAtBottom = false)
         black.claude.advice = recommends("c5")
         tap(black)
@@ -604,7 +604,7 @@ class ChessBrainTest {
         assertEquals("c5", advice.moveSan)
         assertEquals(picture, advice.board!!.rows)
         // c7 -> c5 seen from Black's side: file c is column 5, rank 7 is row 6.
-        assertEquals(ArrowSpec(40, 600, 1000, 6, 5, 4, 5), h.overlay.arrow)
+        assertEquals(ArrowSpec(4, 6, 16, 6, 5, 4, 5), h.overlay.arrow)
 
         // Tracking continues in the flipped orientation, and a rescan keeps it.
         h.frames.scene = Scene(BoardView.toRows(real.after("c5"), false))
@@ -726,10 +726,10 @@ class ChessBrainTest {
         assertEquals(1, h.overlay.captures)
 
         // The next look finds the board where it is now.
-        val moved = com.krstech.chesshelp.vision.BoardRect(500, 100, 640, 0.9f)
+        val moved = com.krstech.chesshelp.vision.BoardRect(10, 2, 20, 0.9f)
         h.frames.scene = Scene(BoardView.toRows(start, true), rect = moved)
         tap(h)
-        assertEquals(ArrowSpec(500, 100, 640, 6, 4, 4, 4), h.overlay.arrow)
+        assertEquals(ArrowSpec(10, 2, 20, 6, 4, 4, 4), h.overlay.arrow)
         assertEquals(1, h.claude.calls)
     }
 

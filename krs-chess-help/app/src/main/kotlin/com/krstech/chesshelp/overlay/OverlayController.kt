@@ -199,6 +199,7 @@ class OverlayController(context: Context, private val listener: Listener) {
         )
 
         panel.panelCard.clipToOutline = true
+        panel.panelTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_knight, 0, 0, 0)
 
         bubble.root.setOnClickListener {
             showPanel(views)
