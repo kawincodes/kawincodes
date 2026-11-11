@@ -294,6 +294,8 @@ class ChessBrain(
         settings.autoAdvise = enabled
         overlay.setAutoEnabled(enabled)
         if (enabled) {
+            // Nobody watched while auto was off: compare the screen with the tracked reading once.
+            verifyPending = true
             startAutoLoop()
         } else {
             autoJob?.cancel()

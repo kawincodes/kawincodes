@@ -378,7 +378,7 @@ class ChessBrainTest {
 
     @Test
     fun adviseForAFixedColourOrBoth() = runTest {
-        suspend fun adviceCallsAfterWhitesMove(setting: AdviseFor, whiteAtBottom: Boolean): Int {
+        fun adviceCallsAfterWhitesMove(setting: AdviseFor, whiteAtBottom: Boolean): Int {
             val h = harness { settings.adviseFor = setting }
             h.show(start, whiteAtBottom)
             h.claude.vision = reads(start, whiteAtBottom, move = "e4")
@@ -642,7 +642,7 @@ class ChessBrainTest {
         assertTrue(h.overlay.hidden)
         h.brain.onRescan()                       // cancels the capture in flight and starts over
         runCurrent()
-        assertFalse(h.overlay.hidden)
+        assertEquals(listOf(true, false, true), h.overlay.captureModes)
         settle()
         assertEquals(listOf(true, false, true, false), h.overlay.captureModes)
         assertEquals(1, h.claude.calls)

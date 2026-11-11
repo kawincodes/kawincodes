@@ -400,6 +400,7 @@ class EngineTest {
 
         // Perpetual check: two rooks down, White has nothing better than Qe8+ Kh7 Qh5+ Kg8 for ever.
         val perpetual = analyze("6k1/5pp1/8/7Q/8/7P/rr4PK/8 w - - 0 1", 6)
+        println("PERPETUAL ${perpetual.lines.map { it.san + " " + it.scoreCp + " " + it.pv }}")
         assertEquals("h5e8", perpetual.lines[0].move.uci())
         assertEquals(0, perpetual.lines[0].scoreCp)
         assertTrue(perpetual.lines[1].scoreCp < -500, "everything else loses: ${perpetual.lines.map { it.san + " " + it.scoreCp }}")

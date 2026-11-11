@@ -116,10 +116,9 @@ internal class BrainOracle private constructor(
             if (!forcedSideQuestioned) {
                 // Either the reading or the user's override is wrong; give the reading one more look first.
                 forcedSideQuestioned = true
-                return PositionVerdict.Rejected(
-                    problems + "The user has set ${Briefings.sideName(side)} to move. Check the squares named above " +
-                        "once more; if the board really is as you reported it, submit the same reading again."
-                )
+                val advice = "The user has set ${Briefings.sideName(side)} to move. Check the squares named above " +
+                    "once more; if the board really is as you reported it, submit the same reading again."
+                return PositionVerdict.Rejected(problems + advice)
             }
             sideToMove = other
             notes += "the user's setting (${Briefings.sideName(side)} to move) is impossible in this position, " +

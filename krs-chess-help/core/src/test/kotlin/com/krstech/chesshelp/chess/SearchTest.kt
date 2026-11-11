@@ -55,7 +55,9 @@ class SearchTest {
      */
     private fun assertExact(fen: String, depth: Int) {
         val position = Position.fromFen(fen)
+        val t0 = System.nanoTime()
         val expected = referenceRootScores(position, depth)
+        val t1 = System.nanoTime()
         val ranked = expected.values.sortedDescending()
 
         for (multiPv in intArrayOf(1, 3, 1000)) {
@@ -70,6 +72,7 @@ class SearchTest {
                 assertEquals(ranked[index], line.scoreCp, "line ${index + 1} must be the ${index + 1}. best move (depth $depth, multiPv $multiPv) in $fen")
             }
         }
+        println("TIMING ref ${(t1 - t0) / 1_000_000} ms engine ${(System.nanoTime() - t1) / 1_000_000} ms depth $depth scores ${ranked.take(4)} :: $fen")
     }
 
     @Test
