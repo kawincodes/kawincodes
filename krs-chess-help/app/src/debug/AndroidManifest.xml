@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Debug builds only: lets a developer point the custom API base URL at a mock server on the host. -->
+    <application android:networkSecurityConfig="@xml/network_security_config_debug" />
+</manifest>

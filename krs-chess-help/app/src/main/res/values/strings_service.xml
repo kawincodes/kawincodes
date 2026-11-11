@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="service_channel_name">Screen capture session</string>
+    <string name="service_notification_title">KRS Chess Help is watching the board</string>
+    <string name="service_notification_text">Tap the floating bubble for a move. Tap Stop to end screen capture.</string>
+    <string name="service_notification_stop">Stop</string>
+    <string name="service_error_start">Screen capture could not be started. Please try again.</string>
+    <string name="service_error_overlay">Allow \"Display over other apps\" first.</string>
+</resources>

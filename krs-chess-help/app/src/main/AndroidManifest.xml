@@ -27,8 +27,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Integration: the capture foreground service (foregroundServiceType="mediaProjection") is declared here. -->
+        <service
+            android:name=".service.ChessHelpService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
     </application>
 
 </manifest>

@@ -397,7 +397,7 @@ internal class Searcher {
             best = -INFINITE
         } else {
             // Standing pat assumes there is a move to make; a lone king (with blocked pawns) may have none.
-            if (false) return DRAW
+            if (hasOnlyKingAndPawns(board.side) && !board.hasLegalMoves()) return DRAW
             best = Evaluation.evaluate(board)
             if (best >= beta) return best
             if (best > alpha) alpha = best
