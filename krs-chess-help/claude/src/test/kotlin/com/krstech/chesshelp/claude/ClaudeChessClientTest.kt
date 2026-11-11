@@ -633,7 +633,9 @@ class ClaudeChessClientTest {
     fun `a fallback block is echoed back where it was and the serving model is reported`() {
         val fallbackTurn = listOf(
             linkedMapOf("type" to "fallback", "from" to linkedMapOf("model" to "claude-opus-5-5"), "to" to linkedMapOf("model" to "claude-opus-4-8")),
-            thinkingBlock(SIGNATURE_1),
+            linkedMapOf("type" to "redacted_thinking", "data" to "EmwKAhgBEgy3va3pzix7Lq0mUO4aDFk2"),
+            thinkingBlock(SIGNATURE_1, thinking = "Summarised reasoning."),
+            textBlock("Reading the board."),
             toolUseBlock("toolu_01AfterFallback", "submit_position", submitPositionInput()),
         )
         enqueue(fallbackTurn, model = "claude-opus-4-8")
@@ -647,7 +649,10 @@ class ClaudeChessClientTest {
         val body2 = server.take().json()
         assertEquals("claude-opus-5-5", body2.get("model").asText(), "the requested model does not change")
         assertEchoed(fallbackTurn, body2.message(1))
-        assertEquals("fallback", body2.message(1).get("content").get(0).get("type").asText())
+        assertEquals(
+            listOf("fallback", "redacted_thinking", "thinking", "text", "tool_use"),
+            body2.message(1).get("content").map { it.get("type").asText() },
+        )
     }
 
     @Test

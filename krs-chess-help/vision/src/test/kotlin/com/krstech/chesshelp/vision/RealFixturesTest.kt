@@ -79,6 +79,8 @@ class RealFixturesTest {
                     val snapshot = BoardSampler.sample(frame, rect)
                     val got = cellsToString(snapshot.cells)
                     right = (0 until 64).count { got[it] == fx.cells!![it] }
+                    val wrong = (0 until 64).filter { got[it] != fx.cells!![it] }
+                        .joinToString(" ") { "(${it / 8},${it % 8})${fx.cells!![it]}>${got[it]}" }
                     reliable = snapshot.reliable
                     val hinted = BoardLocator.locate(frame, rect)
                     hintAgrees = hinted != null && hinted.left == rect.left && hinted.top == rect.top && hinted.size == rect.size
@@ -87,8 +89,9 @@ class RealFixturesTest {
                     }
                     report.append(
                         String.format(
-                            "%-46s locate err %4.1f px  conf %.2f  %5.1f ms  cells %2d/64  reliable=%-5s %s%s%n",
+                            "%-46s locate err %4.1f px  conf %.2f  %5.1f ms  cells %2d/64  reliable=%-5s %s%s%s%n",
                             fx.name, error, rect.confidence, ms, right, reliable,
+                            if (wrong.isEmpty()) "" else "wrong (row,col)truth>read: $wrong ",
                             if (fx.strict) "" else "[cells not asserted] ",
                             fx.knownIssue?.let { "[known issue: $it]" } ?: "",
                         )
