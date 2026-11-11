@@ -449,7 +449,7 @@ class EngineTest {
             assertSoundResult(position, result, limits)
             assertEquals(move, result.lines[0].move)
             assertEquals(0, result.lines[0].scoreCp)
-            assertTrue(result.lines.drop(1).all { it.mateIn != null && it.mateIn!! < 0 })
+            assertTrue(result.lines.drop(1).all { (it.mateIn ?: 0) < 0 })
         }
     }
 

@@ -86,3 +86,9 @@ fun snapshotAsIs(view: View, name: String): Bitmap {
     File(dir, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     return bitmap
 }
+
+/** Root views of every window this process has added (works on releases without WindowInspector). */
+fun windowRoots(): List<View> {
+    val global = Class.forName("android.view.WindowManagerGlobal").getMethod("getInstance").invoke(null)
+    return ArrayList(org.robolectric.util.ReflectionHelpers.getField<List<View>>(global, "mViews"))
+}

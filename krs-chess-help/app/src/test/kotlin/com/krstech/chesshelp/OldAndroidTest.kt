@@ -118,8 +118,7 @@ class OldAndroidTest {
         idle()
         assertTrue(overlay.isAttached)
 
-        val wm = context.getSystemService(WindowManager::class.java)
-        val roots = shadowOf(wm).views
+        val roots = windowRoots()
         assertEquals(3, roots.size)
         val bubble = roots.first { it.id == R.id.bubbleRoot }
         val panel = roots.first { it.id == R.id.panelRoot }
@@ -152,6 +151,6 @@ class OldAndroidTest {
         assertEquals(listOf("analyze", "stop"), events)
         overlay.detach()
         idle()
-        assertTrue(shadowOf(wm).views.isEmpty())
+        assertTrue(windowRoots().isEmpty())
     }
 }
