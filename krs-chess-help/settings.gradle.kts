@@ -26,3 +26,5 @@ include(":app")     // Android application: capture service, overlay, settings U
 include(":core")    // Pure Kotlin: chess rules, FEN, move generation, engine, move tracking
 include(":vision")  // Pure Kotlin: board location, square sampling, change detection
 include(":claude")  // Pure Kotlin: Claude API client (Anthropic Java SDK), prompts, tool loop
+include(":brain")   // Pure Kotlin: analysis coordinator (capture -> locate -> read -> track -> advise)
+include(":capture") // Android library: MediaProjection screen capture and board image encoding
