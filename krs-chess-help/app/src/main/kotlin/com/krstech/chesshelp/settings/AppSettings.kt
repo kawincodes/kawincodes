@@ -36,9 +36,13 @@ private inline fun <reified T : Enum<T>> parseEnum(value: String?, default: T): 
 data class FractionPoint(val x: Float, val y: Float)
 
 object BaseUrlValidator {
+    private val LOCAL_DEV_HOSTS = setOf("localhost", "127.0.0.1", "10.0.2.2")
+
     /**
      * Returns the normalised URL ("" for blank input), or null when the input is not acceptable.
-     * Only https is accepted: the API key travels in a request header.
+     * Only https is accepted, because the API key travels in a request header. The one exception is plain
+     * http to this machine (or the emulator's host alias), for testing against a local mock server; only
+     * debug builds permit that cleartext traffic.
      */
     fun normalize(input: String?): String? {
         val text = input?.trim().orEmpty()
@@ -49,8 +53,11 @@ object BaseUrlValidator {
         } catch (_: URISyntaxException) {
             return null
         }
-        if (!"https".equals(uri.scheme, ignoreCase = true)) return null
-        if (uri.host.isNullOrEmpty() || uri.userInfo != null || uri.query != null || uri.fragment != null) return null
+        val host = uri.host
+        if (host.isNullOrEmpty() || uri.userInfo != null || uri.query != null || uri.fragment != null) return null
+        val secure = "https".equals(uri.scheme, ignoreCase = true)
+        val localDev = "http".equals(uri.scheme, ignoreCase = true) && host in LOCAL_DEV_HOSTS
+        if (!secure && !localDev) return null
         return text.trimEnd('/')
     }
 }
