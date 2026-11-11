@@ -43,4 +43,6 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     // Mocks the (final, constructor-less) platform classes so the capture lifecycle can run on the JVM.
     testImplementation("org.mockito:mockito-core:5.14.2")
+    // Real Skia on the JVM (native graphics mode), so the images sent to Claude are actually rendered in a test.
+    testImplementation("org.robolectric:robolectric:4.16.1")
 }

@@ -74,11 +74,10 @@ object BoardSampler {
         /** Luma histogram ([TONE_BINS] bins) of the piece region shrunk by one pixel. */
         val toneHist = IntArray(TONE_BINS)
         var toneCount = 0
-        /** Solid bright share of the solid interior: near 1 for a light piece, near 0 for a dark one. */
+        /** 0..1 tone of the piece: near 1 for a light piece, near 0 for a dark one (see [classify]). */
         var lightness = 0f
-        var plainBright = 0f
-        var thickBright = 0f
-        var thickDark = 0f
+        /** Colour distance that counted as "not background" in this cell; high on strongly textured squares. */
+        var threshold = 0
     }
 
     /** Per-cell features plus the working-resolution luma and piece-interior mask of every cell. */
@@ -257,6 +256,7 @@ object BoardSampler {
             // must not); a textured one needs to clear its own texture.
             val flat = (TAU_RELATIVE * max(bgR, max(bgG, bgB))).roundToInt().coerceIn(TAU_MIN, TAU_FLAT_MAX)
             val tau = min(TAU_MAX, max(flat, (TAU_TEXTURE_GAIN * low2).roundToInt() + TAU_TEXTURE_BASE))
+            f.threshold = tau
             // under a ring the corners show the square's real colour
             f.bgLuma = if (ring) (cornerR * 77 + cornerG * 150 + cornerB * 29) shr 8 else (bgR * 77 + bgG * 150 + bgB * 29) shr 8
 
@@ -461,7 +461,9 @@ object BoardSampler {
                 // certain when nothing solid is there at all, or when what is there is clearly too small
                 val byArea = 1f - f.coreArea / MIN_CORE_AREA
                 val byBox = (MIN_BOX - f.boxHeight) / BOX_MARGIN
-                confidence[i] = max(byArea, byBox).coerceIn(MIN_CONFIDENCE, 1f)
+                // on a strongly textured square a low-contrast piece can hide below the raised threshold
+                val byTexture = (1.3f - f.threshold / 100f).coerceIn(0.3f, 1f)
+                confidence[i] = (max(byArea, byBox) * byTexture).coerceIn(MIN_CONFIDENCE, 1f)
                 continue
             }
             // Solid (erosion-surviving) bright and dark parts of the interior: a light piece keeps its fill
@@ -475,18 +477,16 @@ object BoardSampler {
             }
             val thickBright = erodedCount(a, scratch, n, rounds)
             val thickDark = erodedCount(b, scratch, n, rounds)
-            run {
+            val solid = thickBright + thickDark
+            f.lightness = if (solid >= THIN_PIECE_SOLID * f.toneCount) {
+                thickBright.toFloat() / solid
+            } else {
+                // Nothing solid either way: a piece drawn with thin strokes only (the spiky, striped queens
+                // of some sets). A dark piece always has a solid dark body, so this is a light piece unless
+                // hardly anything in it is bright; scaled so that LIGHT_SHARE is the decision point again.
                 var above = 0
                 for (k in split / binWidth until TONE_BINS) above += f.toneHist[k]
-                f.plainBright = above.toFloat() / f.toneCount
-                f.thickBright = thickBright.toFloat() / f.toneCount
-                f.thickDark = thickDark.toFloat() / f.toneCount
-            }
-            f.lightness = if (thickBright + thickDark > 0) thickBright.toFloat() / (thickBright + thickDark) else {
-                // nothing solid at all (a tiny or very thin piece): fall back to the plain share
-                var above = 0
-                for (k in split / binWidth until TONE_BINS) above += f.toneHist[k]
-                above.toFloat() / f.toneCount
+                min(1f, above.toFloat() / f.toneCount * (LIGHT_SHARE / THIN_PIECE_BRIGHT))
             }
             val isLight = f.lightness >= LIGHT_SHARE
             cells[i] = if (isLight) CellState.LIGHT_PIECE else CellState.DARK_PIECE
@@ -592,6 +592,8 @@ object BoardSampler {
     private const val TONE_SPLIT_MAX = 170
     private const val TONE_ERODE = 0.022f
     private const val LIGHT_SHARE = 0.37f
+    private const val THIN_PIECE_SOLID = 0.10f
+    private const val THIN_PIECE_BRIGHT = 0.25f
     private const val BOX_MARGIN = 0.12f
     private const val AREA_MARGIN = 0.03f
     private const val TONE_MARGIN = 0.2f

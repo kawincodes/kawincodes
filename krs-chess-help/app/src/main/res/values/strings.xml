@@ -103,7 +103,6 @@
     <string name="overlay_auto_off">Auto: off</string>
     <string name="overlay_stop">Stop</string>
     <string name="overlay_alternatives_label">Also good</string>
-    <string name="overlay_alternative_with_note">%1$s — %2$s</string>
     <string name="overlay_threat">Watch out: %1$s</string>
     <string name="overlay_mini_board_description">Board as read from the screen</string>
     <string name="overlay_mini_board_move_description">Board as read from the screen, suggested move %1$s</string>

@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Typeface
+import androidx.core.graphics.createBitmap
 import com.krstech.chesshelp.vision.BoardRect
 import com.krstech.chesshelp.vision.Frame
 import com.krstech.chesshelp.vision.FrameOps
@@ -20,9 +21,7 @@ object BoardImageRenderer {
      */
     fun boardPng(frame: Frame, rect: BoardRect): ByteArray {
         val board = FrameOps.cropBoard(frame, rect, BoardImageLayout.BOARD_SIZE)
-        val bitmap = Bitmap.createBitmap(
-            BoardImageLayout.IMAGE_SIZE, BoardImageLayout.IMAGE_SIZE, Bitmap.Config.ARGB_8888,
-        )
+        val bitmap = createBitmap(BoardImageLayout.IMAGE_SIZE, BoardImageLayout.IMAGE_SIZE) // ARGB_8888, mutable
         try {
             val canvas = Canvas(bitmap)
             canvas.drawColor(MARGIN_COLOR)
